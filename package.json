@@ -1,0 +1,28 @@
+{
+  "name": "anamata-ai-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "anamata.ai — the AI-operated marketing site. The site is its own evidence.",
+  "scripts": {
+    "tokens": "node scripts/generate-tokens-css.mjs",
+    "dev": "npm run tokens && astro dev",
+    "build": "npm run tokens && astro build",
+    "preview": "astro preview",
+    "test": "npm run build && vitest run",
+    "test:only": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.4.0",
+    "@fontsource-variable/newsreader": "^5.2.0",
+    "@fontsource/ibm-plex-mono": "^5.2.0",
+    "@fontsource/public-sans": "^5.2.0",
+    "astro": "^5.10.0"
+  },
+  "devDependencies": {
+    "fast-glob": "^3.3.0",
+    "linkedom": "^0.18.0",
+    "vitest": "^3.2.0",
+    "yaml": "^2.8.0"
+  }
+}
