@@ -1,0 +1,54 @@
+---
+/**
+ * The Operating Record — real entries from this repo's git history
+ * (src/lib/ledger.mjs). Never fabricated. Each commit entry links to the
+ * public commit; deploy entries carry the named human approval stamp.
+ */
+import { getLedger } from '../lib/ledger.mjs';
+
+interface Props {
+  limit?: number;
+  title?: string;
+}
+const { limit = 6, title = 'FIELD LOG — THIS SITE, FROM THE PUBLIC REPO' } = Astro.props;
+const entries = getLedger(limit);
+const last = entries.length - 1;
+---
+
+<section class="ledger" id="ledger" aria-label="Operating record">
+  <div class="ledger-head">
+    <span class="t">{title}</span>
+    <span class="t live">RECORDING</span>
+  </div>
+  {
+    entries.map((e, i) => (
+      <div class="entry">
+        <span class="ts">{e.ts}</span>
+        {e.kind === 'deploy' ? (
+          <span class="act">
+            <span class="agent">deploy</span> <a href={e.url} rel="noopener">{e.subject}</a>
+            {i === last && <span class="caret" />}
+          </span>
+        ) : (
+          <span class="act">
+            <span class="agent">{e.author.toLowerCase()}</span>{' '}
+            <a href={e.url} rel="noopener">
+              {e.subject}
+            </a>{' '}
+            <span class="a2a">{e.hash}</span>
+            {i === last && <span class="caret" />}
+          </span>
+        )}
+        <span class="stamp-cell">
+          {e.kind === 'deploy' && e.approver ? (
+            <span class="stamp">APPROVED — {e.approver}</span>
+          ) : e.kind === 'deploy' ? (
+            <span class="stamp">ON RECORD</span>
+          ) : (
+            <span class="mono meta">COMMITTED · ON RECORD</span>
+          )}
+        </span>
+      </div>
+    ))
+  }
+</section>
