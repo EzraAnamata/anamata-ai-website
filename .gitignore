@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.handoff-*.md
+
+# Internal work products — not for the public repo (live in Taiga; local reference only)
+docs/compliance/
+docs/spike-*.md
