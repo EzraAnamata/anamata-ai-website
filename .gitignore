@@ -7,6 +7,7 @@ dist/
 *.log
 .DS_Store
 .handoff-*.md
+.playwright-mcp/
 
 # Internal work products — not for the public repo (live in Taiga; local reference only)
 docs/compliance/
