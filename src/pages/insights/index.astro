@@ -1,0 +1,49 @@
+---
+/**
+ * Insights — records 005+: field notes. Every article carries a provenance
+ * ledger block; the list shows drafted-by/approved-by up front.
+ */
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('insights')).sort(
+  (a, b) => b.data.published.valueOf() - a.data.published.valueOf()
+);
+const fmt = (d: Date) =>
+  d.toISOString().slice(0, 10);
+---
+
+<Base
+  title="Insights — field notes from the operating record | Anamata.ai"
+  description="Field notes on AI employees, bounded autonomy and the EU AI Act — drafted by Anamata's AI systems, approved by a named human editor, published on the record."
+>
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">005+</span>
+      <span class="lbl">FIELD<br />NOTES</span>
+    </aside>
+    <main class="content">
+      <span class="kicker">Field notes · Drafted by AI, approved by a named editor</span>
+      <h1 class="sec-title">Insights, on the record.</h1>
+      <p class="sec-intro">
+        Notes from running AI employees in practice. Each article states who drafted it and who
+        approved it — provenance is part of the publication, not a disclaimer.
+      </p>
+
+      <div class="article-list">
+        {
+          posts.map((post) => (
+            <a class="article-row" href={`/insights/${post.id}/`}>
+              <span class="a-meta">
+                {post.data.record} · {fmt(post.data.published)} · drafted {post.data.draftedBy} ·
+                approved {post.data.approvedBy}
+              </span>
+              <span class="a-title">{post.data.title}</span>
+              <span class="a-desc">{post.data.description}</span>
+            </a>
+          ))
+        }
+      </div>
+    </main>
+  </div>
+</Base>

@@ -1,0 +1,113 @@
+---
+/**
+ * Home — records 001 (the claim + the field log) and 002 (personnel records).
+ * Ported from the approved checkpoint; the ledger consumes real git history.
+ * Personnel cards carry only verifiable facts — OKR bars return when the
+ * audit-trail API (#347) provides real metrics.
+ */
+import Base from '../layouts/Base.astro';
+import TransparencyNotice from '../components/TransparencyNotice.astro';
+import Ledger from '../components/Ledger.astro';
+import { getCommitEntries } from '../lib/ledger.mjs';
+
+const latest = getCommitEntries(1)[0];
+---
+
+<Base
+  title="Anamata.ai — This website is run by AI employees. Here is the proof."
+  description="Anamata's AI colleagues draft, publish and improve this site — every action approved by a human, every step on the record. The live operating record is on this page."
+  condensedNotice={false}
+>
+  <!-- ============ 001 · HERO ============ -->
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">001</span>
+      <span class="lbl">OPERATING<br />RECORD</span>
+      <span class="lbl push">ANAMATA.AI<br />UTRECHT, NL</span>
+    </aside>
+    <main class="content hero">
+      <h1>This website is run by AI&nbsp;employees. <span class="proof">Here is the&nbsp;proof.</span></h1>
+      <p class="sub">
+        Anamata's AI colleagues draft, publish and improve this site —
+        <strong>every action approved by a human, every step on the record.</strong>
+        Meet the team that already works this way, then put them to work for yours.
+      </p>
+      <div class="cta-row">
+        <a class="btn" href="/contact">REQUEST A DEMO</a>
+        <a class="btn ghost" href="#ledger">READ THE RECORD ↓</a>
+      </div>
+
+      <TransparencyNotice />
+
+      <Ledger limit={6} />
+    </main>
+  </div>
+
+  <!-- ============ 002 · PERSONNEL RECORDS ============ -->
+  <div class="sheet" id="personnel">
+    <aside class="marginalia">
+      <span class="no">002</span>
+      <span class="lbl">PERSONNEL<br />RECORDS</span>
+    </aside>
+    <section class="content" aria-label="Personnel records">
+      <h2 class="sec-title">The colleagues on file.</h2>
+      <p class="sec-intro">
+        Every AI employee at Anamata has an identity, a permission boundary and an objective —
+        reviewed by the humans they work with. These are their live records.
+      </p>
+
+      <div class="cards">
+        <!-- Anna -->
+        <article class="card">
+          <span class="punch"></span>
+          <span class="kicker">EMPLOYEE Nº 001 · ACTIVE</span>
+          <h3>Anna</h3>
+          <p class="role">Assistant — QA &amp; Engineering, Teams</p>
+          <div class="fields">
+            <div class="field"><span class="k">EMPLOYED</span><span class="v">MAR 2025</span></div>
+            <div class="field"><span class="k">WORKPLACE</span><span class="v">MICROSOFT TEAMS</span></div>
+            <div class="field"><span class="k">SCOPE</span><span class="v">QA &amp; ENGINEERING</span></div>
+            <div class="field"><span class="k">DOSSIER</span><span class="v"><a href="/anna">RECORD 003 →</a></span></div>
+          </div>
+          <div class="objective">
+            <span class="k">CURRENT OBJECTIVE</span>
+            <span class="v">Team questions answered same-day, on the record</span>
+          </div>
+        </article>
+
+        <!-- Site operations -->
+        <article class="card">
+          <span class="punch"></span>
+          <span class="kicker">EMPLOYEE Nº 002 · ACTIVE</span>
+          <h3>Site Operations</h3>
+          <p class="role">Builds and runs this website</p>
+          <div class="fields">
+            <div class="field"><span class="k">EMPLOYED</span><span class="v">JUL 2026</span></div>
+            <div class="field"><span class="k">WORKPLACE</span><span class="v">ANAMATA.AI</span></div>
+            <div class="field"><span class="k">PERMISSIONS</span><span class="v">PUBLISH VIA APPROVAL</span></div>
+            <div class="field"><span class="k">LAST ACTION</span><span class="v ok">{latest.ts} ✓</span></div>
+          </div>
+          <div class="objective">
+            <span class="k">CURRENT OBJECTIVE</span>
+            <span class="v">Qualified demo requests — Q3, baseline set at launch</span>
+          </div>
+        </article>
+
+        <!-- Pending -->
+        <article class="card pending">
+          <span class="punch"></span>
+          <span class="kicker">EMPLOYEE Nº 003 · PLANNED</span>
+          <h3>Sales Research</h3>
+          <p class="role">Market research &amp; outreach support</p>
+          <div class="fields">
+            <div class="field"><span class="k">STATUS</span><span class="v">AWAITING PROVISIONING</span></div>
+            <div class="field"><span class="k">PERMISSIONS</span><span class="v">UNDER DESIGN</span></div>
+          </div>
+          <p class="status-note">
+            Records appear here the day an employee starts — never before. That is the point.
+          </p>
+        </article>
+      </div>
+    </section>
+  </div>
+</Base>

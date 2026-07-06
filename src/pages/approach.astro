@@ -1,0 +1,116 @@
+---
+/**
+ * Approach — record 004: the governance file. Permission rings as cobalt
+ * line art (Direction 2 absorbed), the approval gate, and the record itself.
+ */
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Approach — bounded autonomy, human approval, everything on the record | Anamata.ai"
+  description="How Anamata governs AI employees: a permission-ring model for bounded autonomy, a human approval gate on everything that leaves the boundary, and a tamper-evident operating record. EU AI Act compliance by construction."
+>
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">004</span>
+      <span class="lbl">GOVERNANCE<br />FILE</span>
+    </aside>
+    <main class="content">
+      <span class="kicker">Governance file · The rules every AI employee works under</span>
+      <h1 class="sec-title">Autonomy with a boundary.</h1>
+      <p class="sec-intro">
+        An AI employee is useful because it acts on its own — and trustworthy because it can't
+        act everywhere. Anamata draws that line with three permission rings, a human approval
+        gate, and a record of everything.
+      </p>
+
+      <div class="rings-wrap">
+        <svg
+          class="rings-svg"
+          viewBox="0 0 460 460"
+          role="img"
+          aria-labelledby="rings-title rings-desc"
+        >
+          <title id="rings-title">The permission ring model</title>
+          <desc id="rings-desc">
+            Three concentric rings: an inner ring where the agent acts autonomously and logged, a
+            middle ring where actions require named human approval, and an outer ring of actions
+            the agent can never take.
+          </desc>
+          <g fill="none" stroke="#1F2BE0" stroke-width="1.5">
+            <circle cx="230" cy="230" r="70" />
+            <circle cx="230" cy="230" r="140" stroke-dasharray="6 5" />
+            <circle cx="230" cy="230" r="210" stroke-dasharray="2 6" />
+          </g>
+          <g
+            font-family="'IBM Plex Mono', monospace"
+            font-size="11"
+            letter-spacing="1.5"
+            fill="#1F2BE0"
+            text-anchor="middle"
+          >
+            <text x="230" y="226">INNER</text>
+            <text x="230" y="242" opacity="0.7">ACT · LOGGED</text>
+            <text x="230" y="112">MIDDLE — PROPOSE · HUMAN APPROVES</text>
+            <text x="230" y="38">OUTER — NEVER</text>
+          </g>
+        </svg>
+
+        <div class="ring-legend">
+          <div class="item">
+            <h3>INNER RING — ACT, ON THE RECORD</h3>
+            <p>
+              Read, research, draft, calculate. The agent works autonomously here — and every
+              action writes a log entry: timestamp, input, output, attribution.
+            </p>
+          </div>
+          <div class="item">
+            <h3>MIDDLE RING — PROPOSE, A HUMAN APPROVES</h3>
+            <p>
+              Anything that leaves the boundary: publishing, outbound mail, records of decision.
+              The agent prepares the action; a named person approves it; the approval is stamped
+              into the record. No self-approval, by construction.
+            </p>
+          </div>
+          <div class="item">
+            <h3>OUTER RING — NEVER</h3>
+            <p>
+              Payments, contracts, hiring decisions, access beyond the mandate. Not "requires
+              extra approval" — structurally unavailable to the agent.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>The approval gate is infrastructure, not policy.</h2>
+        <p>
+          A policy document says an AI shouldn't publish unreviewed. A gate makes it impossible:
+          this website's deploy pipeline refuses to ship anything until a named human approves the
+          release, and the approval itself becomes part of the public record. The same gate
+          pattern governs every Anamata AI employee at every client.
+        </p>
+        <h2>The record is the compliance story.</h2>
+        <p>
+          The EU AI Act asks for transparency (Art. 50): tell people when AI is at work, mark
+          AI-generated content, keep a human in the loop for what gets published. Our answer is
+          the operating record — disclosure on every page, every action logged and attributable,
+          every approval named. Compliance falls out of the architecture instead of being
+          retrofitted onto it.
+        </p>
+        <h2>Proven here first.</h2>
+        <p>
+          This site is the reference implementation: built by AI, gated by a human, publicly
+          auditable down to the <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">last commit</a>.
+          When we bring an AI employee into your organisation, we bring this operating model with
+          it — not a promise, a running system.
+        </p>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn" href="/contact">REQUEST A DEMO</a>
+        <a class="btn ghost" href="/#ledger">READ THE LIVE RECORD</a>
+      </div>
+    </main>
+  </div>
+</Base>
