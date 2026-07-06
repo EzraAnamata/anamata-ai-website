@@ -1,0 +1,49 @@
+---
+/**
+ * Insight article — provenance ledger block at the end of every article,
+ * in the same entry grammar as the hero ledger.
+ */
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('insights');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+
+<Base title={`${post.data.title} | Anamata.ai`} description={post.data.description}>
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">{post.data.record}</span>
+      <span class="lbl">FIELD<br />NOTE</span>
+    </aside>
+    <main class="content">
+      <article>
+        <span class="kicker">Field note {post.data.record} · {fmt(post.data.published)}</span>
+        <h1 class="sec-title">{post.data.title}</h1>
+        <div class="prose">
+          <Content />
+        </div>
+
+        <aside class="provenance" aria-label="Provenance record">
+          <div class="ph">PROVENANCE — THIS ARTICLE</div>
+          <div class="entry">
+            <span class="ts">{fmt(post.data.published)}</span>
+            <span class="act">drafted by <span class="agent">{post.data.draftedBy}</span></span>
+            <span class="stamp-cell"><span class="mono meta">AI-GENERATED · ART. 50</span></span>
+          </div>
+          <div class="entry">
+            <span class="ts">{fmt(post.data.published)}</span>
+            <span class="act">reviewed and approved for publication</span>
+            <span class="stamp-cell"><span class="stamp">APPROVED — {post.data.approvedBy}</span></span>
+          </div>
+        </aside>
+      </article>
+    </main>
+  </div>
+</Base>
