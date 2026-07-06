@@ -1,0 +1,90 @@
+name: Deploy
+
+# The approval gate (Taiga #342, reused later by AI employee #1):
+# proposal (PR / push to main) → human approval (production environment
+# required reviewer) → automatic deploy. The deploy job cannot start until a
+# named person approves it in the GitHub UI; the approval becomes part of the
+# site's own operating record.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Build & launch checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx vitest run
+
+  deploy:
+    name: Deploy to anamata.ai (human-approved)
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://anamata.ai
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Resolve the approval on record
+        id: approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The environment gate has passed by the time this job runs; fetch
+          # the named approver so the deploy entry in the ledger is real.
+          approver_login=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/approvals" \
+            --jq '.[0].user.login' 2>/dev/null || echo "")
+          approver_name=""
+          if [ -n "$approver_login" ]; then
+            approver_name=$(gh api "users/${approver_login}" --jq '.name // .login')
+          fi
+          echo "name=${approver_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Build with deploy record
+        env:
+          DEPLOY_RUN_NUMBER: ${{ github.run_number }}
+          DEPLOY_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          DEPLOY_APPROVER: ${{ steps.approval.outputs.name }}
+        run: |
+          export DEPLOY_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          npm run build
+
+      - name: Deploy over rsync
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes" \
+            dist/ "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/"
