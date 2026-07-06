@@ -53,7 +53,8 @@ export function getDeployEntry() {
     ts: fmtTs(DEPLOY_TIME || new Date().toISOString()),
     iso: DEPLOY_TIME || new Date().toISOString(),
     subject: `deployed build #${DEPLOY_RUN_NUMBER} to anamata.ai`,
-    approver: DEPLOY_APPROVER || null,
+    // GitHub display names can carry suffixes like "Ezra Hulsman | Anamata"
+    approver: (DEPLOY_APPROVER || '').split('|')[0].trim() || null,
     url: DEPLOY_RUN_URL || `${REPO_URL}/actions`,
   };
 }

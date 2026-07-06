@@ -15,6 +15,10 @@ import '../styles/tokens.generated.css';
 import '../styles/global.css';
 import TransparencyNotice from '../components/TransparencyNotice.astro';
 import { getLastAction } from '../lib/ledger.mjs';
+// preload the three critical font files (design-brief typography note)
+import newsreaderUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-italic.woff2?url';
+import publicSansUrl from '@fontsource/public-sans/files/public-sans-latin-400-normal.woff2?url';
+import plexMonoUrl from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url';
 
 interface Props {
   title: string;
@@ -40,6 +44,9 @@ const current = (p: string) =>
       name="ai-generated"
       content="true; developed and operated by AI systems under named human editorial review — EU AI Act Art. 50"
     />
+    <link rel="preload" as="font" type="font/woff2" href={newsreaderUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={publicSansUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={plexMonoUrl} crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="canonical" href={new URL(pathname, Astro.site)} />
