@@ -11,3 +11,4 @@ dist/
 # Internal work products — not for the public repo (live in Taiga; local reference only)
 docs/compliance/
 docs/spike-*.md
+src/styles/tokens.generated.css
