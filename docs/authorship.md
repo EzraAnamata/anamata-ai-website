@@ -22,18 +22,23 @@ authored by Otto means an AI did the work.** One is not a substitute for the
 other — every Otto change still reaches production only through a signed human
 merge and a named deployment approval.
 
-## Before this convention (commits up to and including `b4babc4`)
+## History note: the convention was applied retroactively (2026-07-07)
 
-The repository predates this convention by one release. Commits from the root
-through the v1 merge were AI-built as well, but were recorded under the
-operator's identity (Ezra Hulsman) and signed with his key, because the
-AI-identity convention did not exist yet. Those signatures attest that the
-operator stood behind the work; the human approval trail for that era lives in
-the pull-request and deployment-approval history. History was deliberately NOT
-rewritten when the convention was introduced: the v1 merge commit carries
-GitHub's signature over the human merge action, and rewriting would have
-destroyed that marker — the record keeps its receipts, including the receipt
-that the convention arrived after the first release.
+The repository predates this convention by one release. The v1 commits were
+AI-built too, but were initially recorded under the operator's identity
+(Ezra Hulsman, GPG-signed) because the AI-identity convention did not exist
+yet. On 2026-07-07, at the owner's explicit direction, history was rewritten
+so that AI work is attributed to Otto from the very first commit — which is
+what actually happened. Original commit timestamps were preserved; the v1
+pull-request merge commit remains authored by the human who merged it.
+
+What the rewrite necessarily gave up, on the record: the pre-rewrite GPG
+signatures (including GitHub's web-flow signature on the v1 merge commit) are
+not part of the current history. The human approval trail for the v1 era is
+therefore attested by GitHub's own records rather than in-graph signatures:
+pull requests #1–#2 (merged by the owner) and the named production deployment
+approvals in the Actions log. From this note onward, the signed-means-human
+rule applies to new history.
 
 ## Message style
 

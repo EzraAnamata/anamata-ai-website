@@ -14,7 +14,11 @@ in THIS repository are committed under the AI identity, not a human name.**
 - **Signed = human, unsigned Otto = AI.** Humans act via GitHub-signed PR
   merges and named deployment approvals (or their own GPG-signed commits).
   Never sign an Otto commit; never author AI work under a human name here.
-- Full convention and the pre-`b4babc4` history caveat: `docs/authorship.md`.
+- Full convention and the 2026-07-07 retroactive-rewrite note:
+  `docs/authorship.md`. History was rewritten once, by explicit owner order,
+  to attribute all AI work to Otto from the root commit (original dates
+  preserved; the human PR-merge commit kept its human author). Never rewrite
+  published history again without the same explicit order.
 
 This is a deliberate, documented exception to the global "no AI attribution"
 commit policy, scoped to this repository only — the site's product IS its
