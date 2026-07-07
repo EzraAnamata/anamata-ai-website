@@ -10,6 +10,10 @@ import { execSync } from 'node:child_process';
 
 const REPO_URL = 'https://github.com/EzraAnamata/anamata-ai-website';
 
+// The AI author identity (docs/authorship.md): unsigned commits by Otto are
+// AI work; signatures mark human-in-the-loop events.
+const AI_AUTHOR = 'Otto';
+
 function git(args) {
   return execSync(`git ${args}`, { encoding: 'utf8' }).trim();
 }
@@ -32,6 +36,7 @@ export function getCommitEntries(limit = 6) {
         kind: 'commit',
         hash,
         author,
+        ai: author === AI_AUTHOR,
         iso,
         ts: fmtTs(iso),
         subject,

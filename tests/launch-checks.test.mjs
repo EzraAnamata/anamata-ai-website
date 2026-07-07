@@ -127,6 +127,25 @@ describe('the operating record is real and crawlable', () => {
     }
   });
 
+  it('AI-authored commits are marked as AI in the ledger (docs/authorship.md)', () => {
+    // convention active from the first Otto commit onward; conditional so the
+    // suite stays meaningful on pre-convention checkouts
+    const ottoCommits = execSync('git log --author="^Otto$" --format=%h -n 6', {
+      cwd: ROOT,
+      encoding: 'utf8',
+    })
+      .trim()
+      .split('\n')
+      .filter(Boolean);
+    if (ottoCommits.length === 0) return;
+    const { html, document } = page(PAGES.home);
+    const ledgerText = document.querySelector('.ledger').textContent;
+    // if any of the 6 newest ledger entries is Otto's, the AI marker must render
+    if (ottoCommits.some((h) => ledgerText.includes(h))) {
+      expect(html).toContain('AI · ON RECORD');
+    }
+  });
+
   it('ledger is server-rendered text, present without JavaScript', () => {
     const { document } = page(PAGES.home);
     const entries = document.querySelectorAll('.ledger .entry');

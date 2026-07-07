@@ -45,7 +45,7 @@ const last = entries.length - 1;
           ) : e.kind === 'deploy' ? (
             <span class="stamp">ON RECORD</span>
           ) : (
-            <span class="mono meta">COMMITTED · ON RECORD</span>
+            <span class="mono meta">{e.ai ? 'AI · ON RECORD' : 'COMMITTED · ON RECORD'}</span>
           )}
         </span>
       </div>
