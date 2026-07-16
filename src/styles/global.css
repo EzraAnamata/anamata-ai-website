@@ -401,15 +401,37 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
 
 /* ---------- footer ---------- */
 .site-footer { border-top: 2px solid var(--ink); background: var(--paper); }
-.site-footer .inner { max-width: 1080px; padding: 36px 40px 48px; display: flex; flex-direction: column; gap: 24px; }
-.site-footer .cols { display: flex; gap: 48px; flex-wrap: wrap; justify-content: space-between; }
-.site-footer nav { display: flex; gap: 22px; flex-wrap: wrap; }
-.site-footer nav a { font-family: var(--font-mono); font-size: 12px; color: var(--ink); opacity: 0.82; text-decoration: none; padding: 10px 0; }
+.site-footer .inner { padding: 0 40px; display: flex; flex-direction: column; }
+/* Footer as ruled ledger rows — the same grammar as every sheet block above it
+   (Fable's spec, on Ezra's behalf). ROW A: nav links (left) · tech@ lead line
+   (right), baseline-aligned, single line each at desktop. A 1px hairline divides
+   it from ROW B: the colophon alone, the sheet's final entry. Row heights are an
+   outcome of ~16-18px padding per row — no fixed or min heights anywhere. */
+.site-footer .cols {
+  padding: 16px 0; display: flex; gap: 8px 40px; flex-wrap: wrap;
+  justify-content: space-between; align-items: baseline;
+}
+.site-footer nav { display: flex; gap: 8px 22px; flex-wrap: wrap; }
+.site-footer nav a { font-family: var(--font-mono); font-size: 12px; color: var(--ink); opacity: 0.82; text-decoration: none; padding: 6px 0; }
 .site-footer nav a:hover { color: var(--primary); opacity: 1; }
-.site-footer .colophon { font-family: var(--font-mono); font-size: 11px; opacity: 0.72; }
-.site-footer .tech-line { opacity: 1; }
+.site-footer .tech-line { font-family: var(--font-mono); font-size: 11px; opacity: 1; text-align: right; }
 .site-footer .tech-line a { color: var(--primary); text-decoration: none; }
 .site-footer .tech-line a:hover { text-decoration: underline; }
+.site-footer .site-colophon {
+  padding: 16px 0; border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--ink); opacity: 0.55; text-align: left;
+}
+
+/* Fold: below ~940px Row A's two zones stop fitting on one line, so collapse to
+   a single left-aligned column. Order per spec: nav (links wrap, 8px row-gap) →
+   hairline → tech@ line → colophon, 12px gaps. The nav carries the hairline here
+   (it sits after the links), so the colophon's desktop top rule is dropped. */
+@media (max-width: 940px) {
+  .site-footer .cols { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px 0 0; }
+  .site-footer nav { border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  .site-footer .tech-line { text-align: left; }
+  .site-footer .site-colophon { border-top: none; padding: 12px 0 16px; }
+}
 
 /* ---------- persistent record strip ---------- */
 .record-strip {
@@ -419,9 +441,14 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   padding: 12px 40px; display: flex; gap: 10px; align-items: center;
   border-top: 2px solid var(--sky);
 }
-.record-strip .tag { color: var(--sky); letter-spacing: 0.12em; font-size: 10.5px; font-weight: 600; }
-.record-strip .ok { color: #7FD4C8; }
+.record-strip .tag { color: var(--sky); letter-spacing: 0.12em; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+.record-strip .ok { color: #7FD4C8; white-space: nowrap; }
 .record-strip a { color: inherit; text-decoration: none; }
+/* Keep the strip a single predictable line at every width: the long last-action
+   text (the middle, class-less span) ellipsizes rather than wrapping, so the
+   fixed strip never grows past the body's reserved space and hides the footer,
+   and never overflows horizontally at mid widths. Full record is in the ledger. */
+.record-strip > span:not([class]) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 760px) {
@@ -437,10 +464,10 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   .site-header nav a:not(.btn) { display: none; }
   .entry { grid-template-columns: 1fr; gap: 4px; }
   .entry .stamp-cell { order: -1; }
-  .record-strip { padding: 10px 16px; font-size: 10.5px; flex-wrap: wrap; row-gap: 2px; }
+  .record-strip { padding: 10px 16px; font-size: 10.5px; }
   .rings-wrap { grid-template-columns: 1fr; }
   .drow { grid-template-columns: 1fr; gap: 6px; }
-  .site-footer .inner { padding: 28px 24px 40px; }
+  .site-footer .inner { padding: 0 24px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

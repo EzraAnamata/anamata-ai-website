@@ -74,9 +74,11 @@ const {
     grid-template-columns: 1fr minmax(0, 600px);
     align-items: center;
     gap: 3rem;
-    max-width: 1440px;
-    margin-inline: auto;
-    padding: 0 1.5rem;
+    /* Full-bleed stage: the graph-paper underlay reaches the viewport edges like
+       the scenes below, while the content columns stay centred on the 1440px
+       measure via the centring inline padding (PR #8 review fix 1). */
+    padding-block: 0;
+    padding-inline: max(1.5rem, calc((100% - 1440px) / 2 + 1.5rem));
     /* graph-paper underlay (tokens.layout.rhythm) */
     background-image:
       linear-gradient(var(--grid) 1px, transparent 1px),
