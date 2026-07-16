@@ -14,7 +14,7 @@
  *    'production' environment (the approval gate)
  */
 import { describe, it, expect, beforeAll } from 'vitest';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import path from 'node:path';
 import fg from 'fast-glob';
@@ -342,6 +342,94 @@ describe('contrast pairs (computed WCAG ratios, not hand-math)', () => {
 
   it('sky is a non-text highlight only — it fails as text on paper (documents the reservation)', () => {
     expect(ratio(colors.accent, paper)).toBeLessThan(4.5);
+  });
+});
+
+describe('S2 — Anna hero asset pipeline (frames + static fallback)', () => {
+  const ANNA = path.join(ROOT, 'public', 'anna');
+  const FRAME_COUNT = 33; // 0..32, the sanctioned Anna wireframe→human sequence
+  const FRAME_BUDGET = 2_000_000; // ≤2.0MB total (tokens.imagery / plan S2)
+  const FALLBACK_BUDGET = 200 * 1024; // static split-face ≤200KB
+
+  const frameName = (i) => `frame-${String(i).padStart(2, '0')}.webp`;
+
+  it('all 33 scroll-scrub frames exist and are non-empty WebP', () => {
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const f = path.join(ANNA, frameName(i));
+      expect(existsSync(f), `${frameName(i)} missing — run scripts/build-hero-frames.mjs`).toBe(true);
+      const buf = readFileSync(f);
+      expect(buf.length, `${frameName(i)} is empty`).toBeGreaterThan(0);
+      // RIFF/WEBP magic
+      expect(buf.slice(0, 4).toString('ascii'), `${frameName(i)} not RIFF`).toBe('RIFF');
+      expect(buf.slice(8, 12).toString('ascii'), `${frameName(i)} not WEBP`).toBe('WEBP');
+    }
+  });
+
+  it('there is no stray 34th frame (exactly the sanctioned sequence)', () => {
+    expect(existsSync(path.join(ANNA, frameName(FRAME_COUNT))), 'extra frame present').toBe(false);
+  });
+
+  it('total frame bytes stay within the ≤2.0MB budget', () => {
+    let total = 0;
+    for (let i = 0; i < FRAME_COUNT; i++) total += statSync(path.join(ANNA, frameName(i))).size;
+    expect(total, `frames total ${(total / 1e6).toFixed(2)}MB > 2.0MB budget`).toBeLessThanOrEqual(FRAME_BUDGET);
+  });
+
+  it('static split-face fallback exists, is WebP, and is ≤200KB', () => {
+    const f = path.join(ANNA, 'anna-split-face.webp');
+    expect(existsSync(f), 'anna-split-face.webp missing').toBe(true);
+    const buf = readFileSync(f);
+    expect(buf.slice(0, 4).toString('ascii')).toBe('RIFF');
+    expect(buf.slice(8, 12).toString('ascii')).toBe('WEBP');
+    expect(buf.length, `fallback ${(buf.length / 1024).toFixed(0)}KB > 200KB`).toBeLessThanOrEqual(FALLBACK_BUDGET);
+  });
+
+  it('the fallback carries no EXIF/XMP metadata (privacy scrub)', () => {
+    const buf = readFileSync(path.join(ANNA, 'anna-split-face.webp'));
+    // WebP metadata lives in EXIF/XMP RIFF chunks; XMP payloads carry the Adobe namespace
+    expect(buf.includes(Buffer.from('EXIF')), 'fallback still has an EXIF chunk').toBe(false);
+    expect(buf.includes(Buffer.from('http://ns.adobe.com/xap/')), 'fallback still has XMP').toBe(false);
+  });
+});
+
+describe('S2 — AnnaScrub component (fallbacks + CLS reservation)', () => {
+  const src = path.join(ROOT, 'src', 'components', 'AnnaScrub.astro');
+
+  it('the component exists', () => {
+    expect(existsSync(src), 'src/components/AnnaScrub.astro missing').toBe(true);
+  });
+
+  it('renders the static split-face fallback as default markup (no-JS path)', () => {
+    const s = readFileSync(src, 'utf8');
+    expect(s, 'fallback image not referenced').toContain('/anna/anna-split-face.webp');
+  });
+
+  it('reserves the portrait box with explicit dimensions (CLS 0)', () => {
+    const s = readFileSync(src, 'utf8');
+    // the 600x900 frame box must be reserved so no layout shift occurs
+    expect(s).toMatch(/width=["']600["']/);
+    expect(s).toMatch(/height=["']900["']/);
+  });
+
+  it('drives the scrub from the frame sequence', () => {
+    const s = readFileSync(src, 'utf8');
+    expect(s, 'frame sequence path not referenced').toMatch(/\/anna\/frame-/);
+  });
+
+  it('honors reduced motion and no-JS (static-final-state fallback)', () => {
+    const s = readFileSync(src, 'utf8');
+    expect(s, 'no reduced-motion guard').toContain('prefers-reduced-motion');
+  });
+
+  it('falls back to the static portrait below 760px (no rotation)', () => {
+    const s = readFileSync(src, 'utf8');
+    expect(s, 'no <760px guard').toMatch(/760/);
+  });
+
+  it('rotates on scroll via CSS 3D transform (perspective + rotateY), not a 3D runtime', () => {
+    const s = readFileSync(src, 'utf8');
+    expect(s).toMatch(/perspective\(1200px\)/);
+    expect(s).toMatch(/rotateY/);
   });
 });
 

@@ -1,0 +1,216 @@
+---
+/**
+ * AnnaScrub — the hero's signature element (site v2, Scene 0).
+ *
+ * Anna resolves from wireframe to human as the visitor scrolls: a sticky stage
+ * scrubs 33 pre-extracted WebP frames (public/anna/frame-00..32.webp, built by
+ * scripts/build-hero-frames.mjs) while a white veil lightens 12%→0 and the
+ * portrait eases perspective(1200px) rotateY(-6°→0°) — the north-star's
+ * "rotates on scroll", no 3D runtime (tokens.animations.hero).
+ *
+ * Progressive enhancement / fallbacks (tokens: reducedMotionStrategy =
+ * show-final-state): the static split-face portrait is the DEFAULT markup, so
+ * no-JS, prefers-reduced-motion and viewports < 760px all get the resolved
+ * portrait with no scrub, no veil and no rotation. JS only upgrades capable
+ * viewports into the scrub. The 600×900 box is reserved up front so CLS is 0.
+ *
+ * Text is prop-driven with Scene 0 placeholders (tagline wording is an open
+ * brainstorm — marked). NOT yet wired into index.astro; that is slice S3.
+ */
+const FRAME_COUNT = 33;
+interface Props {
+  kicker?: string;
+  heading?: string;
+  subline?: string;
+}
+const {
+  kicker = 'ANAMATA.AI — EMPLOYEE #001',
+  // working title — tagline wording is an open brainstorm (Scene 0)
+  heading = 'Anna, your digital AI assistant',
+  subline = 'Answers, requests and admin handled in your company systems — in Teams, today.',
+} = Astro.props;
+---
+
+<section class="anna-scrub" data-anna-scrub data-frames={FRAME_COUNT} aria-label="Anna — the digital AI assistant">
+  <div class="anna-stage">
+    <div class="anna-copy">
+      <p class="anna-kicker">{kicker}</p>
+      <h1 class="anna-h1">{heading}</h1>
+      <p class="anna-sub">{subline}</p>
+    </div>
+
+    <div class="anna-portrait">
+      <div class="anna-tilt">
+        <!-- Default / fallback: the resolved static portrait (no-JS, reduced-motion, <760px). -->
+        <img
+          class="anna-static"
+          src="/anna/anna-split-face.webp"
+          width="600"
+          height="900"
+          alt="Anna, resolving from wireframe to a human face"
+          fetchpriority="high"
+          decoding="async"
+        />
+        <!-- Scrub target: JS draws the current frame here, then reveals it. -->
+        <canvas class="anna-canvas" width="600" height="900" aria-hidden="true"></canvas>
+        <div class="anna-veil" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .anna-scrub {
+    position: relative;
+    /* 2.5 viewport heights of scroll drive the scrub (Scene 0). */
+    height: 250vh;
+    background: var(--paper);
+  }
+  .anna-stage {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 600px);
+    align-items: center;
+    gap: 3rem;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 0 1.5rem;
+    /* graph-paper underlay (tokens.layout.rhythm) */
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .anna-kicker {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 12.5px;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+    margin: 0 0 1rem;
+  }
+  .anna-h1 {
+    font-family: var(--font-display);
+    font-weight: 200;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+    font-size: clamp(3.2rem, 7.2vw, 6.4rem);
+    color: var(--ink);
+    margin: 0;
+  }
+  .anna-sub {
+    margin: 1.5rem 0 0;
+    max-width: 42ch;
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  .anna-portrait {
+    justify-self: center;
+    width: 100%;
+    max-width: 600px;
+    /* reserve the 600×900 (2:3) box before assets load → CLS 0 */
+    aspect-ratio: 600 / 900;
+    perspective: 1200px;
+  }
+  .anna-tilt {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    /* start rotated; JS eases toward 0deg. Fallbacks never set --rot → 0. */
+    transform: perspective(1200px) rotateY(var(--rot, 0deg));
+    will-change: transform;
+  }
+  .anna-static,
+  .anna-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .anna-canvas { opacity: 0; }
+  /* once JS is scrubbing, the canvas takes over from the static portrait */
+  .anna-scrub.is-scrubbing .anna-static { opacity: 0; }
+  .anna-scrub.is-scrubbing .anna-canvas { opacity: 1; }
+  .anna-veil {
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .anna-scrub.is-scrubbing .anna-veil { opacity: var(--veil, 0); }
+
+  /* Fallback: no scrub, no long scroll, no rotation. */
+  @media (max-width: 759px), (prefers-reduced-motion: reduce) {
+    .anna-scrub { height: auto; }
+    .anna-stage {
+      position: static;
+      min-height: 0;
+      grid-template-columns: 1fr;
+      padding-block: 4rem;
+    }
+    .anna-tilt { transform: none; }
+  }
+</style>
+
+<script>
+  // ~40 lines vanilla JS: scroll progress → frame index + veil + rotateY.
+  // Capable viewports only; everything else keeps the static-final-state fallback.
+  const scrub = document.querySelector<HTMLElement>('[data-anna-scrub]');
+  const canvas = scrub?.querySelector<HTMLCanvasElement>('.anna-canvas');
+  const ctx = canvas?.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const wide = matchMedia('(min-width: 760px)');
+
+  if (scrub && canvas && ctx) {
+    const COUNT = Number(scrub.dataset.frames) || 33;
+    const url = (i: number) => `/anna/frame-${String(i).padStart(2, '0')}.webp`;
+    const frames: HTMLImageElement[] = [];
+    let ready = 0;
+    let last = -1;
+    let raf = 0;
+
+    const active = () => wide.matches && !reduced.matches;
+
+    const render = () => {
+      raf = 0;
+      if (!active() || ready < COUNT) return;
+      const rect = scrub.getBoundingClientRect();
+      const span = rect.height - innerHeight; // scrollable distance while pinned
+      const p = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
+      const i = Math.round(p * (COUNT - 1));
+      scrub.style.setProperty('--veil', String(0.12 * (1 - p))); // 12%→0
+      scrub.style.setProperty('--rot', `${(-6 * (1 - p)).toFixed(2)}deg`); // -6°→0°
+      if (i !== last) {
+        ctx.drawImage(frames[i], 0, 0, canvas.width, canvas.height);
+        last = i;
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(render);
+    };
+
+    if (active()) {
+      for (let i = 0; i < COUNT; i++) {
+        const img = new Image();
+        img.onload = () => {
+          if (++ready === COUNT) {
+            scrub.classList.add('is-scrubbing');
+            render();
+          }
+        };
+        img.src = url(i);
+        frames.push(img);
+      }
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', onScroll, { passive: true });
+    }
+  }
+</script>
