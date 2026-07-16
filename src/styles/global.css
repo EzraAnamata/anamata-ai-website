@@ -50,6 +50,12 @@ a { color: var(--primary); }
 .btn:hover { background: var(--primary); border-color: var(--primary); }
 .btn.ghost { background: transparent; color: var(--primary); border-color: var(--primary); }
 .btn.ghost:hover { background: rgba(var(--primary-rgb), 0.07); }
+/* button-hot: the one coral ask (offerte/contact), max one per viewport */
+.btn.hot {
+  background: var(--coral); border-color: var(--coral); color: #FFFFFF;
+  font-weight: 700; font-size: 18px; padding: 14px 28px; letter-spacing: 0.04em;
+}
+.btn.hot:hover { background: #C94847; border-color: #C94847; }
 
 /* ---------- ledger page structure ---------- */
 .sheet { display: grid; grid-template-columns: var(--margin-w) 1fr; }
@@ -238,8 +244,62 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
 .frow input:focus, .frow textarea:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
 .form-actions { padding: 22px 0; }
 .form-actions .btn { border: 1px solid var(--primary); cursor: pointer; }
+.form-actions .btn.hot { border-color: var(--coral); }
 .filed-confirmation { display: none; }
 .filed-confirmation.on { display: block; }
+
+/* ---------- configurator (/configurator) — order form ---------- */
+.config-stage {
+  margin-top: 44px; display: grid; grid-template-columns: 1fr 300px; gap: 36px;
+  align-items: start;
+}
+.modules { display: flex; flex-direction: column; gap: 16px; }
+.module-row {
+  display: grid; grid-template-columns: 22px 1fr; gap: 18px; align-items: start;
+  background: var(--surface); border: 1px solid var(--ink); border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card); padding: 22px 24px; cursor: pointer;
+  transition: box-shadow var(--dur-fast) ease;
+}
+.module-row:hover { box-shadow: 6px 6px 0 rgba(var(--ink-rgb), 0.1); }
+.module-check { position: absolute; opacity: 0; width: 0; height: 0; }
+/* square checkbox stamp */
+.check-stamp {
+  width: 22px; height: 22px; border: 2px solid var(--ink); border-radius: var(--radius-btn);
+  background: var(--paper); margin-top: 3px; position: relative; flex: none;
+  transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+.module-check:checked ~ .check-stamp { background: var(--primary); border-color: var(--primary); }
+.module-check:checked ~ .check-stamp::after {
+  content: '✓'; position: absolute; inset: 0; color: #FFFFFF; font-size: 15px;
+  font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.module-check:focus-visible ~ .check-stamp { outline: 2px solid var(--primary); outline-offset: 2px; }
+.module-body { display: block; }
+.module-name { display: block; font-family: var(--font-display); font-weight: 600; font-size: 22px; letter-spacing: -0.01em; margin-top: 4px; }
+.module-spec { display: block; font-size: 14.5px; margin-top: 8px; max-width: 52ch; }
+.module-fields { display: block; margin-top: 14px; border-top: 1px solid var(--hairline); }
+.mfield {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-family: var(--font-mono); font-size: 12px;
+  padding: 7px 0; border-bottom: 1px solid var(--hairline);
+}
+.mfield .k { opacity: 0.72; letter-spacing: 0.06em; }
+.mfield .v { text-align: right; color: var(--primary); }
+
+.order-record { margin-top: 0; position: sticky; top: 24px; }
+.order-record .ledger-head .live { color: var(--primary); }
+.order-record .ledger-head .live::before { background: var(--primary); }
+.order-record .entry { grid-template-columns: 74px 1fr auto; gap: 12px; font-size: 12px; }
+.order-record .entry.empty .act { opacity: 0.6; }
+
+.offerte-form { margin-top: 8px; border-top: 2px solid var(--ink); max-width: 640px; }
+.offerte-confirmation { display: none; }
+.offerte-confirmation.on { display: block; }
+
+@media (max-width: 900px) {
+  .config-stage { grid-template-columns: 1fr; }
+  .order-record { position: static; }
+}
 
 /* ---------- footer ---------- */
 .site-footer { border-top: 2px solid var(--ink); background: var(--paper); }
