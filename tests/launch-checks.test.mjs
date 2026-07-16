@@ -433,6 +433,95 @@ describe('S2 — AnnaScrub component (fallbacks + CLS reservation)', () => {
   });
 });
 
+describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
+  it('scenes are numbered 001–004 in order in the marginalia', () => {
+    const { document } = page(PAGES.home);
+    const nums = [...document.querySelectorAll('.marginalia .no')].map((n) => n.textContent.trim());
+    expect(nums, 'scene marginalia numbering/order').toEqual(['001', '002', '003', '004']);
+  });
+
+  it('scene 0 hero: mono kicker + a text H1 (LCP-eligible), no CTA buttons in the scrub stage', () => {
+    const { document } = page(PAGES.home);
+    const hero = document.querySelector('.anna-scrub');
+    expect(hero, 'AnnaScrub hero missing').toBeTruthy();
+    expect(hero.textContent, 'EMPLOYEE #001 kicker missing').toContain('EMPLOYEE #001');
+    // H1 is the LCP element and must be real text, not an image.
+    const h1 = document.querySelector('h1');
+    expect(h1, 'hero h1 missing').toBeTruthy();
+    expect(h1.querySelector('img'), 'h1 must be text, not an image (LCP-eligible text)').toBeFalsy();
+    expect(h1.textContent.trim().length, 'h1 has no text').toBeGreaterThan(0);
+    // no CTA buttons inside the scrub stage (they'd fight the scrub).
+    expect(hero.querySelectorAll('a.btn, button').length, 'no CTAs inside the scrub stage').toBe(0);
+  });
+
+  it('scene 001: demo ledger entries are present and visibly labeled as examples', () => {
+    const { document } = page(PAGES.home);
+    const demo = document.querySelector('.demo-ledger');
+    expect(demo, 'demo ledger missing').toBeTruthy();
+    expect(
+      demo.querySelectorAll('.demo-entry').length,
+      'demo entries missing'
+    ).toBeGreaterThanOrEqual(3);
+    // must clearly disclaim being the real operating record.
+    expect(demo.textContent, 'demo entries not labeled as examples').toMatch(/example/i);
+    expect(demo.textContent, 'demo must disclaim being the real record').toMatch(
+      /not the (live |operating )?record/i
+    );
+    // demo entries must NEVER masquerade as real ledger entries.
+    expect(
+      demo.querySelectorAll('.ledger .entry').length,
+      'demo must not be structured as the real ledger'
+    ).toBe(0);
+  });
+
+  it('scene 002: HOW IT WORKS carries the HUMAN APPROVED stamp motif', () => {
+    const { html } = page(PAGES.home);
+    expect(html, 'HUMAN APPROVED stamp missing').toMatch(/HUMAN APPROVED/i);
+  });
+
+  it('scene 003: proof is the REAL ledger and links /about', () => {
+    const { document } = page(PAGES.home);
+    expect(document.querySelector('.ledger .entry'), 'real ledger missing from proof').toBeTruthy();
+    expect(
+      document.querySelectorAll('a[href^="/about"]').length,
+      'scene 003 must link /about'
+    ).toBeGreaterThan(0);
+  });
+
+  it('scene 004: exit — button-hot to /configurator, ghost to /contact, tech@ mono line, module cards', () => {
+    const { document, html } = page(PAGES.home);
+    const hot = document.querySelector('a.btn.hot');
+    expect(hot, 'button-hot offerte CTA missing').toBeTruthy();
+    expect(hot.getAttribute('href'), 'hot CTA must link the configurator').toBe('/configurator');
+    expect(hot.textContent, 'hot CTA label').toMatch(/vraag offerte aan/i);
+    const ghost = document.querySelector('a.btn.ghost[href="/contact"]');
+    expect(ghost, 'ghost contact CTA missing').toBeTruthy();
+    expect(html, 'tech@ lead line missing').toContain('tech@anamata.ai');
+    expect(
+      document.querySelectorAll('.teaser-card').length,
+      'module teaser cards missing'
+    ).toBe(MODULES.length);
+  });
+
+  it('exactly one button-hot on the home film (max one coral ask per viewport)', () => {
+    const { document } = page(PAGES.home);
+    expect(document.querySelectorAll('a.btn.hot, button.hot').length).toBe(1);
+  });
+
+  it('nav CTA is the offerte ask (VRAAG OFFERTE AAN → /configurator)', () => {
+    const { document } = page(PAGES.home);
+    const cta = document.querySelector('header nav a.btn');
+    expect(cta, 'nav CTA missing').toBeTruthy();
+    expect(cta.getAttribute('href'), 'nav CTA must link the configurator').toBe('/configurator');
+    expect(cta.textContent, 'nav CTA label').toMatch(/vraag offerte aan/i);
+  });
+
+  it('the persistent record strip is present on the home film', () => {
+    const { document } = page(PAGES.home);
+    expect(document.querySelector('.record-strip'), 'record strip missing on home').toBeTruthy();
+  });
+});
+
 describe('configurator (/configurator) — order form in ledger grammar (S4)', () => {
   it('lists every orderable module', () => {
     const { document } = page(PAGES.configurator);
@@ -595,19 +684,22 @@ describe('S5 — old routes redirect to /about', () => {
 });
 
 describe('S5 — nav and footer shape', () => {
-  it('header nav: About replaces Anna/Approach; team anchor, insights and demo CTA kept', () => {
+  it('header nav: About replaces Anna/Approach; team → /about#team, insights and offerte CTA kept', () => {
     const { document } = page(PAGES.about);
     const nav = document.querySelector('header nav');
     const hrefs = [...nav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
     expect(hrefs, 'About link missing from header').toContain('/about');
-    expect(hrefs, 'The team anchor changed').toContain('/#personnel');
+    // S3: personnel cards moved to /about, so the stale /#personnel anchor now
+    // points at the /about team section.
+    expect(hrefs, 'The team link should point at /about#team').toContain('/about#team');
+    expect(hrefs, 'stale home personnel anchor still present').not.toContain('/#personnel');
     expect(hrefs, 'Insights link changed').toContain('/insights');
     expect(hrefs, 'Anna link not removed from header').not.toContain('/anna');
     expect(hrefs, 'Approach link not removed from header').not.toContain('/approach');
-    expect(
-      nav.querySelector('a.btn')?.textContent,
-      'REQUEST A DEMO CTA changed'
-    ).toMatch(/REQUEST A DEMO/);
+    const cta = nav.querySelector('a.btn');
+    // S3: the nav CTA is now the offerte ask, not REQUEST A DEMO.
+    expect(cta?.textContent, 'nav CTA should be the offerte ask').toMatch(/vraag offerte aan/i);
+    expect(cta?.getAttribute('href'), 'nav CTA must link the configurator').toBe('/configurator');
   });
 
   it('footer nav: ABOUT replaces ANNA/APPROACH; tech@ second-lead channel present', () => {

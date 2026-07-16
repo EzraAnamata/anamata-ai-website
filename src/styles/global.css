@@ -301,17 +301,137 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   .order-record { position: static; }
 }
 
+/* ---------- home film: scenes 001–004 (S3) ---------- */
+/* transition from the sticky hero into the ledger sheet */
+.first-scene { border-top: 2px solid var(--ink); }
+
+/* scene 001 — DEMO ledger. Deliberately NOT the .ledger grammar: dashed,
+   muted, stamped EXAMPLE so it can never be read as the real operating record
+   (design-tokens concept.avoid: fabricated ledger data must never look real). */
+.demo-ledger {
+  margin-top: 40px; border: 1px dashed var(--border);
+  border-left: 3px dashed var(--text-muted);
+  background: rgba(var(--ink-rgb), 0.02); padding: 4px 18px 8px;
+}
+.demo-head {
+  display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+  gap: 8px; padding: 12px 0 10px; border-bottom: 1px solid var(--hairline);
+}
+.demo-head .t { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.14em; font-weight: 600; }
+.demo-head .t.warn { color: var(--text-muted); font-weight: 500; letter-spacing: 0.1em; }
+.demo-entry {
+  display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: baseline;
+  padding: 12px 0; border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono); font-size: 13.5px; color: var(--ink);
+}
+.demo-entry:last-child { border-bottom: none; }
+.demo-entry .ts { color: var(--primary); opacity: 0.7; }
+.demo-entry .act { line-height: 1.5; }
+.demo-entry .act .agent { color: var(--primary); font-weight: 500; }
+.demo-entry .tag {
+  font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em;
+  color: var(--text-muted); border: 1px dashed var(--text-muted); border-radius: var(--radius-btn);
+  padding: 2px 7px; white-space: nowrap;
+}
+.demo-foot { margin-top: 12px; font-size: 11.5px; color: var(--text-muted); }
+.demo-foot a { color: var(--primary); }
+
+/* scene 002 — how it works (dossier-row grammar + ring one-liner + gate stamp) */
+.how-rows { margin-top: 40px; border-top: 2px solid var(--ink); }
+.ring-oneliner { list-style: none; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.ring-oneliner li {
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 10px;
+}
+.ring-oneliner .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+/* bounded-autonomy legend within the palette (coral is CTA-reserved): teal =
+   act, primary = human-approval, ink = never. */
+.ring-oneliner .dot.inner { background: var(--teal-dark); }
+.ring-oneliner .dot.middle { background: var(--primary); }
+.ring-oneliner .dot.outer { background: var(--ink); }
+.drow .dv .stamp { margin-left: 4px; }
+
+/* scene 004 — module teaser cards + tech-lead hook */
+.teaser-cards {
+  margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px;
+}
+.teaser-card {
+  position: relative; background: var(--surface); border: 1px solid var(--ink);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 24px 22px 20px;
+}
+/* square "already-picked" stamp, echoing the configurator's checkbox stamps */
+.teaser-stamp {
+  position: absolute; top: 18px; right: 18px; width: 22px; height: 22px;
+  border: 2px solid var(--primary); border-radius: var(--radius-btn); background: var(--primary);
+}
+.teaser-stamp::after {
+  content: '✓'; position: absolute; inset: 0; color: #FFFFFF; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.teaser-card .kicker { font-size: 10.5px; }
+.teaser-card h3 { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; margin-top: 8px; }
+.teaser-spec { font-size: 14.5px; margin-top: 10px; }
+.tech-hook { margin-top: 32px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+.tech-hook a { color: var(--primary); text-decoration: none; }
+.tech-hook a:hover { text-decoration: underline; }
+
+/* Hero fit at shorter viewports (PR #8 review fix). The 600×900 portrait forces
+   the sticky stage taller than the visible band, so the copy centres against the
+   portrait and — worst at scroll-0, where the stage sits below the header — the
+   sub-line slides under the fixed record strip (seen at 1280×720). Reserve the
+   strip height and cap the portrait to the visible band so the full kicker + H1
+   + sub-line stay above it. Overrides AnnaScrub's scoped stage from here so
+   AnnaScrub.astro stays untouched; scrub layout only (≥760px), and only when the
+   viewport is too short for the full portrait (≤820px) so 1440×900 is unchanged. */
+@media (min-width: 760px) and (max-height: 820px) {
+  body .anna-scrub .anna-stage {
+    min-height: 100vh;
+    padding-bottom: 52px; /* fixed record strip (~45px) + breathing room */
+    align-content: center;
+  }
+  body .anna-scrub .anna-portrait {
+    max-height: calc(100vh - 104px);
+  }
+}
+
+@media (max-width: 760px) {
+  .demo-entry { grid-template-columns: 52px 1fr; gap: 8px 12px; }
+  .demo-entry .tag { grid-column: 2; justify-self: start; }
+}
+
 /* ---------- footer ---------- */
 .site-footer { border-top: 2px solid var(--ink); background: var(--paper); }
-.site-footer .inner { max-width: 1080px; padding: 36px 40px 48px; display: flex; flex-direction: column; gap: 24px; }
-.site-footer .cols { display: flex; gap: 48px; flex-wrap: wrap; justify-content: space-between; }
-.site-footer nav { display: flex; gap: 22px; flex-wrap: wrap; }
-.site-footer nav a { font-family: var(--font-mono); font-size: 12px; color: var(--ink); opacity: 0.82; text-decoration: none; padding: 10px 0; }
+.site-footer .inner { padding: 0 40px; display: flex; flex-direction: column; }
+/* Footer as ruled ledger rows — the same grammar as every sheet block above it
+   (Fable's spec, on Ezra's behalf). ROW A: nav links (left) · tech@ lead line
+   (right), baseline-aligned, single line each at desktop. A 1px hairline divides
+   it from ROW B: the colophon alone, the sheet's final entry. Row heights are an
+   outcome of ~16-18px padding per row — no fixed or min heights anywhere. */
+.site-footer .cols {
+  padding: 16px 0; display: flex; gap: 8px 40px; flex-wrap: wrap;
+  justify-content: space-between; align-items: baseline;
+}
+.site-footer nav { display: flex; gap: 8px 22px; flex-wrap: wrap; }
+.site-footer nav a { font-family: var(--font-mono); font-size: 12px; color: var(--ink); opacity: 0.82; text-decoration: none; padding: 6px 0; }
 .site-footer nav a:hover { color: var(--primary); opacity: 1; }
-.site-footer .colophon { font-family: var(--font-mono); font-size: 11px; opacity: 0.72; }
-.site-footer .tech-line { opacity: 1; }
+.site-footer .tech-line { font-family: var(--font-mono); font-size: 11px; opacity: 1; text-align: right; }
 .site-footer .tech-line a { color: var(--primary); text-decoration: none; }
 .site-footer .tech-line a:hover { text-decoration: underline; }
+.site-footer .site-colophon {
+  padding: 16px 0; border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--ink); opacity: 0.55; text-align: left;
+}
+
+/* Fold: below ~940px Row A's two zones stop fitting on one line, so collapse to
+   a single left-aligned column. Order per spec: nav (links wrap, 8px row-gap) →
+   hairline → tech@ line → colophon, 12px gaps. The nav carries the hairline here
+   (it sits after the links), so the colophon's desktop top rule is dropped. */
+@media (max-width: 940px) {
+  .site-footer .cols { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px 0 0; }
+  .site-footer nav { border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  .site-footer .tech-line { text-align: left; }
+  .site-footer .site-colophon { border-top: none; padding: 12px 0 16px; }
+}
 
 /* ---------- persistent record strip ---------- */
 .record-strip {
@@ -321,9 +441,14 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   padding: 12px 40px; display: flex; gap: 10px; align-items: center;
   border-top: 2px solid var(--sky);
 }
-.record-strip .tag { color: var(--sky); letter-spacing: 0.12em; font-size: 10.5px; font-weight: 600; }
-.record-strip .ok { color: #7FD4C8; }
+.record-strip .tag { color: var(--sky); letter-spacing: 0.12em; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+.record-strip .ok { color: #7FD4C8; white-space: nowrap; }
 .record-strip a { color: inherit; text-decoration: none; }
+/* Keep the strip a single predictable line at every width: the long last-action
+   text (the middle, class-less span) ellipsizes rather than wrapping, so the
+   fixed strip never grows past the body's reserved space and hides the footer,
+   and never overflows horizontally at mid widths. Full record is in the ledger. */
+.record-strip > span:not([class]) { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 760px) {
@@ -339,10 +464,10 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   .site-header nav a:not(.btn) { display: none; }
   .entry { grid-template-columns: 1fr; gap: 4px; }
   .entry .stamp-cell { order: -1; }
-  .record-strip { padding: 10px 16px; font-size: 10.5px; flex-wrap: wrap; row-gap: 2px; }
+  .record-strip { padding: 10px 16px; font-size: 10.5px; }
   .rings-wrap { grid-template-columns: 1fr; }
   .drow { grid-template-columns: 1fr; gap: 6px; }
-  .site-footer .inner { padding: 28px 24px 40px; }
+  .site-footer .inner { padding: 0 24px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
