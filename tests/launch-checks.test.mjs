@@ -27,12 +27,16 @@ const DIST = path.join(ROOT, 'dist');
 
 const PAGES = {
   home: 'index.html',
-  anna: 'anna/index.html',
-  approach: 'approach/index.html',
+  about: 'about/index.html',
   insights: 'insights/index.html',
   contact: 'contact/index.html',
   configurator: 'configurator/index.html',
 };
+
+// /approach and /anna became meta-refresh redirect stubs in S5 (their content
+// folded into /about). Stubs are not content pages — they carry no §50 notice,
+// record strip or <main> — so the "every page" assertions must skip them.
+const isRedirectStub = (html) => /http-equiv=["']?refresh/i.test(html);
 
 const TOKENS = JSON.parse(readFileSync(path.join(ROOT, 'design-tokens.json'), 'utf8'));
 
@@ -45,7 +49,10 @@ function page(rel) {
 
 let allPages = [];
 beforeAll(() => {
-  allPages = fg.sync('**/*.html', { cwd: DIST }).filter((p) => p !== '404.html');
+  allPages = fg
+    .sync('**/*.html', { cwd: DIST })
+    .filter((p) => p !== '404.html')
+    .filter((p) => !isRedirectStub(readFileSync(path.join(DIST, p), 'utf8')));
 });
 
 describe('pages exist (design-brief page table)', () => {
@@ -71,6 +78,15 @@ describe('pages exist (design-brief page table)', () => {
       .map((f) => readFileSync(path.join(DIST, f), 'utf8'))
       .join('');
     expect(urls, 'configurator missing from sitemap').toContain('anamata.ai/configurator');
+  });
+
+  it('sitemap lists /about and excludes the redirected /anna and /approach', () => {
+    const sm = readFileSync(path.join(DIST, 'sitemap-0.xml'), 'utf8');
+    expect(sm, 'sitemap should list /about').toContain('anamata.ai/about');
+    expect(sm, 'sitemap must not list the redirected /anna').not.toContain('anamata.ai/anna');
+    expect(sm, 'sitemap must not list the redirected /approach').not.toContain(
+      'anamata.ai/approach'
+    );
   });
 });
 
@@ -447,5 +463,72 @@ describe('deploy approval gate (reused later by AI employee #1)', () => {
     expect(triggers, 'deploy workflow must not trigger on pull_request').not.toContain(
       'pull_request'
     );
+  });
+});
+
+describe('S5 — /about consolidation', () => {
+  it('about states anamata.ai is part of Anamata', () => {
+    const { html } = page(PAGES.about);
+    expect(html).toContain('onderdeel van Anamata');
+  });
+
+  it('about explains the site is AI-run — the CIO/CTO second-look page', () => {
+    const { html } = page(PAGES.about);
+    expect(html, 'missing run-by-AI framing').toMatch(/run by AI/i);
+    expect(html, 'missing second-look framing').toMatch(/second look/i);
+    expect(html, 'missing CIO reference').toContain('CIO');
+    expect(html, 'missing CTO reference').toContain('CTO');
+  });
+
+  it('about carries the personnel cards, the rings diagram and a condensed transparency notice', () => {
+    const { document } = page(PAGES.about);
+    expect(
+      document.querySelectorAll('.card').length,
+      'personnel cards missing'
+    ).toBeGreaterThanOrEqual(3);
+    expect(document.querySelector('.rings-svg'), 'rings diagram missing').toBeTruthy();
+    expect(
+      document.querySelector('.notice.condensed'),
+      'condensed transparency notice missing'
+    ).toBeTruthy();
+  });
+});
+
+describe('S5 — old routes redirect to /about', () => {
+  for (const old of ['approach', 'anna']) {
+    it(`/${old} is a meta-refresh redirect stub pointing at /about`, () => {
+      const file = path.join(DIST, old, 'index.html');
+      expect(existsSync(file), `${old}/index.html missing`).toBe(true);
+      const html = readFileSync(file, 'utf8');
+      expect(isRedirectStub(html), `${old}: no meta refresh`).toBe(true);
+      expect(html, `${old}: does not target /about`).toMatch(/\/about/);
+    });
+  }
+});
+
+describe('S5 — nav and footer shape', () => {
+  it('header nav: About replaces Anna/Approach; team anchor, insights and demo CTA kept', () => {
+    const { document } = page(PAGES.about);
+    const nav = document.querySelector('header nav');
+    const hrefs = [...nav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+    expect(hrefs, 'About link missing from header').toContain('/about');
+    expect(hrefs, 'The team anchor changed').toContain('/#personnel');
+    expect(hrefs, 'Insights link changed').toContain('/insights');
+    expect(hrefs, 'Anna link not removed from header').not.toContain('/anna');
+    expect(hrefs, 'Approach link not removed from header').not.toContain('/approach');
+    expect(
+      nav.querySelector('a.btn')?.textContent,
+      'REQUEST A DEMO CTA changed'
+    ).toMatch(/REQUEST A DEMO/);
+  });
+
+  it('footer nav: ABOUT replaces ANNA/APPROACH; tech@ second-lead channel present', () => {
+    const { document, html } = page(PAGES.about);
+    const fnav = document.querySelector('footer nav');
+    const hrefs = [...fnav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+    expect(hrefs, 'ABOUT link missing from footer').toContain('/about');
+    expect(hrefs, 'ANNA link not removed from footer').not.toContain('/anna');
+    expect(hrefs, 'APPROACH link not removed from footer').not.toContain('/approach');
+    expect(html, 'tech@ second-lead channel line missing').toContain('tech@anamata.ai');
   });
 });

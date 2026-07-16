@@ -1,0 +1,300 @@
+---
+/**
+ * About — the consolidation page (S5). Absorbs the current home story,
+ * the /approach governance file and the /anna dossier into one record:
+ *  005 · onderdeel van Anamata + how this site is AI-run (the CIO/CTO
+ *        second-look page)
+ *  002 · personnel records (the colleagues on file)
+ *  003 · Anna's dossier, condensed
+ *  004 · governance file — permission rings + the approval gate
+ * /approach and /anna now redirect here (see astro.config.mjs).
+ */
+import Base from '../layouts/Base.astro';
+import { getCommitEntries } from '../lib/ledger.mjs';
+
+const latest = getCommitEntries(1)[0];
+---
+
+<Base
+  title="About — anamata.ai is onderdeel van Anamata, run by AI on the record"
+  description="anamata.ai is onderdeel van Anamata: a marketing site built and operated by AI colleagues under named human review. How it works, who's on file, the permission rings and the approval gate — the second look a CIO or CTO comes here to take."
+>
+  <!-- ============ 005 · ABOUT ============ -->
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">005</span>
+      <span class="lbl">ABOUT<br />ANAMATA.AI</span>
+      <span class="lbl push">ONDERDEEL VAN<br />ANAMATA</span>
+    </aside>
+    <main class="content">
+      <span class="kicker">About · anamata.ai · onderdeel van Anamata</span>
+      <h1 class="sec-title">The site is the proof.</h1>
+      <p class="sec-intro">
+        anamata.ai is onderdeel van Anamata — the Utrecht software company that builds and employs
+        AI colleagues. This website is one of them at work: designed, written, published and
+        improved by AI employees, with a named human approving every release.
+      </p>
+
+      <div class="prose">
+        <h2>Run by AI, on the record.</h2>
+        <p>
+          Nothing on this site ships without passing through the same operating model we bring to
+          clients: an AI employee proposes a change, the change is logged, and a named human
+          approves the release before it goes live. The proof isn't a claim in a brochure — it's
+          the live field log on the <a href="/#ledger">home page</a> and the full commit history in
+          the <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">public repository</a>.
+        </p>
+        <h2>The second look, for the people who take it.</h2>
+        <p>
+          This is the page a CIO or CTO comes to for a second look: how an AI-operated site actually
+          works, where the autonomy ends, who signs off on what, and how it stays inside the EU AI
+          Act. If you evaluate AI systems for a living, everything below is written for you — the
+          permission boundary, the approval gate, and the record that makes both auditable.
+        </p>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn" href="/contact">REQUEST A DEMO</a>
+        <a class="btn ghost" href="/#ledger">READ THE LIVE RECORD</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ 002 · PERSONNEL RECORDS ============ -->
+  <div class="sheet" id="team">
+    <aside class="marginalia">
+      <span class="no">002</span>
+      <span class="lbl">PERSONNEL<br />RECORDS</span>
+    </aside>
+    <section class="content" aria-label="Personnel records">
+      <h2 class="sec-title">The colleagues on file.</h2>
+      <p class="sec-intro">
+        Every AI employee at Anamata has an identity, a permission boundary and an objective —
+        reviewed by the humans they work with. These are their live records.
+      </p>
+
+      <div class="cards">
+        <!-- Anna -->
+        <article class="card">
+          <span class="punch"></span>
+          <span class="kicker">EMPLOYEE Nº 001 · ACTIVE</span>
+          <h3>Anna</h3>
+          <p class="role">Assistant — QA &amp; Engineering, Teams</p>
+          <div class="fields">
+            <div class="field"><span class="k">EMPLOYED</span><span class="v">MAR 2025</span></div>
+            <div class="field"><span class="k">WORKPLACE</span><span class="v">MICROSOFT TEAMS</span></div>
+            <div class="field"><span class="k">SCOPE</span><span class="v">QA &amp; ENGINEERING</span></div>
+            <div class="field"><span class="k">DOSSIER</span><span class="v"><a href="#dossier">RECORD 003 ↓</a></span></div>
+          </div>
+          <div class="objective">
+            <span class="k">CURRENT OBJECTIVE</span>
+            <span class="v">Team questions answered same-day, on the record</span>
+          </div>
+        </article>
+
+        <!-- Site operations -->
+        <article class="card">
+          <span class="punch"></span>
+          <span class="kicker">EMPLOYEE Nº 002 · ACTIVE</span>
+          <h3>Site Operations</h3>
+          <p class="role">Builds and runs this website</p>
+          <div class="fields">
+            <div class="field"><span class="k">EMPLOYED</span><span class="v">JUL 2026</span></div>
+            <div class="field"><span class="k">WORKPLACE</span><span class="v">ANAMATA.AI</span></div>
+            <div class="field"><span class="k">PERMISSIONS</span><span class="v">PUBLISH VIA APPROVAL</span></div>
+            <div class="field"><span class="k">LAST ACTION</span><span class="v ok">{latest.ts} ✓</span></div>
+          </div>
+          <div class="objective">
+            <span class="k">CURRENT OBJECTIVE</span>
+            <span class="v">Qualified demo requests — Q3, baseline set at launch</span>
+          </div>
+        </article>
+
+        <!-- Pending -->
+        <article class="card pending">
+          <span class="punch"></span>
+          <span class="kicker">EMPLOYEE Nº 003 · PLANNED</span>
+          <h3>Sales Research</h3>
+          <p class="role">Market research &amp; outreach support</p>
+          <div class="fields">
+            <div class="field"><span class="k">STATUS</span><span class="v">AWAITING PROVISIONING</span></div>
+            <div class="field"><span class="k">PERMISSIONS</span><span class="v">UNDER DESIGN</span></div>
+          </div>
+          <p class="status-note">
+            Records appear here the day an employee starts — never before. That is the point.
+          </p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 003 · PERSONNEL DOSSIER (ANNA) ============ -->
+  <div class="sheet" id="dossier">
+    <aside class="marginalia">
+      <span class="no">003</span>
+      <span class="lbl">PERSONNEL<br />DOSSIER</span>
+      <span class="lbl push">EMPLOYEE<br />Nº 001</span>
+    </aside>
+    <section class="content" aria-label="Anna — personnel dossier">
+      <span class="kicker">Personnel dossier · Employee Nº 001 · Active since March 2025</span>
+      <h2 class="sec-title">Anna.</h2>
+      <p class="sec-intro">
+        Anamata's first AI employee: an assistant for QA and engineering teams that works where
+        your team already works — Microsoft Teams. Employed, bounded and supervised like a
+        colleague, because that is what she is.
+      </p>
+
+      <div class="dossier-rows">
+        <div class="drow">
+          <span class="dk">Workplace</span>
+          <div class="dv">
+            Microsoft Teams — Anna is a member of the channels your team already uses. No new
+            tool, no new tab, no adoption project.
+          </div>
+        </div>
+        <div class="drow">
+          <span class="dk">What she does</span>
+          <div class="dv">
+            Answers your team's questions with company knowledge, same-day. Drafts documents,
+            summaries and reports for human review. Keeps project management and CRM records in
+            sync with what the team actually did.
+          </div>
+        </div>
+        <div class="drow">
+          <span class="dk">What she remembers</span>
+          <div class="dv">
+            Per-person working memory: your preferences, your projects, the way your team writes.
+            Knowledge stays inside your organisation's boundary.
+          </div>
+        </div>
+        <div class="drow">
+          <span class="dk">Permission boundary</span>
+          <div class="dv">
+            Anna reads and drafts autonomously; anything that leaves the boundary — publishing,
+            outbound mail, records of decision — passes a named human first.
+            <span class="sub-mono">SEE THE RING MODEL → <a href="#governance">RECORD 004, GOVERNANCE FILE</a></span>
+          </div>
+        </div>
+        <div class="drow">
+          <span class="dk">Oversight</span>
+          <div class="dv">
+            Every action is logged, human-readable, and attributable — who asked, what she did,
+            who approved. The same operating-record discipline this website runs on.
+          </div>
+        </div>
+        <div class="drow">
+          <span class="dk">Disclosure</span>
+          <div class="dv">
+            Anna tells you she is an AI system at first interaction, in plain language — EU AI
+            Act, Article 50, applied as a courtesy rather than a checkbox.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ 004 · GOVERNANCE FILE ============ -->
+  <div class="sheet" id="governance">
+    <aside class="marginalia">
+      <span class="no">004</span>
+      <span class="lbl">GOVERNANCE<br />FILE</span>
+    </aside>
+    <section class="content" aria-label="Governance file">
+      <span class="kicker">Governance file · The rules every AI employee works under</span>
+      <h2 class="sec-title">Autonomy with a boundary.</h2>
+      <p class="sec-intro">
+        An AI employee is useful because it acts on its own — and trustworthy because it can't
+        act everywhere. Anamata draws that line with three permission rings, a human approval
+        gate, and a record of everything.
+      </p>
+
+      <div class="rings-wrap">
+        <svg
+          class="rings-svg"
+          viewBox="0 0 460 460"
+          role="img"
+          aria-labelledby="rings-title rings-desc"
+        >
+          <title id="rings-title">The permission ring model</title>
+          <desc id="rings-desc">
+            Three concentric rings: an inner ring where the agent acts autonomously and logged, a
+            middle ring where actions require named human approval, and an outer ring of actions
+            the agent can never take.
+          </desc>
+          <g fill="none" stroke="#2C548C" stroke-width="1.5">
+            <circle cx="230" cy="230" r="70" />
+            <circle cx="230" cy="230" r="140" stroke-dasharray="6 5" />
+            <circle cx="230" cy="230" r="210" stroke-dasharray="2 6" />
+          </g>
+          <g
+            font-family="'IBM Plex Mono', monospace"
+            font-size="11"
+            letter-spacing="1.5"
+            fill="#2C548C"
+            text-anchor="middle"
+          >
+            <text x="230" y="226">INNER</text>
+            <text x="230" y="242" opacity="0.7">ACT · LOGGED</text>
+            <text x="230" y="112">MIDDLE — PROPOSE · HUMAN APPROVES</text>
+            <text x="230" y="38">OUTER — NEVER</text>
+          </g>
+        </svg>
+
+        <div class="ring-legend">
+          <div class="item">
+            <h3>INNER RING — ACT, ON THE RECORD</h3>
+            <p>
+              Read, research, draft, calculate. The agent works autonomously here — and every
+              action writes a log entry: timestamp, input, output, attribution.
+            </p>
+          </div>
+          <div class="item">
+            <h3>MIDDLE RING — PROPOSE, A HUMAN APPROVES</h3>
+            <p>
+              Anything that leaves the boundary: publishing, outbound mail, records of decision.
+              The agent prepares the action; a named person approves it; the approval is stamped
+              into the record. No self-approval, by construction.
+            </p>
+          </div>
+          <div class="item">
+            <h3>OUTER RING — NEVER</h3>
+            <p>
+              Payments, contracts, hiring decisions, access beyond the mandate. Not "requires
+              extra approval" — structurally unavailable to the agent.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="prose">
+        <h2>The approval gate is infrastructure, not policy.</h2>
+        <p>
+          A policy document says an AI shouldn't publish unreviewed. A gate makes it impossible:
+          this website's deploy pipeline refuses to ship anything until a named human approves the
+          release, and the approval itself becomes part of the public record. The same gate
+          pattern governs every Anamata AI employee at every client.
+        </p>
+        <h2>The record is the compliance story.</h2>
+        <p>
+          The EU AI Act asks for transparency (Art. 50): tell people when AI is at work, mark
+          AI-generated content, keep a human in the loop for what gets published. Our answer is
+          the operating record — disclosure on every page, every action logged and attributable,
+          every approval named. Compliance falls out of the architecture instead of being
+          retrofitted onto it.
+        </p>
+        <h2>Proven here first.</h2>
+        <p>
+          This site is the reference implementation: built by AI, gated by a human, publicly
+          auditable down to the <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">last commit</a>.
+          When we bring an AI employee into your organisation, we bring this operating model with
+          it — not a promise, a running system.
+        </p>
+      </div>
+
+      <div class="cta-row">
+        <a class="btn" href="/contact">REQUEST A DEMO</a>
+        <a class="btn ghost" href="/#ledger">READ THE LIVE RECORD</a>
+      </div>
+    </section>
+  </div>
+</Base>
