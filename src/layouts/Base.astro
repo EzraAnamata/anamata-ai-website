@@ -4,10 +4,10 @@
  * (condensed footer variant on subpages — the full notice sits in the home
  * hero), fonts, global styles and the single load choreography moment.
  */
-import '@fontsource-variable/newsreader/opsz-italic.css';
-import '@fontsource/public-sans/400.css';
-import '@fontsource/public-sans/500.css';
-import '@fontsource/public-sans/600.css';
+import '@fontsource/poppins/200.css';
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/400-italic.css';
+import '@fontsource/poppins/600.css';
 import '@fontsource/ibm-plex-mono/400.css';
 import '@fontsource/ibm-plex-mono/500.css';
 import '@fontsource/ibm-plex-mono/600.css';
@@ -15,9 +15,10 @@ import '../styles/tokens.generated.css';
 import '../styles/global.css';
 import TransparencyNotice from '../components/TransparencyNotice.astro';
 import { getLastAction } from '../lib/ledger.mjs';
-// preload the three critical font files (design-brief typography note)
-import newsreaderUrl from '@fontsource-variable/newsreader/files/newsreader-latin-opsz-italic.woff2?url';
-import publicSansUrl from '@fontsource/public-sans/files/public-sans-latin-400-normal.woff2?url';
+// preload the three critical font files (design-brief typography note):
+// Poppins 200 (hero display), Poppins 400 (body), IBM Plex Mono 400 (record).
+import poppinsDisplayUrl from '@fontsource/poppins/files/poppins-latin-200-normal.woff2?url';
+import poppinsBodyUrl from '@fontsource/poppins/files/poppins-latin-400-normal.woff2?url';
 import plexMonoUrl from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url';
 
 interface Props {
@@ -44,8 +45,8 @@ const current = (p: string) =>
       name="ai-generated"
       content="true; developed and operated by AI systems under named human editorial review — EU AI Act Art. 50"
     />
-    <link rel="preload" as="font" type="font/woff2" href={newsreaderUrl} crossorigin />
-    <link rel="preload" as="font" type="font/woff2" href={publicSansUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={poppinsDisplayUrl} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={poppinsBodyUrl} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={plexMonoUrl} crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -53,7 +54,9 @@ const current = (p: string) =>
   </head>
   <body>
     <header class="site-header">
-      <a class="wordmark" href="/"><span class="name">ANAMATA</span><span class="tld">.AI</span></a>
+      <a class="wordmark" href="/" aria-label="Anamata.ai — home">
+        <img src="/anamata-ai-logo.svg" alt="Anamata.ai" width="130" height="28" />
+      </a>
       <nav aria-label="Main">
         <a href="/#personnel" aria-current={current('/#personnel')}>The team</a>
         <a href="/anna" aria-current={current('/anna')}>Anna</a>

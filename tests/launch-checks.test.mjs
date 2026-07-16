@@ -225,9 +225,10 @@ describe('tokens are law', () => {
     for (const [role, hex] of [
       ['paper', TOKENS.colors.background],
       ['ink', TOKENS.colors.text],
-      ['cobalt', TOKENS.colors.primary],
-      ['cobalt-soft', TOKENS.colors.secondary],
-      ['approval green', TOKENS.colors.accent],
+      ['primary', TOKENS.colors.primary],
+      ['coral', TOKENS.colors.secondary],
+      ['sky', TOKENS.colors.accent],
+      ['approval teal', TOKENS.colors.semantic.success],
     ]) {
       expect(all, `token color missing from built CSS: ${role} ${hex}`).toContain(
         hex.toUpperCase()
@@ -235,12 +236,86 @@ describe('tokens are law', () => {
     }
   });
 
-  it('token fonts are used', () => {
+  it('token fonts are used (v2: Poppins + IBM Plex Mono)', () => {
     const files = fg.sync('**/*.{css,html}', { cwd: DIST });
     const all = files.map((f) => readFileSync(path.join(DIST, f), 'utf8')).join('');
-    for (const family of ['Newsreader', 'Public Sans', 'IBM Plex Mono']) {
+    for (const family of ['Poppins', 'IBM Plex Mono']) {
       expect(all, `font family missing: ${family}`).toContain(family);
     }
+  });
+
+  it('the v1 fonts are gone everywhere in the built site (no Newsreader, no Public Sans)', () => {
+    const files = fg.sync('**/*.{css,html,woff,woff2,ttf}', { cwd: DIST });
+    for (const rel of files) {
+      // filename check catches font files; content check catches @font-face / stacks
+      expect(rel, `${rel}: Newsreader font file leaked`).not.toMatch(/newsreader/i);
+      expect(rel, `${rel}: Public Sans font file leaked`).not.toMatch(/public-sans/i);
+      if (/\.(css|html)$/.test(rel)) {
+        const content = readFileSync(path.join(DIST, rel), 'utf8');
+        expect(content, `${rel}: Newsreader reference`).not.toMatch(/Newsreader/i);
+        expect(content, `${rel}: Public Sans reference`).not.toMatch(/Public\s*Sans/i);
+      }
+    }
+  });
+});
+
+describe('v2 brand logo (creator metadata scrubbed)', () => {
+  const logoRel = 'anamata-ai-logo.svg';
+
+  it('the brand logo ships and is referenced by the header', () => {
+    expect(existsSync(path.join(ROOT, 'public', logoRel)), 'public logo missing').toBe(true);
+    expect(existsSync(path.join(DIST, logoRel)), 'built logo missing').toBe(true);
+    const { html } = page(PAGES.home);
+    expect(html, 'header does not reference the logo').toContain(logoRel);
+  });
+
+  it('the logo carries no creator metadata or editor cruft (privacy scrub)', () => {
+    const svg = readFileSync(path.join(ROOT, 'public', logoRel), 'utf8');
+    for (const forbidden of [
+      'Michel',
+      'Created by',
+      'sodipodi',
+      'inkscape',
+      '<metadata',
+      'docname',
+    ]) {
+      expect(svg, `logo still contains "${forbidden}"`).not.toContain(forbidden);
+    }
+  });
+});
+
+describe('contrast pairs (computed WCAG ratios, not hand-math)', () => {
+  const srgb = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const luminance = (hex) => {
+    const h = hex.replace('#', '');
+    const [r, g, b] = [0, 2, 4].map((i) => srgb(parseInt(h.slice(i, i + 2), 16) / 255));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  const ratio = (a, b) => {
+    const l1 = luminance(a);
+    const l2 = luminance(b);
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  };
+  const { colors } = TOKENS;
+  const paper = colors.background;
+
+  it('text-safe colors clear AA (4.5:1) on paper', () => {
+    for (const [role, hex] of [
+      ['ink', colors.text],
+      ['primary', colors.primary],
+      ['textMuted', colors.textMuted],
+      ['approval teal', colors.semantic.success],
+    ]) {
+      expect(ratio(hex, paper), `${role} ${hex} on paper is ${ratio(hex, paper).toFixed(2)}:1`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('coral clears large-text/UI (3.0:1) with white — buttons only, never body text', () => {
+    expect(ratio(colors.secondary, '#FFFFFF')).toBeGreaterThanOrEqual(3.0);
+  });
+
+  it('sky is a non-text highlight only — it fails as text on paper (documents the reservation)', () => {
+    expect(ratio(colors.accent, paper)).toBeLessThan(4.5);
   });
 });
 
