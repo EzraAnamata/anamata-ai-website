@@ -20,17 +20,23 @@ import path from 'node:path';
 import fg from 'fast-glob';
 import { parseHTML } from 'linkedom';
 import YAML from 'yaml';
+import { MODULES, FIELD_MAX, worstCaseHrefLength } from '../src/lib/offerte.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
 
 const PAGES = {
   home: 'index.html',
-  anna: 'anna/index.html',
-  approach: 'approach/index.html',
+  about: 'about/index.html',
   insights: 'insights/index.html',
   contact: 'contact/index.html',
+  configurator: 'configurator/index.html',
 };
+
+// /approach and /anna became meta-refresh redirect stubs in S5 (their content
+// folded into /about). Stubs are not content pages — they carry no §50 notice,
+// record strip or <main> — so the "every page" assertions must skip them.
+const isRedirectStub = (html) => /http-equiv=["']?refresh/i.test(html);
 
 const TOKENS = JSON.parse(readFileSync(path.join(ROOT, 'design-tokens.json'), 'utf8'));
 
@@ -43,7 +49,10 @@ function page(rel) {
 
 let allPages = [];
 beforeAll(() => {
-  allPages = fg.sync('**/*.html', { cwd: DIST }).filter((p) => p !== '404.html');
+  allPages = fg
+    .sync('**/*.html', { cwd: DIST })
+    .filter((p) => p !== '404.html')
+    .filter((p) => !isRedirectStub(readFileSync(path.join(DIST, p), 'utf8')));
 });
 
 describe('pages exist (design-brief page table)', () => {
@@ -61,6 +70,23 @@ describe('pages exist (design-brief page table)', () => {
   it('sitemap and robots.txt are built', () => {
     expect(existsSync(path.join(DIST, 'sitemap-index.xml'))).toBe(true);
     expect(existsSync(path.join(DIST, 'robots.txt'))).toBe(true);
+  });
+
+  it('sitemap lists the configurator page', () => {
+    const urls = fg
+      .sync('sitemap-*.xml', { cwd: DIST })
+      .map((f) => readFileSync(path.join(DIST, f), 'utf8'))
+      .join('');
+    expect(urls, 'configurator missing from sitemap').toContain('anamata.ai/configurator');
+  });
+
+  it('sitemap lists /about and excludes the redirected /anna and /approach', () => {
+    const sm = readFileSync(path.join(DIST, 'sitemap-0.xml'), 'utf8');
+    expect(sm, 'sitemap should list /about').toContain('anamata.ai/about');
+    expect(sm, 'sitemap must not list the redirected /anna').not.toContain('anamata.ai/anna');
+    expect(sm, 'sitemap must not list the redirected /approach').not.toContain(
+      'anamata.ai/approach'
+    );
   });
 });
 
@@ -407,6 +433,99 @@ describe('S2 — AnnaScrub component (fallbacks + CLS reservation)', () => {
   });
 });
 
+describe('configurator (/configurator) — order form in ledger grammar (S4)', () => {
+  it('lists every orderable module', () => {
+    const { document } = page(PAGES.configurator);
+    const rows = [...document.querySelectorAll('.module-row')];
+    expect(rows.length, 'one card-stock row per module').toBe(MODULES.length);
+    const text = document.querySelector('main').textContent;
+    for (const m of MODULES) {
+      expect(text, `module "${m.name}" not present`).toContain(m.name);
+    }
+  });
+
+  it('each module row has a square checkbox stamp control', () => {
+    const { document } = page(PAGES.configurator);
+    const boxes = document.querySelectorAll('.module-row input[type="checkbox"]');
+    expect(boxes.length, 'a checkbox per module').toBe(MODULES.length);
+  });
+
+  it('shows NO prices anywhere on the page (gefaseerd — offerte only)', () => {
+    const { document } = page(PAGES.configurator);
+    // user-visible content only — the "$" in bundled JS template literals is
+    // not a price, so we scan rendered text, not the raw script/style source
+    const html = document.querySelector('main').textContent;
+    const forbidden = [
+      /[€$£]/,
+      /\bEUR\b/i,
+      /\bprijs/i,
+      /\bprijzen/i,
+      /\bprice/i,
+      /\bpricing/i,
+      /\btarief/i,
+      /per\s+maand/i,
+      /per\s+month/i,
+      /\/mo\b/i,
+    ];
+    for (const re of forbidden) {
+      expect(re.test(html), `price signal matched ${re} on the configurator page`).toBe(false);
+    }
+  });
+
+  it('has the offerte contact fields and a button-hot submit CTA', () => {
+    const { document } = page(PAGES.configurator);
+    const form = document.querySelector('form.offerte-form');
+    expect(form, 'offerte form missing').toBeTruthy();
+    for (const name of ['name', 'org', 'email', 'note']) {
+      expect(
+        form.querySelector(`[name="${name}"]`),
+        `field "${name}" missing`
+      ).toBeTruthy();
+    }
+    const submit = form.querySelector('button[type="submit"]');
+    expect(submit, 'submit button missing').toBeTruthy();
+    expect(submit.textContent).toMatch(/vraag offerte aan/i);
+    expect(submit.className, 'submit must use the button-hot style').toMatch(/\bhot\b/);
+  });
+
+  it('files via mailto only — no backend, no third-party endpoint', () => {
+    const { document, html } = page(PAGES.configurator);
+    const form = document.querySelector('form.offerte-form');
+    // a client-side mailto flow posts nowhere: no form action, no method=post
+    expect(form.getAttribute('action'), 'form must not POST to a backend').toBeFalsy();
+    // the plain-email fallback puts the destination mailto in the page
+    expect(html, 'mailto mechanism not present').toContain('mailto:');
+  });
+
+  it('renders the submission confirmation as a ledger entry', () => {
+    const { document } = page(PAGES.configurator);
+    const confirm = document.querySelector('.offerte-confirmation.ledger');
+    expect(confirm, 'confirmation ledger block missing').toBeTruthy();
+    expect(confirm.querySelector('.entry'), 'confirmation entry missing').toBeTruthy();
+    expect(confirm.querySelector('.stamp'), 'confirmation stamp missing').toBeTruthy();
+  });
+
+  it('picks mirror into a live order-record ledger column', () => {
+    const { document } = page(PAGES.configurator);
+    const record = document.querySelector('.order-record.ledger');
+    expect(record, 'order-record ledger column missing').toBeTruthy();
+    expect(record.querySelector('.ledger-head'), 'order-record head missing').toBeTruthy();
+  });
+
+  it('caps every field so the worst-case mailto URL stays under ~1900 chars', () => {
+    const { document } = page(PAGES.configurator);
+    const form = document.querySelector('form.offerte-form');
+    for (const [name, max] of Object.entries(FIELD_MAX)) {
+      const field = form.querySelector(`[name="${name}"]`);
+      expect(
+        Number(field.getAttribute('maxlength')),
+        `field "${name}" must cap at ${max}`
+      ).toBe(max);
+    }
+    expect(worstCaseHrefLength(), 'worst-case mailto exceeds practical limit').toBeLessThan(1900);
+  });
+});
+
 describe('deploy approval gate (reused later by AI employee #1)', () => {
   const wfPath = path.join(ROOT, '.github/workflows/deploy.yml');
 
@@ -432,5 +551,72 @@ describe('deploy approval gate (reused later by AI employee #1)', () => {
     expect(triggers, 'deploy workflow must not trigger on pull_request').not.toContain(
       'pull_request'
     );
+  });
+});
+
+describe('S5 — /about consolidation', () => {
+  it('about states anamata.ai is part of Anamata', () => {
+    const { html } = page(PAGES.about);
+    expect(html).toContain('onderdeel van Anamata');
+  });
+
+  it('about explains the site is AI-run — the CIO/CTO second-look page', () => {
+    const { html } = page(PAGES.about);
+    expect(html, 'missing run-by-AI framing').toMatch(/run by AI/i);
+    expect(html, 'missing second-look framing').toMatch(/second look/i);
+    expect(html, 'missing CIO reference').toContain('CIO');
+    expect(html, 'missing CTO reference').toContain('CTO');
+  });
+
+  it('about carries the personnel cards, the rings diagram and a condensed transparency notice', () => {
+    const { document } = page(PAGES.about);
+    expect(
+      document.querySelectorAll('.card').length,
+      'personnel cards missing'
+    ).toBeGreaterThanOrEqual(3);
+    expect(document.querySelector('.rings-svg'), 'rings diagram missing').toBeTruthy();
+    expect(
+      document.querySelector('.notice.condensed'),
+      'condensed transparency notice missing'
+    ).toBeTruthy();
+  });
+});
+
+describe('S5 — old routes redirect to /about', () => {
+  for (const old of ['approach', 'anna']) {
+    it(`/${old} is a meta-refresh redirect stub pointing at /about`, () => {
+      const file = path.join(DIST, old, 'index.html');
+      expect(existsSync(file), `${old}/index.html missing`).toBe(true);
+      const html = readFileSync(file, 'utf8');
+      expect(isRedirectStub(html), `${old}: no meta refresh`).toBe(true);
+      expect(html, `${old}: does not target /about`).toMatch(/\/about/);
+    });
+  }
+});
+
+describe('S5 — nav and footer shape', () => {
+  it('header nav: About replaces Anna/Approach; team anchor, insights and demo CTA kept', () => {
+    const { document } = page(PAGES.about);
+    const nav = document.querySelector('header nav');
+    const hrefs = [...nav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+    expect(hrefs, 'About link missing from header').toContain('/about');
+    expect(hrefs, 'The team anchor changed').toContain('/#personnel');
+    expect(hrefs, 'Insights link changed').toContain('/insights');
+    expect(hrefs, 'Anna link not removed from header').not.toContain('/anna');
+    expect(hrefs, 'Approach link not removed from header').not.toContain('/approach');
+    expect(
+      nav.querySelector('a.btn')?.textContent,
+      'REQUEST A DEMO CTA changed'
+    ).toMatch(/REQUEST A DEMO/);
+  });
+
+  it('footer nav: ABOUT replaces ANNA/APPROACH; tech@ second-lead channel present', () => {
+    const { document, html } = page(PAGES.about);
+    const fnav = document.querySelector('footer nav');
+    const hrefs = [...fnav.querySelectorAll('a')].map((a) => a.getAttribute('href'));
+    expect(hrefs, 'ABOUT link missing from footer').toContain('/about');
+    expect(hrefs, 'ANNA link not removed from footer').not.toContain('/anna');
+    expect(hrefs, 'APPROACH link not removed from footer').not.toContain('/approach');
+    expect(html, 'tech@ second-lead channel line missing').toContain('tech@anamata.ai');
   });
 });
