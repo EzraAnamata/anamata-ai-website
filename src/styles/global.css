@@ -375,6 +375,25 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
 .tech-hook a { color: var(--primary); text-decoration: none; }
 .tech-hook a:hover { text-decoration: underline; }
 
+/* Hero fit at shorter viewports (PR #8 review fix). The 600×900 portrait forces
+   the sticky stage taller than the visible band, so the copy centres against the
+   portrait and — worst at scroll-0, where the stage sits below the header — the
+   sub-line slides under the fixed record strip (seen at 1280×720). Reserve the
+   strip height and cap the portrait to the visible band so the full kicker + H1
+   + sub-line stay above it. Overrides AnnaScrub's scoped stage from here so
+   AnnaScrub.astro stays untouched; scrub layout only (≥760px), and only when the
+   viewport is too short for the full portrait (≤820px) so 1440×900 is unchanged. */
+@media (min-width: 760px) and (max-height: 820px) {
+  body .anna-scrub .anna-stage {
+    min-height: 100vh;
+    padding-bottom: 52px; /* fixed record strip (~45px) + breathing room */
+    align-content: center;
+  }
+  body .anna-scrub .anna-portrait {
+    max-height: calc(100vh - 104px);
+  }
+}
+
 @media (max-width: 760px) {
   .demo-entry { grid-template-columns: 52px 1fr; gap: 8px 12px; }
   .demo-entry .tag { grid-column: 2; justify-self: start; }
