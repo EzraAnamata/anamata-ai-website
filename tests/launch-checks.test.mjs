@@ -20,6 +20,7 @@ import path from 'node:path';
 import fg from 'fast-glob';
 import { parseHTML } from 'linkedom';
 import YAML from 'yaml';
+import { MODULES, FIELD_MAX, worstCaseHrefLength } from '../src/lib/offerte.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist');
@@ -30,6 +31,7 @@ const PAGES = {
   approach: 'approach/index.html',
   insights: 'insights/index.html',
   contact: 'contact/index.html',
+  configurator: 'configurator/index.html',
 };
 
 const TOKENS = JSON.parse(readFileSync(path.join(ROOT, 'design-tokens.json'), 'utf8'));
@@ -61,6 +63,14 @@ describe('pages exist (design-brief page table)', () => {
   it('sitemap and robots.txt are built', () => {
     expect(existsSync(path.join(DIST, 'sitemap-index.xml'))).toBe(true);
     expect(existsSync(path.join(DIST, 'robots.txt'))).toBe(true);
+  });
+
+  it('sitemap lists the configurator page', () => {
+    const urls = fg
+      .sync('sitemap-*.xml', { cwd: DIST })
+      .map((f) => readFileSync(path.join(DIST, f), 'utf8'))
+      .join('');
+    expect(urls, 'configurator missing from sitemap').toContain('anamata.ai/configurator');
   });
 });
 
@@ -316,6 +326,99 @@ describe('contrast pairs (computed WCAG ratios, not hand-math)', () => {
 
   it('sky is a non-text highlight only — it fails as text on paper (documents the reservation)', () => {
     expect(ratio(colors.accent, paper)).toBeLessThan(4.5);
+  });
+});
+
+describe('configurator (/configurator) — order form in ledger grammar (S4)', () => {
+  it('lists every orderable module', () => {
+    const { document } = page(PAGES.configurator);
+    const rows = [...document.querySelectorAll('.module-row')];
+    expect(rows.length, 'one card-stock row per module').toBe(MODULES.length);
+    const text = document.querySelector('main').textContent;
+    for (const m of MODULES) {
+      expect(text, `module "${m.name}" not present`).toContain(m.name);
+    }
+  });
+
+  it('each module row has a square checkbox stamp control', () => {
+    const { document } = page(PAGES.configurator);
+    const boxes = document.querySelectorAll('.module-row input[type="checkbox"]');
+    expect(boxes.length, 'a checkbox per module').toBe(MODULES.length);
+  });
+
+  it('shows NO prices anywhere on the page (gefaseerd — offerte only)', () => {
+    const { document } = page(PAGES.configurator);
+    // user-visible content only — the "$" in bundled JS template literals is
+    // not a price, so we scan rendered text, not the raw script/style source
+    const html = document.querySelector('main').textContent;
+    const forbidden = [
+      /[€$£]/,
+      /\bEUR\b/i,
+      /\bprijs/i,
+      /\bprijzen/i,
+      /\bprice/i,
+      /\bpricing/i,
+      /\btarief/i,
+      /per\s+maand/i,
+      /per\s+month/i,
+      /\/mo\b/i,
+    ];
+    for (const re of forbidden) {
+      expect(re.test(html), `price signal matched ${re} on the configurator page`).toBe(false);
+    }
+  });
+
+  it('has the offerte contact fields and a button-hot submit CTA', () => {
+    const { document } = page(PAGES.configurator);
+    const form = document.querySelector('form.offerte-form');
+    expect(form, 'offerte form missing').toBeTruthy();
+    for (const name of ['name', 'org', 'email', 'note']) {
+      expect(
+        form.querySelector(`[name="${name}"]`),
+        `field "${name}" missing`
+      ).toBeTruthy();
+    }
+    const submit = form.querySelector('button[type="submit"]');
+    expect(submit, 'submit button missing').toBeTruthy();
+    expect(submit.textContent).toMatch(/vraag offerte aan/i);
+    expect(submit.className, 'submit must use the button-hot style').toMatch(/\bhot\b/);
+  });
+
+  it('files via mailto only — no backend, no third-party endpoint', () => {
+    const { document, html } = page(PAGES.configurator);
+    const form = document.querySelector('form.offerte-form');
+    // a client-side mailto flow posts nowhere: no form action, no method=post
+    expect(form.getAttribute('action'), 'form must not POST to a backend').toBeFalsy();
+    // the plain-email fallback puts the destination mailto in the page
+    expect(html, 'mailto mechanism not present').toContain('mailto:');
+  });
+
+  it('renders the submission confirmation as a ledger entry', () => {
+    const { document } = page(PAGES.configurator);
+    const confirm = document.querySelector('.offerte-confirmation.ledger');
+    expect(confirm, 'confirmation ledger block missing').toBeTruthy();
+    expect(confirm.querySelector('.entry'), 'confirmation entry missing').toBeTruthy();
+    expect(confirm.querySelector('.stamp'), 'confirmation stamp missing').toBeTruthy();
+  });
+
+  it('picks mirror into a live order-record ledger column', () => {
+    const { document } = page(PAGES.configurator);
+    const record = document.querySelector('.order-record.ledger');
+    expect(record, 'order-record ledger column missing').toBeTruthy();
+    expect(record.querySelector('.ledger-head'), 'order-record head missing').toBeTruthy();
+  });
+
+  it('caps every field so the worst-case mailto URL stays under ~1900 chars', () => {
+    const { document } = page(PAGES.configurator);
+    const form = document.querySelector('form.offerte-form');
+    for (const [name, max] of Object.entries(FIELD_MAX)) {
+      const field = form.querySelector(`[name="${name}"]`);
+      expect(
+        Number(field.getAttribute('maxlength')),
+        `field "${name}" must cap at ${max}`
+      ).toBe(max);
+    }
+    expect(worstCaseHrefLength(), 'worst-case mailto exceeds practical limit').toBeLessThan(1900);
   });
 });
 

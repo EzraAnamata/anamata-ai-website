@@ -1,0 +1,165 @@
+---
+/**
+ * Configurator — the order form. A gefaseerd webshop with no prices: you pick
+ * modules (Anna · CV-tool · couplings), the picks mirror live into an "order
+ * record" ledger column, and the exit files an offerte request. Submission
+ * reuses the contact page's mechanism — a prefilled mailto:, nothing leaves the
+ * origin, no backend. Confirmation renders as a ledger entry.
+ */
+import Base from '../layouts/Base.astro';
+import { MODULES, FIELD_MAX, OFFERTE_EMAIL } from '../lib/offerte.mjs';
+---
+
+<Base
+  title="Configure your AI team — request an offerte | Anamata.ai"
+  description="Pick the modules you want — Anna, the CV-tool, couplings into your stack — and file an offerte request. Phased rollout, no prices: you configure, we quote."
+>
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">CFG</span>
+      <span class="lbl">ORDER<br />FORM</span>
+    </aside>
+    <main class="content">
+      <span class="kicker">Order form · Phased rollout · You configure, we quote</span>
+      <h1 class="sec-title">Configure your AI team.</h1>
+      <p class="sec-intro">
+        Select the modules you want. Every pick lands in the order record on the right. When it
+        looks right, file an offerte request — a person reads it and comes back with a proposal
+        on your terms. No numbers here: this is a configurator, not a checkout.
+      </p>
+
+      <div class="config-stage">
+        <div class="modules" role="group" aria-label="Modules">
+          {MODULES.map((m) => (
+            <label class="module-row">
+              <input class="module-check" type="checkbox" name="module" value={m.id} data-name={m.name} />
+              <span class="check-stamp" aria-hidden="true"></span>
+              <span class="module-body">
+                <span class="kicker">{m.kicker}</span>
+                <span class="module-name">{m.name}</span>
+                <span class="module-spec">{m.spec}</span>
+                <span class="module-fields">
+                  {m.fields.map(([k, v]) => (
+                    <span class="mfield"><span class="k">{k}</span><span class="v">{v}</span></span>
+                  ))}
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
+
+        <aside class="order-record ledger" aria-label="Order record">
+          <div class="ledger-head">
+            <span class="t">ORDER RECORD — DRAFT</span>
+            <span class="t live">DRAFTING</span>
+          </div>
+          <div id="order-entries">
+            <div class="entry on empty">
+              <span class="ts">—</span>
+              <span class="act">no modules selected yet</span>
+              <span class="stamp-cell"></span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <form class="offerte-form" id="offerte-form" aria-label="Request an offerte">
+        <div class="frow">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" required autocomplete="name"
+            maxlength={FIELD_MAX.name} />
+        </div>
+        <div class="frow">
+          <label for="f-org">Organisation</label>
+          <input id="f-org" name="org" type="text" autocomplete="organization"
+            maxlength={FIELD_MAX.org} />
+        </div>
+        <div class="frow">
+          <label for="f-email">Reply-to email</label>
+          <input id="f-email" name="email" type="email" required autocomplete="email"
+            maxlength={FIELD_MAX.email} />
+        </div>
+        <div class="frow">
+          <label for="f-note">Note</label>
+          <textarea id="f-note" name="note" rows="4" maxlength={FIELD_MAX.note}
+            placeholder="Anything we should know — team size, timeline, the stack you run."></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn hot" type="submit">VRAAG OFFERTE AAN →</button>
+        </div>
+      </form>
+
+      <div class="offerte-confirmation ledger" id="filed" aria-live="polite">
+        <div class="ledger-head"><span class="t">OFFERTE — FILED FROM THIS PAGE</span></div>
+        <div class="entry on">
+          <span class="ts" id="filed-ts"></span>
+          <span class="act">offerte request drafted — your email client opens with the filing;
+            send it and it is in our record</span>
+          <span class="stamp-cell"><span class="stamp">FILED</span></span>
+        </div>
+      </div>
+
+      <p class="prose">
+        Prefer plain email? Write to <a href={`mailto:${OFFERTE_EMAIL}`}>{OFFERTE_EMAIL}</a>.
+      </p>
+    </main>
+  </div>
+
+  <script>
+    import { buildOfferteHref, MODULES } from '../lib/offerte.mjs';
+
+    const form = document.getElementById('offerte-form');
+    const checks = [...document.querySelectorAll('.module-check')];
+    const orderEntries = document.getElementById('order-entries');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const p = (n) => String(n).padStart(2, '0');
+    const stamp = () => {
+      const now = new Date();
+      return `${p(now.getMonth() + 1)}-${p(now.getDate())} ${p(now.getHours())}:${p(now.getMinutes())}`;
+    };
+    const picked = () => checks.filter((c) => c.checked).map((c) => c.value);
+
+    // Mirror the current picks into the order-record ledger column, one entry
+    // per module, in the same grammar as the operating record.
+    function renderOrder() {
+      const ids = picked();
+      orderEntries.textContent = '';
+      if (ids.length === 0) {
+        const e = document.createElement('div');
+        e.className = 'entry on empty';
+        e.innerHTML = '<span class="ts">—</span><span class="act">no modules selected yet</span><span class="stamp-cell"></span>';
+        orderEntries.appendChild(e);
+        return;
+      }
+      MODULES.filter((m) => ids.includes(m.id)).forEach((m, i) => {
+        const e = document.createElement('div');
+        e.className = 'entry';
+        e.innerHTML =
+          `<span class="ts">${stamp()}</span>` +
+          `<span class="act">module added — <span class="agent">${m.name}</span></span>` +
+          `<span class="stamp-cell"><span class="stamp">PICKED</span></span>`;
+        orderEntries.appendChild(e);
+        if (reduced) e.classList.add('on');
+        else requestAnimationFrame(() => setTimeout(() => e.classList.add('on'), i * 90));
+      });
+    }
+
+    checks.forEach((c) => c.addEventListener('change', renderOrder));
+
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const data = new FormData(form);
+      const href = buildOfferteHref({
+        name: data.get('name'),
+        org: data.get('org'),
+        email: data.get('email'),
+        note: data.get('note'),
+        modules: picked(),
+      });
+      document.getElementById('filed-ts').textContent = stamp();
+      document.getElementById('filed').classList.add('on');
+      window.location.href = href;
+    });
+  </script>
+</Base>
