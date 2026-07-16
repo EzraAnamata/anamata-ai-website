@@ -4,74 +4,81 @@
     "project": "anamata.ai",
     "projectType": "marketing",
     "created": "2026-07-04",
-    "updated": "2026-07-04",
-    "aesthetic": "The Operating Record — ledger-modern, Cobalt Grid-derived, subject-grounded",
-    "extends": null
+    "updated": "2026-07-16",
+    "aesthetic": "The Operating Record, brand-inked — ledger-modern paper/grid structure carrying the Anamata brand palette (navy/white, coral + sky accents) and Poppins",
+    "extends": "design/bas-design-system/colors_and_type.css (Anamata Design System, pinned 2026-07-16 — local decision-time snapshot, gitignored pending license confirmation; canonical copy in the internal repo)"
   },
   "concept": {
-    "statement": "The site is its own evidence — every page carries the live, typeset operating record of the AI team that runs it.",
-    "mood": "A QA lab notebook that updates itself: warm ivory paper, one strict electric-cobalt ink, faint graph-paper grid, hairline rules, green approval stamps. Daylight and calm in a category that hides in dark mode.",
+    "statement": "Anna in your face, on the record — the site opens with Anna as the product and every page still carries the live, typeset operating record of the AI team that runs it.",
+    "mood": "A QA lab notebook rebranded by the mothership: cool brand-white paper, deep navy ink, the logo's steel-blue for interactive elements, one hot coral for the ask, sky-blue trace lines. Daylight and calm in a category that hides in dark mode.",
     "subjectWorld": [
+      "Anna — the digital AI assistant, wireframe becoming human",
       "audit trail / field log",
       "approval gate and named human approvers",
       "permission rings (bounded autonomy)",
-      "personnel records for AI employees",
-      "QA and quality-engineering heritage (Anamata)",
+      "configurator → offerte (webshop, gefaseerd, no prices)",
+      "QA and quality-engineering heritage (Anamata — Quality from the Heart)",
       "graph paper, hairline rules, ledger typography, stamps"
     ],
-    "audienceFeeling": "This is real and it is running right now — wonder wrapped in reassurance, for skeptical Dutch/EU enterprise buyers.",
+    "audienceFeeling": "Bam, dit is Anna — this is real and it is running right now; wonder wrapped in reassurance, for skeptical Dutch/EU enterprise buyers.",
     "avoid": [
       "dark mode as default",
       "purple/indigo gradients",
       "fake dashboard screenshots",
       "glow and blur decoration",
-      "robot/brain/neural-network imagery",
+      "generic robot/brain/neural-network clip-art (the Anna wireframe-portrait hero is the one sanctioned figurative image, decided 2026-07-15)",
       "pill badge above centered hero H1",
       "vague aspirational headlines",
+      "prices in the configurator",
       "fabricated ledger data in production — the record must always be real"
     ]
   },
   "signature": {
-    "element": "The Operating Record — the real audit ledger, typeset",
-    "location": "Hero field log; persistent bottom record strip on every page; provenance blocks on articles",
-    "implementation": "Consumes the real audit trail (Taiga #347). Day one it shows the site's own AI-built commit/deploy history. Mono entries type on sequentially; human approvals appear as rotated green stamps with the approver's name.",
-    "boldnessBudget": "Strictly bichromatic cobalt-on-paper. Green is reserved for approval events only. No imagery. Calm ruled grid — display type and arriving ledger entries are the only loud elements."
+    "element": "Anna resolving from wireframe to human on scroll, above the real audit ledger",
+    "location": "Hero: scroll-scrubbed wireframe→face portrait; persistent bottom record strip on every page; provenance blocks on articles",
+    "implementation": "Hero scrubs 33 pre-extracted frames (600x900) as the visitor scrolls — the face gains skin, the page brightens; fallback is the static split-face portrait. Ledger consumes the real audit trail. Mono entries type on; human approvals appear as rotated teal stamps with the approver's name.",
+    "boldnessBudget": "Navy ink on brand-white paper; steel-blue (#2C548C, the logo's Ai blue) is the working interactive color; coral is spent ONLY on the primary ask (offerte/contact CTAs); sky-blue only as non-text highlight (wireframe, grid, underlines, fills). Teal is reserved for approval events. Display type, the resolving face and arriving ledger entries are the only loud elements."
   },
   "imagery": {
-    "strategy": "typographic",
-    "direction": "No photography, illustration or 3D. The ornament is real data typeset as ledger lines. Only geometric artifacts allowed: punch holes, stamps, hairline rules, graph-paper grid underlay (cobalt at 7% opacity, 32px cells).",
-    "sources": []
+    "strategy": "typographic-plus-one-portrait",
+    "direction": "The Anna wireframe→human portrait (assets from Bas via ChatGPT: 33-frame sequence + static split-face fallback, white background, sky-blue wireframe) is the single figurative image on the site. Everything else stays typeset real data with geometric artifacts only: punch holes, stamps, hairline rules, graph-paper grid underlay (navy at 6% opacity, 32px cells). No stock photography, no illustration sets.",
+    "sources": [
+      "anna-face frame sequence: local 33-frame source (600x900) — converted to WebP frames by scripts/build-hero-frames.mjs, source never committed",
+      "anna-split-face: local static portrait (1024x1536) — metadata-stripped WebP fallback ≤200KB",
+      "wordmark: public/anamata-ai-logo.svg (Ai in #2C548C) — metadata scrubbed before shipping"
+    ]
   },
   "layout": {
-    "composition": "Ruled ledger sheet: fixed marginalia column (132px) carrying mono record numbers (001, 002, ...) and micro-labels, separated by a hairline; content column to its right. Sections are numbered records divided by 2px ink rules. A persistent record strip is pinned to the bottom viewport edge.",
-    "wireframe": "| 001 | DISPLAY HEADLINE ............ |\n| LOG | ledger entries ... [stamp]    |\n|-----+-------------------------------|\n| 002 | section content ............. |\n[ LAST ACTION 14:08 · ... ✓ ON RECORD ]",
+    "composition": "Ruled ledger sheet: fixed marginalia column (132px) carrying mono record numbers (001, 002, ...) and micro-labels, separated by a hairline; content column to its right. Sections are numbered records divided by 2px ink rules. A persistent record strip is pinned to the bottom viewport edge. The hero is a full-viewport sticky stage for the Anna scrub before the ledger sheet begins.",
+    "wireframe": "| HERO: Anna wireframe→face, sticky, scroll-scrubbed          |\n| 001 | WHAT ANNA DOES ............ |\n| 002 | HOW IT WORKS ... [stamp]    |\n| 003 | PROOF: OPERATING RECORD ... |\n| 004 | CONFIGURATOR EXIT ........  |\n[ LAST ACTION 14:08 · ... ✓ ON RECORD ]",
     "rhythm": "32px graph-grid underlay; 1px hairlines between rows; 2px ink rules between numbered sections; generous 56-72px section padding",
     "maxWidth": "1440px",
     "contentWidth": "1080px",
     "gutter": "1.5rem"
   },
   "colors": {
-    "background": "#F2EFE6",
+    "background": "#FAFAFA",
     "surface": "#FFFFFF",
     "surfaceRaised": "#FFFFFF",
-    "text": "#16233A",
-    "textMuted": "#5C6679",
-    "primary": "#1F2BE0",
-    "secondary": "#5560E5",
-    "accent": "#1F7A4D",
-    "border": "#C2C2C0",
+    "text": "#041524",
+    "textMuted": "#5A7080",
+    "primary": "#2C548C",
+    "secondary": "#E15857",
+    "accent": "#8AD9FF",
+    "border": "#C9D4DF",
     "semantic": {
-      "success": "",
-      "warning": "",
-      "error": "",
-      "info": ""
-    }
+      "success": "#067E75",
+      "warning": "#E15857",
+      "error": "#E15857",
+      "info": "#40A2F6"
+    },
+    "_comment": "Brand mapping (design/bas-design-system): text=navy-900, primary=navy-700 (the logo's Ai blue), secondary=coral (CTA only), accent=sky-200 (non-text highlight only — fails contrast as text on white), semantic.success=darkened brand teal for stamp/small text (true teal #00B3A6 allowed as fill/dot), semantic.info=sky-400. Provisional pending QUESTIONS-design-system-2026-07-16.md (internal repo)."
   },
   "typography": {
     "fontFamily": {
-      "display": "Newsreader, Georgia, serif",
-      "heading": "Newsreader, Georgia, serif",
-      "body": "'Public Sans', -apple-system, sans-serif",
+      "display": "Poppins, sans-serif",
+      "heading": "Poppins, sans-serif",
+      "body": "Poppins, -apple-system, sans-serif",
       "mono": "'IBM Plex Mono', ui-monospace, monospace"
     },
     "scale": {
@@ -91,8 +98,8 @@
       "display-xl": "12rem"
     },
     "weightPairing": {
-      "display": "Newsreader italic 600 at display scale (hero: clamp(3.2rem, 7.2vw, 6.4rem), line-height 1.02, letter-spacing -0.015em)",
-      "emphasis": "700 italic (card names); mono 600 for stamps, buttons and mono labels"
+      "display": "Poppins 200 (ExtraLight) UPPERCASE tracked 0.04em at display scale (hero: clamp(3.2rem, 7.2vw, 6.4rem), line-height 1.05); one accent word may carry primary color — DS voice, provisional vs .eu's bold-700 (Q2 for Bas)",
+      "emphasis": "Poppins 600 (card names, kickers); mono 600 for stamps, buttons and mono labels"
     },
     "lineHeight": {
       "tight": "1.25",
@@ -100,7 +107,7 @@
       "normal": "1.55",
       "relaxed": "1.625",
       "loose": "2",
-      "display": "1.02"
+      "display": "1.05"
     },
     "fontWeight": {
       "thin": "100",
@@ -150,7 +157,7 @@
       "3xl": "0.1875rem",
       "full": "9999px"
     },
-    "_radiusComment": "Squareness is part of the ledger grammar: 2px buttons/stamps, 3px cards, nothing rounder. 'full' exists only for punch holes and the recording pulse dot.",
+    "_radiusComment": "Squareness is part of the ledger grammar and matches the brand's 2-4px sharpness: 2px buttons/stamps, 3px cards, nothing rounder. 'full' exists only for punch holes and the recording pulse dot.",
     "width": {
       "thin": "1px",
       "default": "1px",
@@ -158,12 +165,12 @@
     }
   },
   "shadows": {
-    "sm": "4px 4px 0 rgba(22, 35, 58, 0.08)",
+    "sm": "4px 4px 0 rgba(4, 21, 36, 0.08)",
     "md": "",
     "lg": "",
     "xl": "",
     "glow": "",
-    "_comment": "One hard offset shadow (card stock on paper) — never soft blur."
+    "_comment": "One hard offset shadow (card stock on paper) — never soft blur, never the DS's dark-mode glow (that token is navy-world only)."
   },
   "animations": {
     "duration": {
@@ -181,18 +188,18 @@
       "spring": "cubic-bezier(0.2, 1.6, 0.4, 1)",
       "bounce": "cubic-bezier(0.34, 1.56, 0.64, 1)"
     },
-    "choreography": "One moment, on load: ledger entries fade/rise in sequentially (650ms stagger, 500ms each); each approval stamp scales in rotated -2deg with spring easing 450ms after its entry; a cobalt caret blinks on the final line; OKR bars fill 700ms after load (1.1s ease-out). The recording dot pulses at 2.2s. Nothing else on the page moves — no scroll animations in v1.",
-    "patterns": ["type-on ledger entries", "stamp-in (scale 1.6→1, rotate -2deg, spring)", "caret blink 1.1s steps(1)", "bar fill width transition"],
+    "choreography": "Two systems. (1) HERO SCRUB, scroll-driven: sticky viewport stage; scroll progress 0→1 maps linearly to frames 0→32 of the Anna sequence while a white veil lightens from 12% to 0 ('light brightening') and the portrait stage eases perspective(1200px) rotateY(-6deg→0deg) — the decided 'rotates on scroll', no 3D runtime; H1 and kicker are fixed over the stage; last 15% of the stage cross-fades the resolved face into section 001. (2) LEDGER, time-driven on entry into view: entries fade/rise sequentially (650ms stagger, 500ms each); each approval stamp scales in rotated -2deg with spring easing 450ms after its entry; a primary-blue caret blinks on the final line. The recording dot pulses at 2.2s. Section reveals below the hero: single 350ms rise on first intersection, nothing continuous.",
+    "patterns": ["scroll-scrub frame sequence (hero only)", "type-on ledger entries", "stamp-in (scale 1.6→1, rotate -2deg, spring)", "caret blink 1.1s steps(1)", "bar fill width transition"],
     "hero": {
-      "archetype": "Minimal Motion",
-      "library": "none — CSS keyframes + ~20 lines vanilla JS (no animation dependency)",
+      "archetype": "Scroll-Scrubbed Sequence",
+      "library": "none — IntersectionObserver + rAF + preloaded WebP frames (~40 lines vanilla JS, no animation dependency)",
       "videoBackground": {
         "enabled": false,
         "source": "",
         "poster": "",
         "reducedMotionFallback": ""
       },
-      "reducedMotionStrategy": "show-final-state: all entries visible, stamps placed, bars filled, no blink/pulse"
+      "reducedMotionStrategy": "show-final-state: static split-face portrait (wireframe|human), no scrub, no veil; same for no-JS and for viewports < 760px if frame preload exceeds budget"
     }
   },
   "breakpoints": {
@@ -209,21 +216,24 @@
     "minContrastRatioUI": 3.0,
     "minTouchTarget": "44px",
     "respectReducedMotion": true,
-    "_notes": "Cobalt #1F2BE0 on paper #F2EFE6 ≈ 8:1 ✓. Ink #16233A on paper ≈ 12:1 ✓. Approval green #1F7A4D on paper ≈ 4.6:1 — use only bold/uppercase ≥10.5px with border (stamps) or ≥14px text."
+    "_notes": "Ink #041524 on paper #FAFAFA ≈ 17:1 ✓. Primary #2C548C on paper ≈ 7.6:1 ✓ text-safe. Muted #5A7080 ≈ 4.9:1 ✓. Approval #067E75 ≈ 4.8:1 ✓ (true teal #00B3A6 ≈ 2.5:1 — fills/dots only, never text). Coral #E15857 vs white ≈ 3.6:1 — coral-filled buttons only at ≥18px bold white text; smaller buttons use ink fill. Sky #8AD9FF — never text on white."
   },
   "components": {
-    "header": "Paper bg, 1px hairline bottom. Wordmark: 'ANAMATA' Public Sans 600 tracking 0.14em + '.AI' IBM Plex Mono 600 cobalt. Mono nav links 12.5px, ink at 82%, cobalt on hover.",
-    "button-primary": "Solid cobalt, paper text, mono 600 13px uppercase tracking 0.05em, 12x22px padding, 2px radius. Hover: #1722B8.",
-    "button-ghost": "Transparent, cobalt text + 1px cobalt border, same metrics. Hover: cobalt at 7% fill.",
-    "marginalia": "132px left column, hairline right border. Record number mono 600 13px cobalt; labels mono 10.5px ink at 55%, tracking 0.08em. Collapses to horizontal strip above content < 760px.",
-    "transparency-notice": "Art. 50 disclosure as feature: 1px cobalt border with 4px left edge, '§50' glyph, mono kicker 11px cobalt tracking 0.08em, body 13.5px. Mandatory on every page (may be condensed in footer on subpages).",
-    "ledger": "2px ink top rule. Head row: mono 11.5px 600 tracking 0.14em + green 'RECORDING' pulse dot. Entries: grid 150px/1fr/auto, mono 13.5px, 1px hairline dividers. Timestamps cobalt-soft, agent names cobalt 500, A2A arrows ink at 60%.",
-    "approval-stamp": "Mono 600 10.5px uppercase tracking 0.12em, green text + 1.5px green border, 2px radius, rotated -2deg, spring scale-in.",
-    "record-strip": "Fixed bottom, ink bg, paper text, 2px cobalt top border, mono 12px. 'LAST ACTION' tag #9AA4E8, checkmark #7FD4A8. Present on every page.",
-    "personnel-card": "White card stock, 1px ink border, 3px radius, hard offset shadow, punch-hole circle top-right (14px, 2px ink ring, paper fill). Kicker mono 10.5px cobalt 600; name Newsreader italic 700 30px; mono field rows with hairline dividers, keys at 55% opacity. Pending state: dashed border, 55% white fill, no shadow.",
-    "okr-bar": "8px tall, 1px ink border, 2px radius, cobalt fill, width transition 1.1s; mono 12px cobalt percentage line below.",
+    "header": "Paper bg, 1px hairline bottom. Wordmark: anamata_ai6.svg (navy word, Ai in #2C548C), height 28px; '.AI' suffix retired — it lives in the mark. Mono nav links 12.5px, ink at 82%, primary on hover.",
+    "button-primary": "Solid ink #041524, paper text, mono 600 13px uppercase tracking 0.05em, 12x22px padding, 2px radius. Hover: #2C548C. (Mirrors live .eu's navy button.)",
+    "button-hot": "Offerte/contact ask only: solid coral #E15857, white text, mono 700 ≥18px uppercase, 14x28px padding, 2px radius. Hover: #C94847. Max one per viewport.",
+    "button-ghost": "Transparent, primary #2C548C text + 1px primary border, primary-button metrics. Hover: primary at 7% fill.",
+    "marginalia": "132px left column, hairline right border. Record number mono 600 13px primary; labels mono 10.5px ink at 55%, tracking 0.08em. Collapses to horizontal strip above content < 760px.",
+    "transparency-notice": "Art. 50 disclosure as feature: 1px primary border with 4px left edge, '§50' glyph, mono kicker 11px primary tracking 0.08em, body 13.5px. Mandatory on every page (may be condensed in footer on subpages).",
+    "ledger": "2px ink top rule. Head row: mono 11.5px 600 tracking 0.14em + approval-teal 'RECORDING' pulse dot (fill may use #00B3A6). Entries: grid 150px/1fr/auto, mono 13.5px, 1px hairline dividers. Timestamps primary at 70%, agent names primary 500, A2A arrows ink at 60%.",
+    "approval-stamp": "Mono 600 10.5px uppercase tracking 0.12em, #067E75 text + 1.5px #067E75 border, 2px radius, rotated -2deg, spring scale-in.",
+    "record-strip": "Fixed bottom, ink #041524 bg, paper text, 2px sky #8AD9FF top border, mono 12px. 'LAST ACTION' tag sky #8AD9FF, checkmark #7FD4C8. Present on every page.",
+    "personnel-card": "White card stock, 1px ink border, 3px radius, hard offset shadow, punch-hole circle top-right (14px, 2px ink ring, paper fill). Kicker mono 10.5px primary 600; name Poppins 600 26px; mono field rows with hairline dividers, keys at 55% opacity. Pending state: dashed border, 55% white fill, no shadow.",
+    "okr-bar": "8px tall, 1px ink border, 2px radius, primary fill, width transition 1.1s; mono 12px primary percentage line below.",
     "provenance-block": "(Insights pages) condensed ledger footer per article: drafted-by, approved-by (named human), published — same entry grammar as hero ledger.",
-    "demo-form": "(Contact page) styled as 'file a request': mono labels, paper inputs with 1px ink borders, 2px radius; submission confirmation renders as a new ledger entry.",
-    "rings-diagram": "(Approach page, from Direction 2) concentric permission rings as cobalt SVG line art on paper — inner/middle/outer annotated in mono; no fills, hairline strokes."
+    "demo-form": "(Contact + configurator offerte) styled as 'file a request': mono labels, paper inputs with 1px ink borders, 2px radius; submission confirmation renders as a new ledger entry.",
+    "rings-diagram": "(About page) concentric permission rings as primary-blue SVG line art on paper — inner/middle/outer annotated in mono; no fills, hairline strokes.",
+    "configurator": "Component picker as ledger order form: each module (Anna, CV-tool, couplings/plugins) a white card-stock row with mono spec fields and a square checkbox stamp; running 'order record' column mirrors picks as ledger entries; NO prices anywhere; exit = button-hot 'Vraag offerte aan' which files the request as a form submission.",
+    "commit-widget": "(Peter's techie element — stays) live commit/deploy feed in ledger grammar, mono 13.5px, real data only."
   }
 }
