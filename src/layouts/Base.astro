@@ -26,10 +26,17 @@ interface Props {
   description: string;
   /** home carries the full hero notice; subpages get the condensed footer variant */
   condensedNotice?: boolean;
+  /** LCP image to preload (home only — the Anna portrait is the LCP element there) */
+  preloadImage?: string;
 }
-const { title, description, condensedNotice = true } = Astro.props;
+const { title, description, condensedNotice = true, preloadImage } = Astro.props;
 const lastAction = getLastAction();
 const { pathname } = Astro.url;
+// Absolute URLs for social/canonical (Astro.site = https://anamata.ai). The OG
+// card is the committed, metadata-stripped split-face composite (scripts/
+// build-og-image.mjs) — the one sanctioned figurative image, never Higgsfield.
+const canonical = new URL(pathname, Astro.site);
+const ogImage = new URL('/og-image.png', Astro.site);
 const current = (p: string) =>
   (p === '/' ? pathname === '/' : pathname.startsWith(p)) ? 'page' : undefined;
 ---
@@ -48,9 +55,28 @@ const current = (p: string) =>
     <link rel="preload" as="font" type="font/woff2" href={poppinsDisplayUrl} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={poppinsBodyUrl} crossorigin />
     <link rel="preload" as="font" type="font/woff2" href={plexMonoUrl} crossorigin />
+    {preloadImage && (
+      <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+    )}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="canonical" href={new URL(pathname, Astro.site)} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph / social card (default og:image is the split-face composite;
+         title/description/url are per-page, image is absolute per the spec). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Anamata.ai" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Anna — Anamata's AI employee, resolving from wireframe to human" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
     <header class="site-header">

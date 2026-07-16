@@ -4,7 +4,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://anamata.ai',
   // S5: /approach and /anna folded into /about. On a static build these emit
-  // meta-refresh stubs (accepted); server-level 301s are an S6 follow-up.
+  // meta-refresh stubs (accepted deployed behaviour). S6: true HTTP 301s are a
+  // one-time manual Caddyfile edit — see deploy/redirects.caddy (outside the
+  // dist/-only deploy pipeline).
   redirects: {
     '/approach': '/about',
     '/anna': '/about',

@@ -1,0 +1,22 @@
+# Server-level 301 redirects for anamata.ai (S6 follow-up to S5's route fold).
+#
+# /anna and /approach were folded into /about in S5. The static build emits
+# meta-refresh stubs for both (astro.config.mjs `redirects`), which work today.
+# This snippet upgrades them to true HTTP 301 permanent redirects.
+#
+# WHY THIS IS A SEPARATE, MANUAL STEP (not shipped by the deploy workflow):
+# the deploy pipeline (.github/workflows/deploy.yml) only rsyncs `dist/` to
+# /var/www/anamata.ai. It does NOT manage the Caddyfile. Applying these lines is
+# a server-config edit on the Anamata cloud server (Caddy), which is a named,
+# human-gated action — it is intentionally OUTSIDE the automated static deploy.
+#
+# TO APPLY: paste the four `redir` lines inside the existing `anamata.ai`
+# (and `www.anamata.ai`) site block in the server Caddyfile, ABOVE the
+# `file_server` / `root` directives, then reload Caddy (`caddy reload`).
+# Until applied, the meta-refresh stubs remain in effect — this is additive and
+# safe to defer.
+
+redir /anna       /about 301
+redir /anna/      /about 301
+redir /approach   /about 301
+redir /approach/  /about 301

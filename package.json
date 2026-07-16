@@ -6,6 +6,7 @@
   "description": "anamata.ai — the AI-operated marketing site. The site is its own evidence.",
   "scripts": {
     "tokens": "node scripts/generate-tokens-css.mjs",
+    "og": "node scripts/build-og-image.mjs",
     "dev": "npm run tokens && astro dev",
     "build": "npm run tokens && astro build",
     "preview": "astro preview",

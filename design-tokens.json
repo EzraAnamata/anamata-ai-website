@@ -98,7 +98,7 @@
       "display-xl": "12rem"
     },
     "weightPairing": {
-      "display": "Poppins 200 (ExtraLight) UPPERCASE tracked 0.04em at display scale (hero: clamp(3.2rem, 7.2vw, 6.4rem), line-height 1.05); one accent word may carry primary color — DS voice, provisional vs .eu's bold-700 (Q2 for Bas)",
+      "display": "As shipped (S1, Ezra-approved visually): the hero H1 is Poppins 200 (ExtraLight) UPPERCASE tracked 0.04em (clamp(3.2rem, 7.2vw, 6.4rem), line-height 1.05); section and subpage headings are Poppins 300 (Light) SENTENCE-CASE (clamp up to 4.5rem). The DS voice prescribes uppercase display throughout — sentence-case section headings are the provisional shipped choice (one-line-reversible: drop text-transform / raise weight), pending Bas Q2 (vs .eu's bold-700). One accent word may carry primary color.",
       "emphasis": "Poppins 600 (card names, kickers); mono 600 for stamps, buttons and mono labels"
     },
     "lineHeight": {
