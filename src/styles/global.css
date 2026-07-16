@@ -301,6 +301,85 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   .order-record { position: static; }
 }
 
+/* ---------- home film: scenes 001–004 (S3) ---------- */
+/* transition from the sticky hero into the ledger sheet */
+.first-scene { border-top: 2px solid var(--ink); }
+
+/* scene 001 — DEMO ledger. Deliberately NOT the .ledger grammar: dashed,
+   muted, stamped EXAMPLE so it can never be read as the real operating record
+   (design-tokens concept.avoid: fabricated ledger data must never look real). */
+.demo-ledger {
+  margin-top: 40px; border: 1px dashed var(--border);
+  border-left: 3px dashed var(--text-muted);
+  background: rgba(var(--ink-rgb), 0.02); padding: 4px 18px 8px;
+}
+.demo-head {
+  display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+  gap: 8px; padding: 12px 0 10px; border-bottom: 1px solid var(--hairline);
+}
+.demo-head .t { font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.14em; font-weight: 600; }
+.demo-head .t.warn { color: var(--text-muted); font-weight: 500; letter-spacing: 0.1em; }
+.demo-entry {
+  display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: baseline;
+  padding: 12px 0; border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono); font-size: 13.5px; color: var(--ink);
+}
+.demo-entry:last-child { border-bottom: none; }
+.demo-entry .ts { color: var(--primary); opacity: 0.7; }
+.demo-entry .act { line-height: 1.5; }
+.demo-entry .act .agent { color: var(--primary); font-weight: 500; }
+.demo-entry .tag {
+  font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em;
+  color: var(--text-muted); border: 1px dashed var(--text-muted); border-radius: var(--radius-btn);
+  padding: 2px 7px; white-space: nowrap;
+}
+.demo-foot { margin-top: 12px; font-size: 11.5px; color: var(--text-muted); }
+.demo-foot a { color: var(--primary); }
+
+/* scene 002 — how it works (dossier-row grammar + ring one-liner + gate stamp) */
+.how-rows { margin-top: 40px; border-top: 2px solid var(--ink); }
+.ring-oneliner { list-style: none; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.ring-oneliner li {
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 10px;
+}
+.ring-oneliner .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+/* bounded-autonomy legend within the palette (coral is CTA-reserved): teal =
+   act, primary = human-approval, ink = never. */
+.ring-oneliner .dot.inner { background: var(--teal-dark); }
+.ring-oneliner .dot.middle { background: var(--primary); }
+.ring-oneliner .dot.outer { background: var(--ink); }
+.drow .dv .stamp { margin-left: 4px; }
+
+/* scene 004 — module teaser cards + tech-lead hook */
+.teaser-cards {
+  margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px;
+}
+.teaser-card {
+  position: relative; background: var(--surface); border: 1px solid var(--ink);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 24px 22px 20px;
+}
+/* square "already-picked" stamp, echoing the configurator's checkbox stamps */
+.teaser-stamp {
+  position: absolute; top: 18px; right: 18px; width: 22px; height: 22px;
+  border: 2px solid var(--primary); border-radius: var(--radius-btn); background: var(--primary);
+}
+.teaser-stamp::after {
+  content: '✓'; position: absolute; inset: 0; color: #FFFFFF; font-size: 14px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.teaser-card .kicker { font-size: 10.5px; }
+.teaser-card h3 { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; margin-top: 8px; }
+.teaser-spec { font-size: 14.5px; margin-top: 10px; }
+.tech-hook { margin-top: 32px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+.tech-hook a { color: var(--primary); text-decoration: none; }
+.tech-hook a:hover { text-decoration: underline; }
+
+@media (max-width: 760px) {
+  .demo-entry { grid-template-columns: 52px 1fr; gap: 8px 12px; }
+  .demo-entry .tag { grid-column: 2; justify-self: start; }
+}
+
 /* ---------- footer ---------- */
 .site-footer { border-top: 2px solid var(--ink); background: var(--paper); }
 .site-footer .inner { max-width: 1080px; padding: 36px 40px 48px; display: flex; flex-direction: column; gap: 24px; }

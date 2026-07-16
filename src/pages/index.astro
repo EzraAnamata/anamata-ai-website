@@ -1,117 +1,196 @@
 ---
 /**
- * Home — records 001 (the claim + the field log) and 002 (personnel records).
- * Ported from the approved checkpoint; the ledger consumes real git history.
- * Personnel cards carry only verifiable facts — OKR bars return when the
- * audit-trail API (#347) provides real metrics.
+ * Home — THE funnel, as a film (SPEC-website-v2-ia-choreography, scenes 0–004).
+ * The scroll is the funnel; ledger grammar (marginalia numbers, rules, stamps)
+ * makes descending the page feel like paging through a record.
+ *
+ *   0   HERO      — Anna resolving wireframe→human on scroll (AnnaScrub)
+ *   001 WHAT      — concrete jobs as DEMO ledger entries, labeled as examples
+ *   002 HOW       — channels, couplings, permission rings, the HUMAN APPROVED gate
+ *   003 PROOF     — the REAL operating record (src/lib/ledger.mjs), never fabricated
+ *   004 EXIT      — configurator teaser → offerte (button-hot), contact (ghost)
+ *
+ * Non-negotiables: tokens are law; the ledger is never fabricated (scene 001's
+ * entries are visibly labeled examples); no prices; §50 transparency present.
  */
 import Base from '../layouts/Base.astro';
-import TransparencyNotice from '../components/TransparencyNotice.astro';
+import AnnaScrub from '../components/AnnaScrub.astro';
 import Ledger from '../components/Ledger.astro';
-import { getCommitEntries } from '../lib/ledger.mjs';
-
-const latest = getCommitEntries(1)[0];
+import TransparencyNotice from '../components/TransparencyNotice.astro';
+import { MODULES } from '../lib/offerte.mjs';
 ---
 
 <Base
-  title="Anamata.ai — This website is run by AI employees. Here is the proof."
-  description="Anamata's AI colleagues draft, publish and improve this site — every action approved by a human, every step on the record. The live operating record is on this page."
+  title="Anna — your digital AI assistant, working in Teams today | Anamata.ai"
+  description="Anna is Anamata's AI employee: she handles answers, requests and admin inside Microsoft Teams, bounded by permission rings and a human approval gate. See her work, then see the real operating record of the AI team that runs this site."
   condensedNotice={false}
 >
-  <!-- ============ 001 · HERO ============ -->
-  <div class="sheet">
+  <!-- ============ 0 · HERO (Anna scrub) ============ -->
+  <!-- tagline wording is an open trio brainstorm — placeholder, easily edited here -->
+  <AnnaScrub
+    kicker="ANAMATA.AI — EMPLOYEE #001"
+    heading="Anna, your digital AI assistant"
+    subline="Answers, requests and admin — handled inside your company systems, in Teams, today."
+  />
+
+  <!-- ============ 001 · WHAT ANNA DOES ============ -->
+  <div class="sheet first-scene">
     <aside class="marginalia">
       <span class="no">001</span>
-      <span class="lbl">OPERATING<br />RECORD</span>
-      <span class="lbl push">ANAMATA.AI<br />UTRECHT, NL</span>
+      <span class="lbl">WHAT ANNA<br />DOES</span>
+      <span class="lbl push">RECORD<br />001</span>
     </aside>
-    <main class="content hero">
-      <h1>
-        <span class="l">This website is</span>
-        <span class="l">run by AI&nbsp;employees.</span>
-        <span class="l proof">Here is the&nbsp;proof.</span>
-      </h1>
-      <p class="sub">
-        Anamata's AI colleagues draft, publish and improve this site —
-        <strong>every action approved by a human, every step on the record.</strong>
-        Meet the team that already works this way, then put them to work for yours.
+    <main class="content">
+      <span class="kicker">Record 001 · What she does</span>
+      <h2 class="sec-title">The work nobody has time for.</h2>
+      <p class="sec-intro">
+        Picture de manager van de Albert Heijn — drowning in systems: hours to log, requests to
+        file, a desk to book, an answer buried in some portal. Anna does that work where the team
+        already works, and writes down what she did. A day in Teams looks like this.
       </p>
-      <div class="cta-row">
-        <a class="btn" href="/contact">REQUEST A DEMO</a>
-        <a class="btn ghost" href="#ledger">READ THE RECORD ↓</a>
+
+      <div class="demo-ledger" aria-label="Illustrative examples — not the live operating record">
+        <div class="demo-head">
+          <span class="t">EXAMPLE — A DAY IN TEAMS</span>
+          <span class="t warn">DEMO · NOT THE LIVE RECORD</span>
+        </div>
+        <div class="demo-entry">
+          <span class="ts">09:12</span>
+          <span class="act">logged 3.5h to ClockWise — “sprint review” <span class="agent">· anna</span></span>
+          <span class="tag">EXAMPLE</span>
+        </div>
+        <div class="demo-entry">
+          <span class="ts">09:41</span>
+          <span class="act">filed a vacation request for approval — 12–16 Aug <span class="agent">· anna</span></span>
+          <span class="tag">EXAMPLE</span>
+        </div>
+        <div class="demo-entry">
+          <span class="ts">10:03</span>
+          <span class="act">booked a desk — Utrecht, Thu, near the QA pod <span class="agent">· anna</span></span>
+          <span class="tag">EXAMPLE</span>
+        </div>
+        <div class="demo-entry">
+          <span class="ts">10:20</span>
+          <span class="act">answered “which VM hosts the pilot?” from company systems <span class="agent">· anna</span></span>
+          <span class="tag">EXAMPLE</span>
+        </div>
       </div>
-
-      <TransparencyNotice />
-
-      <Ledger limit={6} />
+      <p class="demo-foot mono">
+        Illustrative examples, not the operating record. The live record — real, unedited — is
+        <a href="#ledger">record 003, below</a>.
+      </p>
     </main>
   </div>
 
-  <!-- ============ 002 · PERSONNEL RECORDS ============ -->
-  <div class="sheet" id="personnel">
+  <!-- ============ 002 · HOW IT WORKS ============ -->
+  <div class="sheet">
     <aside class="marginalia">
       <span class="no">002</span>
-      <span class="lbl">PERSONNEL<br />RECORDS</span>
+      <span class="lbl">HOW IT<br />WORKS</span>
+      <span class="lbl push">RECORD<br />002</span>
     </aside>
-    <section class="content" aria-label="Personnel records">
-      <h2 class="sec-title">The colleagues on file.</h2>
+    <section class="content" aria-label="How it works">
+      <span class="kicker">Record 002 · How it works</span>
+      <h2 class="sec-title">Autonomy with a boundary.</h2>
       <p class="sec-intro">
-        Every AI employee at Anamata has an identity, a permission boundary and an objective —
-        reviewed by the humans they work with. These are their live records.
+        Anna is useful because she acts on her own — and trustworthy because she can't act
+        everywhere. One assistant, reachable where you already are, bounded by permission rings and
+        a human approval gate.
       </p>
 
-      <div class="cards">
-        <!-- Anna -->
-        <article class="card">
-          <span class="punch"></span>
-          <span class="kicker">EMPLOYEE Nº 001 · ACTIVE</span>
-          <h3>Anna</h3>
-          <p class="role">Assistant — QA &amp; Engineering, Teams</p>
-          <div class="fields">
-            <div class="field"><span class="k">EMPLOYED</span><span class="v">MAR 2025</span></div>
-            <div class="field"><span class="k">WORKPLACE</span><span class="v">MICROSOFT TEAMS</span></div>
-            <div class="field"><span class="k">SCOPE</span><span class="v">QA &amp; ENGINEERING</span></div>
-            <div class="field"><span class="k">DOSSIER</span><span class="v"><a href="/anna">RECORD 003 →</a></span></div>
+      <div class="how-rows">
+        <div class="drow">
+          <span class="dk">Channels</span>
+          <div class="dv">
+            Microsoft Teams — live today. WhatsApp and Telegram are pluggable; the same Anna sits
+            behind each one.
           </div>
-          <div class="objective">
-            <span class="k">CURRENT OBJECTIVE</span>
-            <span class="v">Team questions answered same-day, on the record</span>
+        </div>
+        <div class="drow">
+          <span class="dk">Couplings</span>
+          <div class="dv">
+            MCP couplings into the systems you already run. Loket is the current pilot — modelled on
+            the rekensheet the team keeps by hand today.
           </div>
-        </article>
-
-        <!-- Site operations -->
-        <article class="card">
-          <span class="punch"></span>
-          <span class="kicker">EMPLOYEE Nº 002 · ACTIVE</span>
-          <h3>Site Operations</h3>
-          <p class="role">Builds and runs this website</p>
-          <div class="fields">
-            <div class="field"><span class="k">EMPLOYED</span><span class="v">JUL 2026</span></div>
-            <div class="field"><span class="k">WORKPLACE</span><span class="v">ANAMATA.AI</span></div>
-            <div class="field"><span class="k">PERMISSIONS</span><span class="v">PUBLISH VIA APPROVAL</span></div>
-            <div class="field"><span class="k">LAST ACTION</span><span class="v ok">{latest.ts} ✓</span></div>
+        </div>
+        <div class="drow">
+          <span class="dk">Permission rings</span>
+          <div class="dv">
+            <ul class="ring-oneliner">
+              <li><span class="dot inner" aria-hidden="true"></span> INNER — act &amp; log, on her own</li>
+              <li><span class="dot middle" aria-hidden="true"></span> MIDDLE — propose; a named human approves</li>
+              <li><span class="dot outer" aria-hidden="true"></span> OUTER — never: payments, contracts, hiring</li>
+            </ul>
           </div>
-          <div class="objective">
-            <span class="k">CURRENT OBJECTIVE</span>
-            <span class="v">Qualified demo requests — Q3, baseline set at launch</span>
+        </div>
+        <div class="drow">
+          <span class="dk">The gate</span>
+          <div class="dv">
+            Anything that leaves the boundary passes a person first — and the approval is stamped
+            into the record. <span class="stamp">HUMAN APPROVED</span>
+            <span class="sub-mono">SEE THE RING MODEL → <a href="/about#governance">GOVERNANCE FILE</a></span>
           </div>
-        </article>
-
-        <!-- Pending -->
-        <article class="card pending">
-          <span class="punch"></span>
-          <span class="kicker">EMPLOYEE Nº 003 · PLANNED</span>
-          <h3>Sales Research</h3>
-          <p class="role">Market research &amp; outreach support</p>
-          <div class="fields">
-            <div class="field"><span class="k">STATUS</span><span class="v">AWAITING PROVISIONING</span></div>
-            <div class="field"><span class="k">PERMISSIONS</span><span class="v">UNDER DESIGN</span></div>
-          </div>
-          <p class="status-note">
-            Records appear here the day an employee starts — never before. That is the point.
-          </p>
-        </article>
+        </div>
       </div>
+    </section>
+  </div>
+
+  <!-- ============ 003 · PROOF: THE OPERATING RECORD ============ -->
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">003</span>
+      <span class="lbl">PROOF ·<br />OPERATING<br />RECORD</span>
+      <span class="lbl push">RECORD<br />003</span>
+    </aside>
+    <section class="content" aria-label="Proof — the operating record">
+      <span class="kicker">Record 003 · Proof</span>
+      <h2 class="sec-title">After the pitch, the receipts.</h2>
+      <p class="sec-intro">
+        Everything above is a claim until you can check it. This site is run by AI under named human
+        review — and here is that team's live operating record: real commits from the public
+        repository, each one on the record. <a href="/about">See how it works →</a>
+      </p>
+
+      <Ledger limit={6} />
+
+      <TransparencyNotice />
+    </section>
+  </div>
+
+  <!-- ============ 004 · EXIT: BUILD YOUR ANNA ============ -->
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">004</span>
+      <span class="lbl">BUILD<br />YOUR ANNA</span>
+      <span class="lbl push">RECORD<br />004</span>
+    </aside>
+    <section class="content" aria-label="Build your Anna">
+      <span class="kicker">Record 004 · Build your Anna</span>
+      <h2 class="sec-title">Configure the team you want.</h2>
+      <p class="sec-intro">
+        Pick the modules that fit, and file an offerte request — a person reads it and comes back
+        with a proposal on your terms. Phased rollout, no numbers here: you configure, we quote.
+      </p>
+
+      <div class="teaser-cards">
+        {MODULES.map((m) => (
+          <article class="teaser-card">
+            <span class="teaser-stamp" aria-hidden="true"></span>
+            <span class="kicker">{m.kicker}</span>
+            <h3>{m.name}</h3>
+            <p class="teaser-spec">{m.spec}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="cta-row">
+        <a class="btn hot" href="/configurator">VRAAG OFFERTE AAN →</a>
+        <a class="btn ghost" href="/contact">OR FILE A REQUEST</a>
+      </div>
+
+      <p class="tech-hook mono">
+        DRAWN HERE BY HOW THIS SITE RUNS? <a href="mailto:tech@anamata.ai">tech@anamata.ai</a>
+      </p>
     </section>
   </div>
 </Base>
