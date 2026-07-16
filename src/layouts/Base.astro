@@ -59,8 +59,7 @@ const current = (p: string) =>
       </a>
       <nav aria-label="Main">
         <a href="/#personnel" aria-current={current('/#personnel')}>The team</a>
-        <a href="/anna" aria-current={current('/anna')}>Anna</a>
-        <a href="/approach" aria-current={current('/approach')}>Approach</a>
+        <a href="/about" aria-current={current('/about')}>About</a>
         <a href="/insights" aria-current={current('/insights')}>Insights</a>
         <a class="btn" href="/contact">REQUEST A DEMO</a>
       </nav>
@@ -73,13 +72,15 @@ const current = (p: string) =>
         {condensedNotice && <TransparencyNotice condensed />}
         <div class="cols">
           <nav aria-label="Footer">
-            <a href="/anna">ANNA</a>
-            <a href="/approach">APPROACH</a>
+            <a href="/about">ABOUT</a>
             <a href="/insights">INSIGHTS</a>
             <a href="/contact">FILE A REQUEST</a>
             <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">READ THE SOURCE ↗</a>
             <a href="https://anamata.eu" rel="noopener">ANAMATA.EU ↗</a>
           </nav>
+          <p class="colophon tech-line">
+            DRAWN HERE BY HOW THIS SITE RUNS? <a href="mailto:tech@anamata.ai">tech@anamata.ai</a>
+          </p>
           <p class="colophon">ANAMATA BV · UTRECHT, NL · THE SITE IS ITS OWN EVIDENCE</p>
         </div>
       </div>
