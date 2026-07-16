@@ -17,28 +17,27 @@ function hexToRgb(hex) {
 
 const marginW = (t.components.marginalia.match(/(\d+)px/) || [, '132'])[1];
 
-// The self-hosted variable font registers as 'Newsreader Variable'; keep the
-// token's family list but resolve to the loaded file first.
-const displayFamily = t.typography.fontFamily.display.replace(
-  /^Newsreader/,
-  "'Newsreader Variable', Newsreader"
-);
-
 const css = `/* GENERATED from design-tokens.json — do not edit by hand. */
 :root {
   --paper: ${t.colors.background};
   --surface: ${t.colors.surface};
   --ink: ${t.colors.text};
+  --ink-rgb: ${hexToRgb(t.colors.text)};
   --text-muted: ${t.colors.textMuted};
-  --cobalt: ${t.colors.primary};
-  --cobalt-soft: ${t.colors.secondary};
-  --green: ${t.colors.accent};
+  /* v2 palette: primary = the logo's steel-blue (interactive), coral = the ask
+     (offerte/contact only), sky = non-text highlight, teal = approval events. */
+  --primary: ${t.colors.primary};
+  --primary-rgb: ${hexToRgb(t.colors.primary)};
+  --coral: ${t.colors.secondary};
+  --sky: ${t.colors.accent};
+  --sky-rgb: ${hexToRgb(t.colors.accent)};
+  --teal-dark: ${t.colors.semantic.success};
   --border: ${t.colors.border};
-  --grid: rgba(${hexToRgb(t.colors.primary)}, 0.07);
+  --grid: rgba(${hexToRgb(t.colors.text)}, 0.06);
   --hairline: rgba(${hexToRgb(t.colors.text)}, 0.22);
   --margin-w: ${marginW}px;
 
-  --font-display: ${displayFamily};
+  --font-display: ${t.typography.fontFamily.display};
   --font-body: ${t.typography.fontFamily.body};
   --font-mono: ${t.typography.fontFamily.mono};
 
