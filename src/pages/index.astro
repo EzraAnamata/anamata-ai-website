@@ -24,6 +24,7 @@ import { MODULES } from '../lib/offerte.mjs';
   title="Anna — your digital AI assistant, working in Teams today | Anamata.ai"
   description="Anna is Anamata's AI employee: she handles answers, requests and admin inside Microsoft Teams, bounded by permission rings and a human approval gate. See her work, then see the real operating record of the AI team that runs this site."
   condensedNotice={false}
+  preloadImage="/anna/anna-split-face.webp"
 >
   <!-- ============ 0 · HERO (Anna scrub) ============ -->
   <!-- tagline wording is an open trio brainstorm — placeholder, easily edited here -->
@@ -187,10 +188,9 @@ import { MODULES } from '../lib/offerte.mjs';
         <a class="btn hot" href="/configurator">VRAAG OFFERTE AAN →</a>
         <a class="btn ghost" href="/contact">OR FILE A REQUEST</a>
       </div>
-
-      <p class="tech-hook mono">
-        DRAWN HERE BY HOW THIS SITE RUNS? <a href="mailto:tech@anamata.ai">tech@anamata.ai</a>
-      </p>
+      <!-- The techie "tech@anamata.ai" hook lives once, in the footer's Row A on
+           every page (Base.astro) — not repeated here, where it sat directly
+           above its footer twin at the page bottom (S6 dedupe). -->
     </section>
   </div>
 </Base>

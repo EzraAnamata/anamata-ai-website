@@ -712,3 +712,149 @@ describe('S5 — nav and footer shape', () => {
     expect(html, 'tech@ second-lead channel line missing').toContain('tech@anamata.ai');
   });
 });
+
+describe('S6 — launch QA', () => {
+  // ---- Item 4: Art. 50 transparency present & cited on every content page ----
+  it('every page cites EU AI Act Article 50 in its machine-readable provenance meta', () => {
+    expect(allPages.length).toBeGreaterThan(0);
+    for (const rel of allPages) {
+      const { document } = page(rel);
+      const meta = document.querySelector('meta[name="ai-generated"]');
+      expect(meta, `${rel}: missing ai-generated meta`).toBeTruthy();
+      expect(
+        meta.getAttribute('content'),
+        `${rel}: provenance meta must cite Art. 50`
+      ).toMatch(/art\.?\s*50/i);
+    }
+  });
+
+  it('the human-readable §50 notice names Article 50 on every content page', () => {
+    for (const rel of allPages) {
+      const { html } = page(rel);
+      expect(html, `${rel}: notice must name Article 50`).toMatch(/ART\.?\s*50/i);
+    }
+  });
+
+  // ---- Item 5: OG image (1200x630, metadata-stripped) wired absolute ----
+  describe('OG / social card', () => {
+    const OG_REL = 'og-image.png';
+    const OG_ABS = 'https://anamata.ai/og-image.png';
+
+    it('the OG image is committed to public/ and built into dist/', () => {
+      expect(existsSync(path.join(ROOT, 'public', OG_REL)), 'public OG image missing').toBe(true);
+      expect(existsSync(path.join(DIST, OG_REL)), 'built OG image missing').toBe(true);
+    });
+
+    it('the OG image is a 1200x630 PNG', () => {
+      const buf = readFileSync(path.join(ROOT, 'public', OG_REL));
+      // PNG signature + IHDR: width @ byte 16, height @ byte 20 (big-endian u32)
+      expect(buf.slice(1, 4).toString('ascii'), 'not a PNG').toBe('PNG');
+      const width = buf.readUInt32BE(16);
+      const height = buf.readUInt32BE(20);
+      expect(width, `OG width ${width}`).toBe(1200);
+      expect(height, `OG height ${height}`).toBe(630);
+    });
+
+    it('the OG image carries no EXIF/XMP metadata (privacy scrub)', () => {
+      const buf = readFileSync(path.join(ROOT, 'public', OG_REL));
+      expect(buf.includes(Buffer.from('eXIf')), 'OG image still has an eXIf chunk').toBe(false);
+      expect(
+        buf.includes(Buffer.from('http://ns.adobe.com/xap/')),
+        'OG image still has XMP'
+      ).toBe(false);
+    });
+
+    it('every content page sets an absolute og:image and a twitter card', () => {
+      for (const rel of allPages) {
+        const { document } = page(rel);
+        const og = document.querySelector('meta[property="og:image"]');
+        expect(og, `${rel}: og:image missing`).toBeTruthy();
+        expect(og.getAttribute('content'), `${rel}: og:image must be absolute`).toBe(OG_ABS);
+        expect(
+          document.querySelector('meta[property="og:title"]'),
+          `${rel}: og:title missing`
+        ).toBeTruthy();
+        expect(
+          document.querySelector('meta[property="og:url"]')?.getAttribute('content'),
+          `${rel}: og:url must be absolute`
+        ).toMatch(/^https:\/\/anamata\.ai\//);
+        const tw = document.querySelector('meta[name="twitter:card"]');
+        expect(tw?.getAttribute('content'), `${rel}: twitter:card`).toBe('summary_large_image');
+      }
+    });
+  });
+
+  // ---- Item 7: token casing prose reconciled to shipped reality ----
+  it('the display weightPairing prose documents the shipped sentence-case headings', () => {
+    const prose = TOKENS.typography.weightPairing.display;
+    expect(prose, 'display prose must acknowledge sentence-case section headings').toMatch(
+      /sentence.?case/i
+    );
+  });
+
+  // ---- Item 3: focus visibility (a11y) ----
+  it('a visible keyboard-focus indicator is defined (:focus-visible in built CSS)', () => {
+    const files = fg.sync('**/*.{css,html}', { cwd: DIST });
+    const all = files.map((f) => readFileSync(path.join(DIST, f), 'utf8')).join('');
+    expect(all, 'no :focus-visible focus ring anywhere').toContain(':focus-visible');
+  });
+
+  // ---- Item 9: footer / scene-004 tech@ dedupe ----
+  it('the tech@ hook line is not duplicated at the home page bottom (footer only)', () => {
+    const { html } = page(PAGES.home);
+    const matches = html.match(/DRAWN HERE BY HOW THIS SITE RUNS\?/gi) || [];
+    expect(
+      matches.length,
+      `tech@ hook appears ${matches.length}× on home — footer carries it globally, so scene 004 must not repeat it`
+    ).toBe(1);
+  });
+
+  // ---- Contact addresses (Ezra decision 2026-07-17): no personal address ----
+  describe('contact addresses', () => {
+    it('the personal address ezrahulsman appears nowhere in the built site', () => {
+      const files = fg.sync('**/*.{html,js,mjs,css,xml,txt,svg,json}', { cwd: DIST });
+      expect(files.length).toBeGreaterThan(0);
+      for (const rel of files) {
+        const content = readFileSync(path.join(DIST, rel), 'utf8');
+        expect(content, `${rel}: leaks the personal address ezrahulsman`).not.toMatch(
+          /ezrahulsman/i
+        );
+      }
+    });
+
+    it('the configurator offerte flow files to offerte@anamata.ai', () => {
+      const { html } = page(PAGES.configurator);
+      expect(html, 'configurator must use offerte@anamata.ai').toContain(
+        'mailto:offerte@anamata.ai'
+      );
+    });
+
+    it('the contact page general channel is info@anamata.ai', () => {
+      const { html } = page(PAGES.contact);
+      expect(html, 'contact must use info@anamata.ai').toContain('mailto:info@anamata.ai');
+    });
+
+    it('the tech@ channel is unchanged', () => {
+      expect(page(PAGES.home).html, 'tech@anamata.ai must remain').toContain('tech@anamata.ai');
+    });
+  });
+
+  // ---- Item 10: no-mail-client fallback on the two filing pages ----
+  for (const [name, rel] of [
+    ['contact', PAGES.contact],
+    ['configurator', PAGES.configurator],
+  ]) {
+    it(`${name} renders the plain-email fallback for visitors with no mail client`, () => {
+      const { document } = page(rel);
+      const main = document.querySelector('main');
+      expect(main.textContent, `${name}: 'Prefer plain email?' fallback missing`).toMatch(
+        /prefer plain email/i
+      );
+      const fallbackMailto = [...main.querySelectorAll('a[href^="mailto:"]')];
+      expect(
+        fallbackMailto.length,
+        `${name}: fallback mailto link missing`
+      ).toBeGreaterThanOrEqual(1);
+    });
+  }
+});

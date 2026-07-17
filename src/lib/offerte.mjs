@@ -8,7 +8,7 @@
  * you configure, we quote).
  */
 
-export const OFFERTE_EMAIL = 'ezrahulsman@anamata.nl';
+export const OFFERTE_EMAIL = 'offerte@anamata.ai';
 
 /**
  * Field length caps. This is the real defense that keeps the encoded mailto:

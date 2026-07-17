@@ -21,6 +21,12 @@ body {
 a { color: var(--primary); }
 ::selection { background: var(--primary); color: var(--paper); }
 
+/* Keyboard focus: a consistent, high-contrast ring on every interactive element
+   (a11y — the UA default is invisible on the ink-filled .btn). The ring sits in
+   the paper margin via the offset, so primary-on-paper (~7.6:1) always reads. */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 1px; }
+.btn:focus-visible { outline-offset: 3px; }
+
 /* ---------- header ---------- */
 .site-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -34,7 +40,7 @@ a { color: var(--primary); }
 .site-header nav a:not(.btn) {
   font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.04em;
   color: var(--ink); text-decoration: none; opacity: 0.82;
-  padding: 12px 0; /* 44px touch target */
+  padding: 13px 0; /* ≥44px touch target (measured 45px) */
 }
 .site-header nav a:not(.btn):hover { color: var(--primary); opacity: 1; }
 .site-header nav a[aria-current="page"] { color: var(--primary); opacity: 1; }
@@ -371,9 +377,8 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
 .teaser-card .kicker { font-size: 10.5px; }
 .teaser-card h3 { font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -0.01em; margin-top: 8px; }
 .teaser-spec { font-size: 14.5px; margin-top: 10px; }
-.tech-hook { margin-top: 32px; font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
-.tech-hook a { color: var(--primary); text-decoration: none; }
-.tech-hook a:hover { text-decoration: underline; }
+/* .tech-hook removed with the scene-004 tech@ line (S6 dedupe); the footer's
+   .tech-line carries that channel once per page. */
 
 /* Hero fit at shorter viewports (PR #8 review fix). The 600×900 portrait forces
    the sticky stage taller than the visible band, so the copy centres against the
@@ -412,7 +417,9 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
   justify-content: space-between; align-items: baseline;
 }
 .site-footer nav { display: flex; gap: 8px 22px; flex-wrap: wrap; }
-.site-footer nav a { font-family: var(--font-mono); font-size: 12px; color: var(--ink); opacity: 0.82; text-decoration: none; padding: 6px 0; }
+/* 13px vertical padding gives a ≥44px tap target (a11y) while staying an outcome
+   of padding, not a min-height — consistent with the footer's ruled-row rule. */
+.site-footer nav a { font-family: var(--font-mono); font-size: 12px; color: var(--ink); opacity: 0.82; text-decoration: none; padding: 13px 0; }
 .site-footer nav a:hover { color: var(--primary); opacity: 1; }
 .site-footer .tech-line { font-family: var(--font-mono); font-size: 11px; opacity: 1; text-align: right; }
 .site-footer .tech-line a { color: var(--primary); text-decoration: none; }
