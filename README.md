@@ -77,11 +77,11 @@ and search engines to `/about`.
 
 ## Open items
 
-- **Offerte/contact email address.** The configurator and contact pages file via
-  a prefilled `mailto:` to `ezrahulsman@anamata.nl`
-  (`src/lib/offerte.mjs`, `src/pages/contact.astro`). A dedicated
-  `offerte@`/`info@` address is a pending owner decision — change in those two
-  places when decided.
+- ~~**Offerte/contact email address.**~~ **Decided 2026-07-17:** the
+  configurator offerte flow files to `offerte@anamata.ai`
+  (`OFFERTE_EMAIL`, `src/lib/offerte.mjs`) and the contact page's general
+  channel is `info@anamata.ai` (`src/pages/contact.astro`). The techie channel
+  stays `tech@anamata.ai` (footer). No personal address ships.
 - **Provisional design-token answers** pending Bas's review are one-line
   reversible edits in `design-tokens.json` (e.g. the display heading casing,
   `typography.weightPairing.display`). See the internal repo's design questions.

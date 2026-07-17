@@ -809,6 +809,36 @@ describe('S6 — launch QA', () => {
     ).toBe(1);
   });
 
+  // ---- Contact addresses (Ezra decision 2026-07-17): no personal address ----
+  describe('contact addresses', () => {
+    it('the personal address ezrahulsman appears nowhere in the built site', () => {
+      const files = fg.sync('**/*.{html,js,mjs,css,xml,txt,svg,json}', { cwd: DIST });
+      expect(files.length).toBeGreaterThan(0);
+      for (const rel of files) {
+        const content = readFileSync(path.join(DIST, rel), 'utf8');
+        expect(content, `${rel}: leaks the personal address ezrahulsman`).not.toMatch(
+          /ezrahulsman/i
+        );
+      }
+    });
+
+    it('the configurator offerte flow files to offerte@anamata.ai', () => {
+      const { html } = page(PAGES.configurator);
+      expect(html, 'configurator must use offerte@anamata.ai').toContain(
+        'mailto:offerte@anamata.ai'
+      );
+    });
+
+    it('the contact page general channel is info@anamata.ai', () => {
+      const { html } = page(PAGES.contact);
+      expect(html, 'contact must use info@anamata.ai').toContain('mailto:info@anamata.ai');
+    });
+
+    it('the tech@ channel is unchanged', () => {
+      expect(page(PAGES.home).html, 'tech@anamata.ai must remain').toContain('tech@anamata.ai');
+    });
+  });
+
   // ---- Item 10: no-mail-client fallback on the two filing pages ----
   for (const [name, rel] of [
     ['contact', PAGES.contact],
