@@ -63,7 +63,7 @@
     "text": "#041524",
     "textMuted": "#5A7080",
     "primary": "#2C548C",
-    "secondary": "#E15857",
+    "secondary": "#C85F52",
     "accent": "#8AD9FF",
     "border": "#C9D4DF",
     "semantic": {
@@ -216,12 +216,12 @@
     "minContrastRatioUI": 3.0,
     "minTouchTarget": "44px",
     "respectReducedMotion": true,
-    "_notes": "Ink #041524 on paper #FAFAFA ≈ 17:1 ✓. Primary #2C548C on paper ≈ 7.6:1 ✓ text-safe. Muted #5A7080 ≈ 4.9:1 ✓. Approval #067E75 ≈ 4.8:1 ✓ (true teal #00B3A6 ≈ 2.5:1 — fills/dots only, never text). Coral #E15857 vs white ≈ 3.6:1 — coral-filled buttons only at ≥18px bold white text; smaller buttons use ink fill. Sky #8AD9FF — never text on white."
+    "_notes": "Ink #041524 on paper #FAFAFA ≈ 17:1 ✓. Primary #2C548C on paper ≈ 7.6:1 ✓ text-safe. Muted #5A7080 ≈ 4.9:1 ✓. Approval #067E75 ≈ 4.8:1 ✓ (true teal #00B3A6 ≈ 2.5:1 — fills/dots only, never text). Coral #C85F52 vs white ≈ 4.0:1 — coral-filled buttons only at ≥18px bold white text; smaller buttons use ink fill. Sky #8AD9FF — never text on white."
   },
   "components": {
-    "header": "Paper bg, 1px hairline bottom. Wordmark: anamata_ai6.svg (navy word, Ai in #2C548C), height 28px; '.AI' suffix retired — it lives in the mark. Mono nav links 12.5px, ink at 82%, primary on hover.",
+    "header": "Paper bg, 1px hairline bottom. Wordmark: anamata_ai6.svg (navy word, Ai in #2C548C), height 32px; '.AI' suffix retired — it lives in the mark. Mono nav links 12.5px, ink at 82%, primary on hover.",
     "button-primary": "Solid ink #041524, paper text, mono 600 13px uppercase tracking 0.05em, 12x22px padding, 2px radius. Hover: #2C548C. (Mirrors live .eu's navy button.)",
-    "button-hot": "Offerte/contact ask only: solid coral #E15857, white text, mono 700 ≥18px uppercase, 14x28px padding, 2px radius. Hover: #C94847. Max one per viewport.",
+    "button-hot": "Offerte/contact ask only: solid coral #C85F52, white text, mono 700 ≥18px uppercase, 14x28px padding, 2px radius. Hover: #B14C41. Max one per viewport.",
     "button-ghost": "Transparent, primary #2C548C text + 1px primary border, primary-button metrics. Hover: primary at 7% fill.",
     "marginalia": "132px left column, hairline right border. Record number mono 600 13px primary; labels mono 10.5px ink at 55%, tracking 0.08em. Collapses to horizontal strip above content < 760px.",
     "transparency-notice": "Art. 50 disclosure as feature: 1px primary border with 4px left edge, '§50' glyph, mono kicker 11px primary tracking 0.08em, body 13.5px. Mandatory on every page (may be condensed in footer on subpages).",

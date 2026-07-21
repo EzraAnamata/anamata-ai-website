@@ -35,7 +35,7 @@ a { color: var(--primary); }
   background: var(--paper);
 }
 .wordmark { display: inline-flex; align-items: center; text-decoration: none; }
-.wordmark img { display: block; height: 28px; width: auto; }
+.wordmark img { display: block; height: 32px; width: auto; }
 .site-header nav { display: flex; gap: 28px; align-items: center; }
 .site-header nav a:not(.btn) {
   font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.04em;
@@ -61,7 +61,7 @@ a { color: var(--primary); }
   background: var(--coral); border-color: var(--coral); color: #FFFFFF;
   font-weight: 700; font-size: 18px; padding: 14px 28px; letter-spacing: 0.04em;
 }
-.btn.hot:hover { background: #C94847; border-color: #C94847; }
+.btn.hot:hover { background: #B14C41; border-color: #B14C41; }
 
 /* ---------- ledger page structure ---------- */
 .sheet { display: grid; grid-template-columns: var(--margin-w) 1fr; }
