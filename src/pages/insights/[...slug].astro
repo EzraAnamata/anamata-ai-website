@@ -4,6 +4,7 @@
  * in the same entry grammar as the hero ledger.
  */
 import Base from '../../layouts/Base.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -44,6 +45,9 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
           </div>
         </aside>
       </article>
+
+      <!-- Standard funnel exit (shared CtaBlock) — consistent close site-wide. -->
+      <CtaBlock more="about" />
     </main>
   </div>
 </Base>

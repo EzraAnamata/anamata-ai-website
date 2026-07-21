@@ -4,6 +4,7 @@
  * ledger block; the list shows drafted-by/approved-by up front.
  */
 import Base from '../../layouts/Base.astro';
+import CtaBlock from '../../components/CtaBlock.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('insights')).sort(
@@ -15,18 +16,18 @@ const fmt = (d: Date) =>
 
 <Base
   title="Insights — field notes from the operating record | Anamata.ai"
-  description="Field notes on AI employees, bounded autonomy and the EU AI Act — drafted by Anamata's AI systems, approved by a named human editor, published on the record."
+  description="Field notes on AI colleagues, bounded autonomy and the EU AI Act — drafted by Anamata's AI systems, approved by a named human editor, published on the record."
 >
   <div class="sheet">
     <aside class="marginalia">
-      <span class="no">005+</span>
+      <span class="no">I001+</span>
       <span class="lbl">FIELD<br />NOTES</span>
     </aside>
     <main class="content">
       <span class="kicker">Field notes · Drafted by AI, approved by a named editor</span>
       <h1 class="sec-title">Insights, on the record.</h1>
       <p class="sec-intro">
-        Notes from running AI employees in practice. Each article states who drafted it and who
+        Notes from running AI colleagues in practice. Each article states who drafted it and who
         approved it — provenance is part of the publication, not a disclaimer.
       </p>
 
@@ -44,6 +45,10 @@ const fmt = (d: Date) =>
           ))
         }
       </div>
+
+      <!-- Standard funnel exit (shared CtaBlock) — field notes close on the same
+           dual-path ask as every content page; the unsure go deeper on About. -->
+      <CtaBlock more="about" />
     </main>
   </div>
 </Base>
