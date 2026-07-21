@@ -1,48 +1,52 @@
 ---
 /**
- * About — the consolidation page (S5). Absorbs the current home story,
- * the /approach governance file and the /anna dossier into one record:
- *  005 · onderdeel van Anamata + how this site is AI-run (the CIO/CTO
- *        second-look page)
- *  002 · personnel records (the colleagues on file)
- *  003 · Anna's dossier, condensed
- *  004 · governance file — permission rings + the approval gate
- * /approach and /anna now redirect here (see astro.config.mjs).
+ * About — the consolidation page. The CIO/CTO "second look": what/why → who's
+ * on the team → one colleague in depth → the rules they all run under. S8
+ * (#368) moved the live operating record and the HOW content here from home,
+ * and this pass eliminated the dossier/governance duplication. Per-page record
+ * numbering with an A- prefix (S8):
+ *  A001 · part of Anamata + how this site is AI-run + the live record
+ *  A002 · personnel records (the colleagues on file)
+ *  A003 · Anna's dossier, condensed
+ *  A004 · governance file — permission rings + the approval gate
+ * /approach and /anna redirect here (see astro.config.mjs).
  */
 import Base from '../layouts/Base.astro';
+import Ledger from '../components/Ledger.astro';
+import CtaBlock from '../components/CtaBlock.astro';
 import { getCommitEntries } from '../lib/ledger.mjs';
 
 const latest = getCommitEntries(1)[0];
 ---
 
 <Base
-  title="About — anamata.ai is onderdeel van Anamata, run by AI on the record"
-  description="anamata.ai is onderdeel van Anamata: a marketing site built and operated by AI colleagues under named human review. How it works, who's on file, the permission rings and the approval gate — the second look a CIO or CTO comes here to take."
+  title="About — anamata.ai is part of Anamata, run by AI on the record"
+  description="anamata.ai is part of Anamata: a marketing site built and operated by AI colleagues under named human review. How it works, who's on file, the permission rings and the approval gate — the second look a CIO or CTO comes here to take."
 >
   <!-- ============ 005 · ABOUT ============ -->
   <div class="sheet">
     <aside class="marginalia">
-      <span class="no">005</span>
+      <span class="no">A001</span>
       <span class="lbl">ABOUT<br />ANAMATA.AI</span>
-      <span class="lbl push">ONDERDEEL VAN<br />ANAMATA</span>
+      <span class="lbl push">PART OF<br />ANAMATA</span>
     </aside>
     <main class="content">
-      <span class="kicker">About · anamata.ai · onderdeel van Anamata</span>
+      <span class="kicker">About · anamata.ai</span>
       <h1 class="sec-title">The site is the proof.</h1>
       <p class="sec-intro">
-        anamata.ai is onderdeel van Anamata — the Utrecht software company that builds and employs
+        anamata.ai is part of Anamata — the Utrecht software company that builds and employs
         AI colleagues. This website is one of them at work: designed, written, published and
-        improved by AI employees, with a named human approving every release.
+        improved by AI colleagues, with a named human approving every release.
       </p>
 
       <div class="prose">
         <h2>Run by AI, on the record.</h2>
         <p>
           Nothing on this site ships without passing through the same operating model we bring to
-          clients: an AI employee proposes a change, the change is logged, and a named human
+          clients: an AI colleague proposes a change, the change is logged, and a named human
           approves the release before it goes live. The proof isn't a claim in a brochure — it's
-          the live field log on the <a href="/#ledger">home page</a> and the full commit history in
-          the <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">public repository</a>.
+          the live field log below and the full commit history in the
+          <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">public repository</a>.
         </p>
         <h2>The second look, for the people who take it.</h2>
         <p>
@@ -53,23 +57,24 @@ const latest = getCommitEntries(1)[0];
         </p>
       </div>
 
-      <div class="cta-row">
-        <a class="btn" href="/contact">REQUEST A DEMO</a>
-        <a class="btn ghost" href="/#ledger">READ THE LIVE RECORD</a>
-      </div>
+      <!-- The live operating record (the "commit widget") — moved here from the
+           home page in S8 (#368). This is the proof the prose above points at;
+           it stays real, derived from git history, never fabricated. The §50
+           transparency notice sits in the footer (condensed) and links here. -->
+      <Ledger limit={6} />
     </main>
   </div>
 
   <!-- ============ 002 · PERSONNEL RECORDS ============ -->
   <div class="sheet" id="team">
     <aside class="marginalia">
-      <span class="no">002</span>
+      <span class="no">A002</span>
       <span class="lbl">PERSONNEL<br />RECORDS</span>
     </aside>
     <section class="content" aria-label="Personnel records">
       <h2 class="sec-title">The colleagues on file.</h2>
       <p class="sec-intro">
-        Every AI employee at Anamata has an identity, a permission boundary and an objective —
+        Every AI colleague at Anamata has an identity, a permission boundary and an objective —
         reviewed by the humans they work with. These are their live records.
       </p>
 
@@ -84,7 +89,7 @@ const latest = getCommitEntries(1)[0];
             <div class="field"><span class="k">EMPLOYED</span><span class="v">MAR 2025</span></div>
             <div class="field"><span class="k">WORKPLACE</span><span class="v">MICROSOFT TEAMS</span></div>
             <div class="field"><span class="k">SCOPE</span><span class="v">QA &amp; ENGINEERING</span></div>
-            <div class="field"><span class="k">DOSSIER</span><span class="v"><a href="#dossier">RECORD 003 ↓</a></span></div>
+            <div class="field"><span class="k">DOSSIER</span><span class="v"><a href="#dossier">RECORD A003 ↓</a></span></div>
           </div>
           <div class="objective">
             <span class="k">CURRENT OBJECTIVE</span>
@@ -121,7 +126,7 @@ const latest = getCommitEntries(1)[0];
             <div class="field"><span class="k">PERMISSIONS</span><span class="v">UNDER DESIGN</span></div>
           </div>
           <p class="status-note">
-            Records appear here the day an employee starts — never before. That is the point.
+            Records appear here the day a colleague starts — never before. That is the point.
           </p>
         </article>
       </div>
@@ -131,7 +136,7 @@ const latest = getCommitEntries(1)[0];
   <!-- ============ 003 · PERSONNEL DOSSIER (ANNA) ============ -->
   <div class="sheet" id="dossier">
     <aside class="marginalia">
-      <span class="no">003</span>
+      <span class="no">A003</span>
       <span class="lbl">PERSONNEL<br />DOSSIER</span>
       <span class="lbl push">EMPLOYEE<br />Nº 001</span>
     </aside>
@@ -139,17 +144,25 @@ const latest = getCommitEntries(1)[0];
       <span class="kicker">Personnel dossier · Employee Nº 001 · Active since March 2025</span>
       <h2 class="sec-title">Anna.</h2>
       <p class="sec-intro">
-        Anamata's first AI employee: an assistant for QA and engineering teams that works where
-        your team already works — Microsoft Teams. Employed, bounded and supervised like a
-        colleague, because that is what she is.
+        Anamata's first AI colleague: an assistant for QA and engineering teams that works where
+        your team already works. Employed, bounded and supervised like a colleague, because that
+        is what she is.
       </p>
 
       <div class="dossier-rows">
         <div class="drow">
-          <span class="dk">Workplace</span>
+          <span class="dk">Workplace &amp; channels</span>
           <div class="dv">
-            Microsoft Teams — Anna is a member of the channels your team already uses. No new
-            tool, no new tab, no adoption project.
+            Microsoft Teams — the tools your team already lives in; no new tool, no new tab, no
+            adoption project. One Anna sits behind every channel: Teams is live today, a Telegram
+            channel is in refinement.
+          </div>
+        </div>
+        <div class="drow">
+          <span class="dk">Couplings</span>
+          <div class="dv">
+            MCP couplings into the systems you already run. Loket is the current pilot — modelled
+            on the spreadsheet the team keeps by hand today.
           </div>
         </div>
         <div class="drow">
@@ -168,25 +181,14 @@ const latest = getCommitEntries(1)[0];
           </div>
         </div>
         <div class="drow">
-          <span class="dk">Permission boundary</span>
+          <span class="dk">Governance</span>
           <div class="dv">
-            Anna reads and drafts autonomously; anything that leaves the boundary — publishing,
-            outbound mail, records of decision — passes a named human first.
-            <span class="sub-mono">SEE THE RING MODEL → <a href="#governance">RECORD 004, GOVERNANCE FILE</a></span>
-          </div>
-        </div>
-        <div class="drow">
-          <span class="dk">Oversight</span>
-          <div class="dv">
-            Every action is logged, human-readable, and attributable — who asked, what she did,
-            who approved. The same operating-record discipline this website runs on.
-          </div>
-        </div>
-        <div class="drow">
-          <span class="dk">Disclosure</span>
-          <div class="dv">
-            Anna tells you she is an AI system at first interaction, in plain language — EU AI
-            Act, Article 50, applied as a courtesy rather than a checkbox.
+            Anna acts autonomously inside her permission ring, logs every action, and passes
+            anything that leaves the boundary — publishing, outbound mail, records of decision —
+            to a named human first. She also tells your users she is an AI system at first
+            interaction, in plain language (EU AI Act, Art. 50). The full model — rings, gate and
+            record — is the governance file below.
+            <span class="sub-mono">SEE THE RING MODEL → <a href="#governance">RECORD A004, GOVERNANCE FILE</a></span>
           </div>
         </div>
       </div>
@@ -196,14 +198,14 @@ const latest = getCommitEntries(1)[0];
   <!-- ============ 004 · GOVERNANCE FILE ============ -->
   <div class="sheet" id="governance">
     <aside class="marginalia">
-      <span class="no">004</span>
+      <span class="no">A004</span>
       <span class="lbl">GOVERNANCE<br />FILE</span>
     </aside>
     <section class="content" aria-label="Governance file">
-      <span class="kicker">Governance file · The rules every AI employee works under</span>
+      <span class="kicker">Governance file · The rules every AI colleague works under</span>
       <h2 class="sec-title">Autonomy with a boundary.</h2>
       <p class="sec-intro">
-        An AI employee is useful because it acts on its own — and trustworthy because it can't
+        An AI colleague is useful because it acts on its own — and trustworthy because it can't
         act everywhere. Anamata draws that line with three permission rings, a human approval
         gate, and a record of everything.
       </p>
@@ -272,29 +274,29 @@ const latest = getCommitEntries(1)[0];
           A policy document says an AI shouldn't publish unreviewed. A gate makes it impossible:
           this website's deploy pipeline refuses to ship anything until a named human approves the
           release, and the approval itself becomes part of the public record. The same gate
-          pattern governs every Anamata AI employee at every client.
+          pattern governs every Anamata AI colleague at every client.
+          <span class="stamp">HUMAN APPROVED</span>
         </p>
         <h2>The record is the compliance story.</h2>
         <p>
           The EU AI Act asks for transparency (Art. 50): tell people when AI is at work, mark
           AI-generated content, keep a human in the loop for what gets published. Our answer is
-          the operating record — disclosure on every page, every action logged and attributable,
-          every approval named. Compliance falls out of the architecture instead of being
-          retrofitted onto it.
+          the <a href="#ledger">operating record above</a> — disclosure on every page, every action
+          logged and attributable, every approval named. Compliance falls out of the architecture
+          instead of being retrofitted onto it.
         </p>
         <h2>Proven here first.</h2>
         <p>
           This site is the reference implementation: built by AI, gated by a human, publicly
           auditable down to the <a href="https://github.com/EzraAnamata/anamata-ai-website" rel="noopener">last commit</a>.
-          When we bring an AI employee into your organisation, we bring this operating model with
+          When we bring an AI colleague into your organisation, we bring this operating model with
           it — not a promise, a running system.
         </p>
       </div>
 
-      <div class="cta-row">
-        <a class="btn" href="/contact">REQUEST A DEMO</a>
-        <a class="btn ghost" href="/#ledger">READ THE LIVE RECORD</a>
-      </div>
+      <!-- Standard funnel exit (shared CtaBlock). About IS the "more" depth, so
+           no "want to know more?" referral here; the record is linked above. -->
+      <CtaBlock more="none" />
     </section>
   </div>
 </Base>
