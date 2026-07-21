@@ -1,28 +1,31 @@
 ---
 /**
- * Home — THE funnel, as a film (SPEC-website-v2-ia-choreography, scenes 0–004).
+ * Home — THE funnel, as a film (SPEC-website-v2-ia-choreography).
  * The scroll is the funnel; ledger grammar (marginalia numbers, rules, stamps)
  * makes descending the page feel like paging through a record.
  *
- *   0   HERO      — Anna resolving wireframe→human on scroll (AnnaScrub)
- *   001 WHAT      — concrete jobs as DEMO ledger entries, labeled as examples
- *   002 HOW       — channels, couplings, permission rings, the HUMAN APPROVED gate
- *   003 PROOF     — the REAL operating record (src/lib/ledger.mjs), never fabricated
- *   004 EXIT      — configurator teaser → offerte (button-hot), contact (ghost)
+ * S8 (#368, Peter 2026-07-21): the homepage is the "what". The HOW/autonomy
+ * section and the live operating record moved to /about; home is now hero →
+ * what → exit.
+ *
+ *   0    HERO     — Anna resolving wireframe→human on scroll (AnnaScrub)
+ *   H001 WHAT     — concrete jobs as DEMO ledger entries, labeled as examples
+ *   H002 EXIT     — configurator teaser → quote (shared CtaBlock: coral primary,
+ *                   demo ghost, "want to know more?" → About)
  *
  * Non-negotiables: tokens are law; the ledger is never fabricated (scene 001's
  * entries are visibly labeled examples); no prices; §50 transparency present.
  */
 import Base from '../layouts/Base.astro';
 import AnnaScrub from '../components/AnnaScrub.astro';
-import Ledger from '../components/Ledger.astro';
 import TransparencyNotice from '../components/TransparencyNotice.astro';
+import CtaBlock from '../components/CtaBlock.astro';
 import { MODULES } from '../lib/offerte.mjs';
 ---
 
 <Base
   title="Anna — your digital AI assistant, working in Teams today | Anamata.ai"
-  description="Anna is Anamata's AI employee: she handles answers, requests and admin inside Microsoft Teams, bounded by permission rings and a human approval gate. See her work, then see the real operating record of the AI team that runs this site."
+  description="Anna is Anamata's AI colleague: she handles answers, requests and admin inside Microsoft Teams, bounded by permission rings and a human approval gate. See her work, then see the real operating record of the AI team that runs this site."
   condensedNotice={false}
   preloadImage="/anna/anna-split-face.webp"
 >
@@ -37,17 +40,18 @@ import { MODULES } from '../lib/offerte.mjs';
   <!-- ============ 001 · WHAT ANNA DOES ============ -->
   <div class="sheet first-scene">
     <aside class="marginalia">
-      <span class="no">001</span>
+      <span class="no">H001</span>
       <span class="lbl">WHAT ANNA<br />DOES</span>
-      <span class="lbl push">RECORD<br />001</span>
+      <span class="lbl push">RECORD<br />H001</span>
     </aside>
     <main class="content">
-      <span class="kicker">Record 001 · What she does</span>
-      <h2 class="sec-title">The work nobody has time for.</h2>
+      <span class="kicker">Record H001 · What she does</span>
+      <h2 class="sec-title">The work no human should waste time on.</h2>
       <p class="sec-intro">
         Picture the office manager at any mid-sized company — drowning in systems: hours to log,
-        requests to file, a desk to book, an answer buried in some portal. Anna does that work where
-        the team already works, and writes down what she did. A day in Teams looks like this.
+        requests to file, a desk to book, an answer buried in some portal. This is the work around
+        the work, and no one should be spending a day on it. Anna does it where the team already
+        works, and writes down what she did. A day in Teams looks like this.
       </p>
 
       <div class="demo-ledger" aria-label="Illustrative examples — not the live operating record">
@@ -77,99 +81,27 @@ import { MODULES } from '../lib/offerte.mjs';
         </div>
       </div>
       <p class="demo-foot mono">
-        Illustrative examples, not the operating record. The live record — real, unedited — is
-        <a href="#ledger">record 003, below</a>.
+        Illustrative examples, not the operating record. The live, unedited record — how this site
+        itself is built and run — is <a href="/about#ledger">on the record, over on About</a>.
       </p>
     </main>
   </div>
 
-  <!-- ============ 002 · HOW IT WORKS ============ -->
+  <!-- ============ 002 · EXIT: BUILD YOUR ANNA ============ -->
+  <!-- Home is the "what" (Peter, 2026-07-21): the HOW/autonomy section and the
+       live operating record moved to /about. The exit (configure → quote)
+       stays as the funnel's close. -->
   <div class="sheet">
     <aside class="marginalia">
-      <span class="no">002</span>
-      <span class="lbl">HOW IT<br />WORKS</span>
-      <span class="lbl push">RECORD<br />002</span>
-    </aside>
-    <section class="content" aria-label="How it works">
-      <span class="kicker">Record 002 · How it works</span>
-      <h2 class="sec-title">Autonomy with a boundary.</h2>
-      <p class="sec-intro">
-        Anna is useful because she acts on her own — and trustworthy because she can't act
-        everywhere. One assistant, reachable where you already are, bounded by permission rings and
-        a human approval gate.
-      </p>
-
-      <div class="how-rows">
-        <div class="drow">
-          <span class="dk">Channels</span>
-          <div class="dv">
-            Microsoft Teams — live today. Telegram is pluggable; the same Anna sits behind each
-            channel.
-          </div>
-        </div>
-        <div class="drow">
-          <span class="dk">Couplings</span>
-          <div class="dv">
-            MCP couplings into the systems you already run. Loket is the current pilot — modelled on
-            the rekensheet the team keeps by hand today.
-          </div>
-        </div>
-        <div class="drow">
-          <span class="dk">Permission rings</span>
-          <div class="dv">
-            <ul class="ring-oneliner">
-              <li><span class="dot inner" aria-hidden="true"></span> INNER — act &amp; log, on her own</li>
-              <li><span class="dot middle" aria-hidden="true"></span> MIDDLE — propose; a named human approves</li>
-              <li><span class="dot outer" aria-hidden="true"></span> OUTER — never: payments, contracts, hiring</li>
-            </ul>
-          </div>
-        </div>
-        <div class="drow">
-          <span class="dk">The gate</span>
-          <div class="dv">
-            Anything that leaves the boundary passes a person first — and the approval is stamped
-            into the record. <span class="stamp">HUMAN APPROVED</span>
-            <span class="sub-mono">SEE THE RING MODEL → <a href="/about#governance">GOVERNANCE FILE</a></span>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- ============ 003 · PROOF: THE OPERATING RECORD ============ -->
-  <div class="sheet">
-    <aside class="marginalia">
-      <span class="no">003</span>
-      <span class="lbl">PROOF ·<br />OPERATING<br />RECORD</span>
-      <span class="lbl push">RECORD<br />003</span>
-    </aside>
-    <section class="content" aria-label="Proof — the operating record">
-      <span class="kicker">Record 003 · Proof</span>
-      <h2 class="sec-title">After the pitch, the receipts.</h2>
-      <p class="sec-intro">
-        Everything above is a claim until you can check it. This site is run by AI under named human
-        review — and here is that team's live operating record: real commits from the public
-        repository, each one on the record. <a href="/about">See how it works →</a>
-      </p>
-
-      <Ledger limit={6} />
-
-      <TransparencyNotice />
-    </section>
-  </div>
-
-  <!-- ============ 004 · EXIT: BUILD YOUR ANNA ============ -->
-  <div class="sheet">
-    <aside class="marginalia">
-      <span class="no">004</span>
+      <span class="no">H002</span>
       <span class="lbl">BUILD<br />YOUR ANNA</span>
-      <span class="lbl push">RECORD<br />004</span>
+      <span class="lbl push">RECORD<br />H002</span>
     </aside>
     <section class="content" aria-label="Build your Anna">
-      <span class="kicker">Record 004 · Build your Anna</span>
+      <span class="kicker">Record H002 · Build your Anna</span>
       <h2 class="sec-title">Configure the team you want.</h2>
       <p class="sec-intro">
-        Pick the modules that fit, and file an offerte request — a person reads it and comes back
+        Pick the modules that fit, and file a quote request — a person reads it and comes back
         with a proposal on your terms. Phased rollout, no numbers here: you configure, we quote.
       </p>
 
@@ -184,13 +116,17 @@ import { MODULES } from '../lib/offerte.mjs';
         ))}
       </div>
 
-      <div class="cta-row">
-        <a class="btn hot" href="/configurator">VRAAG OFFERTE AAN →</a>
-        <a class="btn ghost" href="/contact">OR FILE A REQUEST</a>
-      </div>
+      <!-- Standard funnel exit — shared CtaBlock (S8 CTA consistency). The
+           "want to know more?" referral routes the not-yet-ready to /about,
+           where the HOW/proof now live (Peter, funnel-tied referral). -->
+      <CtaBlock more="about" />
       <!-- The techie "tech@anamata.ai" hook lives once, in the footer's Row A on
            every page (Base.astro) — not repeated here, where it sat directly
            above its footer twin at the page bottom (S6 dedupe). -->
+
+      <!-- §50 notice: home carries the full transparency notice (the ledger it
+           used to sit beside now lives on /about, so the notice links there). -->
+      <TransparencyNotice />
     </section>
   </div>
 </Base>

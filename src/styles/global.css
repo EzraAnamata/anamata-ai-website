@@ -56,7 +56,12 @@ a { color: var(--primary); }
 .btn:hover { background: var(--primary); border-color: var(--primary); }
 .btn.ghost { background: transparent; color: var(--primary); border-color: var(--primary); }
 .btn.ghost:hover { background: rgba(var(--primary-rgb), 0.07); }
-/* button-hot: the one coral ask (offerte/contact), max one per viewport */
+/* the "want to know more?" referral under a CTA row — subordinate to the ask */
+.cta-more { margin-top: 14px; font-size: 12.5px; color: var(--text-muted); letter-spacing: 0.02em; }
+.cta-more a { color: var(--primary); }
+
+/* button-hot: the one coral ask (request a quote / a page's primary action),
+   max one per viewport */
 .btn.hot {
   background: var(--coral); border-color: var(--coral); color: #FFFFFF;
   font-weight: 700; font-size: 18px; padding: 14px 28px; letter-spacing: 0.04em;
@@ -81,7 +86,7 @@ a { color: var(--primary); }
 /* ---------- display type ---------- */
 .hero h1 {
   font-family: var(--font-display); font-weight: 200;
-  /* sized so the longest line ("run by AI employees") stays on one line in the
+  /* sized so the longest line ("run by AI colleagues") stays on one line in the
      content column — the three .l blocks below force the 3-line reading.
      Interim: S3 rebuilds this hero around the Anna scrub. */
   font-size: clamp(2rem, 5.4vw, 4.6rem);

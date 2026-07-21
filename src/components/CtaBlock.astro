@@ -1,0 +1,32 @@
+---
+/**
+ * CtaBlock — the site's single standard funnel exit (S8, #368 CTA consistency).
+ *
+ * Dual-path CTA: one dominant coral primary (request a quote → configurator),
+ * a subordinate ghost demo ask, and a low-key "want to know more?" referral for
+ * visitors not yet ready to buy. Coral stays max one per viewport (design law,
+ * global.css). The referral target swaps per page so it never points at the
+ * page it sits on — 'about' routes to the deep page, 'record' to the live
+ * operating record, 'none' drops the line (used where the page IS the depth).
+ *
+ * English only — the site is an English page (no "VRAAG OFFERTE AAN").
+ */
+interface Props {
+  more?: 'about' | 'record' | 'none';
+}
+const { more = 'about' } = Astro.props;
+---
+<div class="cta-row">
+  <a class="btn hot" href="/configurator">REQUEST A QUOTE →</a>
+  <a class="btn ghost" href="/contact">REQUEST A DEMO</a>
+</div>
+{more !== 'none' && (
+  <p class="cta-more mono">
+    Want to know more?{' '}
+    {more === 'about' ? (
+      <a href="/about">Read the full story on About →</a>
+    ) : (
+      <a href="#ledger">Read the live operating record →</a>
+    )}
+  </p>
+)}

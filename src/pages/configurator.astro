@@ -1,8 +1,8 @@
 ---
 /**
- * Configurator — the order form. A gefaseerd webshop with no prices: you pick
+ * Configurator — the order form. A phased webshop with no prices: you pick
  * modules (Anna · CV-tool · couplings), the picks mirror live into an "order
- * record" ledger column, and the exit files an offerte request. Submission
+ * record" ledger column, and the exit files a quote request. Submission
  * reuses the contact page's mechanism — a prefilled mailto:, nothing leaves the
  * origin, no backend. Confirmation renders as a ledger entry.
  */
@@ -11,8 +11,8 @@ import { MODULES, FIELD_MAX, OFFERTE_EMAIL } from '../lib/offerte.mjs';
 ---
 
 <Base
-  title="Configure your AI team — request an offerte | Anamata.ai"
-  description="Pick the modules you want — Anna, the CV-tool, couplings into your stack — and file an offerte request. Phased rollout, no prices: you configure, we quote."
+  title="Configure your AI team — request a quote | Anamata.ai"
+  description="Pick the modules you want — Anna, the CV-tool, couplings into your stack — and file a quote request. Phased rollout, no prices: you configure, we quote."
 >
   <div class="sheet">
     <aside class="marginalia">
@@ -24,7 +24,7 @@ import { MODULES, FIELD_MAX, OFFERTE_EMAIL } from '../lib/offerte.mjs';
       <h1 class="sec-title">Configure your AI team.</h1>
       <p class="sec-intro">
         Select the modules you want. Every pick lands in the order record on the right. When it
-        looks right, file an offerte request — a person reads it and comes back with a proposal
+        looks right, file a quote request — a person reads it and comes back with a proposal
         on your terms. No numbers here: this is a configurator, not a checkout.
       </p>
 
@@ -63,7 +63,7 @@ import { MODULES, FIELD_MAX, OFFERTE_EMAIL } from '../lib/offerte.mjs';
         </aside>
       </div>
 
-      <form class="offerte-form" id="offerte-form" aria-label="Request an offerte">
+      <form class="offerte-form" id="offerte-form" aria-label="Request a quote">
         <div class="frow">
           <label for="f-name">Name</label>
           <input id="f-name" name="name" type="text" required autocomplete="name"
@@ -85,15 +85,15 @@ import { MODULES, FIELD_MAX, OFFERTE_EMAIL } from '../lib/offerte.mjs';
             placeholder="Anything we should know — team size, timeline, the stack you run."></textarea>
         </div>
         <div class="form-actions">
-          <button class="btn hot" type="submit">VRAAG OFFERTE AAN →</button>
+          <button class="btn hot" type="submit">REQUEST A QUOTE →</button>
         </div>
       </form>
 
       <div class="offerte-confirmation ledger" id="filed" aria-live="polite">
-        <div class="ledger-head"><span class="t">OFFERTE — FILED FROM THIS PAGE</span></div>
+        <div class="ledger-head"><span class="t">QUOTE — FILED FROM THIS PAGE</span></div>
         <div class="entry on">
           <span class="ts" id="filed-ts"></span>
-          <span class="act">offerte request drafted — your email client opens with the filing;
+          <span class="act">quote request drafted — your email client opens with the filing;
             send it and it is in our record</span>
           <span class="stamp-cell"><span class="stamp">FILED</span></span>
         </div>

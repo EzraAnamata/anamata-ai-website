@@ -105,7 +105,7 @@ const overlay = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${
   ${textPath(poppins200, 'your digital AI assistant', TEXT_X, 392, 54, { fill: INK })}
 
   <!-- supporting line (Poppins 600) -->
-  ${textPath(poppins600, 'An AI employee in Microsoft Teams —', TEXT_X, 452, 23, { fill: MUTED })}
+  ${textPath(poppins600, 'An AI colleague in Microsoft Teams —', TEXT_X, 452, 23, { fill: MUTED })}
   ${textPath(poppins600, 'bounded, human-approved, on the record.', TEXT_X, 484, 23, { fill: MUTED })}
 
   <!-- record line (mono) -->

@@ -4,7 +4,7 @@
  * Single source of truth for BOTH the page (server-render + client script) and
  * launch-checks. Submission reuses the contact page's mechanism: a prefilled
  * mailto: opens the visitor's own mail client — nothing leaves the origin, no
- * backend, no third-party form service. NO prices anywhere (gefaseerd webshop:
+ * backend, no third-party form service. NO prices anywhere (phased webshop:
  * you configure, we quote).
  */
 
@@ -26,7 +26,7 @@ export const MODULES = [
     id: 'anna',
     name: 'Anna',
     kicker: 'AI-EMPLOYEE',
-    spec: 'The AI employee working inside Microsoft Teams — a permission ring around what she may touch and a human approval gate on anything that leaves it.',
+    spec: 'The AI colleague working inside Microsoft Teams — a permission ring around what she may touch and a human approval gate on anything that leaves it.',
     fields: [
       ['runs in', 'Microsoft Teams'],
       ['boundary', 'permission ring'],
@@ -62,7 +62,7 @@ export const MODULES = [
 export function buildOfferteBody({ name, org, email, note, modules }) {
   const picked = MODULES.filter((m) => modules.includes(m.id));
   const lines = [
-    'Offerte request filed from anamata.ai/configurator',
+    'Quote request filed from anamata.ai/configurator',
     '',
     'Modules:',
     ...(picked.length ? picked.map((m) => `- ${m.name}`) : ['- (no module selected)']),
@@ -77,7 +77,7 @@ export function buildOfferteBody({ name, org, email, note, modules }) {
   return lines.join('\n');
 }
 
-export const OFFERTE_SUBJECT = 'Offerte request via anamata.ai';
+export const OFFERTE_SUBJECT = 'Quote request via anamata.ai';
 
 /** Build the full mailto: href for a picked set. */
 export function buildOfferteHref(data) {

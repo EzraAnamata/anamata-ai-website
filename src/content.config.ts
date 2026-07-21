@@ -13,7 +13,7 @@ const insights = defineCollection({
     published: z.coerce.date(),
     draftedBy: z.string(),
     approvedBy: z.string(),
-    record: z.string(), // record number in the continuous site record, e.g. "005"
+    record: z.string(), // per-page record number with a page prefix, e.g. "I001"
   }),
 });
 
