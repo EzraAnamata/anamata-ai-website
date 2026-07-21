@@ -858,3 +858,76 @@ describe('S6 — launch QA', () => {
     });
   }
 });
+
+describe('S7 — delta fixes (persona/channel scrub, coral softening)', () => {
+  const scannable = () => fg.sync('**/*.{html,js,mjs,css,xml,txt,svg,json}', { cwd: DIST });
+
+  // #371 — no real company name in the personas
+  it('the built site names no real company (Albert Heijn) anywhere', () => {
+    const files = scannable();
+    expect(files.length).toBeGreaterThan(0);
+    for (const rel of files) {
+      const content = readFileSync(path.join(DIST, rel), 'utf8');
+      expect(content, `${rel}: leaks the Albert Heijn reference`).not.toMatch(
+        /albert\s*heijn/i
+      );
+    }
+  });
+
+  it('the persona intro keeps its rhythm but stays generic', () => {
+    const { document } = page(PAGES.home);
+    const intro = document.querySelector('.first-scene .sec-intro')?.textContent ?? '';
+    expect(intro, 'persona intro missing its "drowning in systems" beat').toMatch(
+      /drowning in systems/i
+    );
+    expect(intro, 'persona intro must not name a real company').not.toMatch(/albert\s*heijn/i);
+  });
+
+  // #372 — WhatsApp dropped from every channel mention, no Slack replacement
+  it('the built site mentions no WhatsApp channel anywhere', () => {
+    const files = scannable();
+    for (const rel of files) {
+      const content = readFileSync(path.join(DIST, rel), 'utf8');
+      expect(content, `${rel}: leaks a WhatsApp channel mention`).not.toMatch(/whatsapp/i);
+    }
+  });
+
+  it('the channels line keeps Teams (live) and Telegram, drops WhatsApp and adds no Slack', () => {
+    const { document } = page(PAGES.home);
+    const channelsRow = [...document.querySelectorAll('.how-rows .drow')].find((r) =>
+      /channels/i.test(r.querySelector('.dk')?.textContent ?? '')
+    );
+    expect(channelsRow, 'channels row missing').toBeTruthy();
+    const text = channelsRow.textContent;
+    expect(text, 'Microsoft Teams should stay').toMatch(/Microsoft Teams/);
+    expect(text, 'Telegram may stay').toMatch(/Telegram/);
+    expect(text, 'WhatsApp must be gone').not.toMatch(/whatsapp/i);
+    expect(text, 'Slack must not be added as a replacement').not.toMatch(/slack/i);
+  });
+
+  // #370 — softened coral CTA fill still clears the white-on-coral guardrail
+  it('the softened coral fill no longer ships the loud original and keeps AA on white', () => {
+    const srgb = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+    const luminance = (hex) => {
+      const h = hex.replace('#', '');
+      const [r, g, b] = [0, 2, 4].map((i) => srgb(parseInt(h.slice(i, i + 2), 16) / 255));
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (a, b) => {
+      const l1 = luminance(a);
+      const l2 = luminance(b);
+      return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    };
+    // the loud launch coral is retired as the CTA fill
+    expect(TOKENS.colors.secondary.toUpperCase()).not.toBe('#E15857');
+    // white-on-coral still clears AA for the ≥18px bold button label (large text/UI, 3:1)
+    expect(ratio(TOKENS.colors.secondary, '#FFFFFF')).toBeGreaterThanOrEqual(3.0);
+    // and the loud original is gone from the shipped CSS
+    const css = fg
+      .sync('**/*.css', { cwd: DIST })
+      .map((f) => readFileSync(path.join(DIST, f), 'utf8'))
+      .join('')
+      .toUpperCase();
+    expect(css, 'loud original coral #E15857 still in shipped CSS').not.toContain('#E15857');
+  });
+});
