@@ -124,8 +124,9 @@ describe('the operating record is real and crawlable', () => {
     }
   });
 
-  it('home ledger entries are real git commits from this repo (never fabricated)', () => {
-    const { document } = page(PAGES.home);
+  it('about ledger entries are real git commits from this repo (never fabricated)', () => {
+    // S8 (#368): the live operating record moved off home to /about.
+    const { document } = page(PAGES.about);
     const entries = [...document.querySelectorAll('.ledger .entry')];
     expect(entries.length).toBeGreaterThanOrEqual(3);
 
@@ -146,7 +147,7 @@ describe('the operating record is real and crawlable', () => {
   });
 
   it('ledger contains no demo/fabricated data from the checkpoint', () => {
-    const { html } = page(PAGES.home);
+    const { html } = page(PAGES.about);
     // sentinels from the checkpoint's demo ledger — must never ship
     for (const demo of ['research-agent', 'build #142', '“keyword brief', 'keyword brief:']) {
       expect(html, `fabricated checkpoint data leaked: ${demo}`).not.toContain(demo);
@@ -164,7 +165,7 @@ describe('the operating record is real and crawlable', () => {
       .split('\n')
       .filter(Boolean);
     if (ottoCommits.length === 0) return;
-    const { html, document } = page(PAGES.home);
+    const { html, document } = page(PAGES.about);
     const ledgerText = document.querySelector('.ledger').textContent;
     // if any of the 6 newest ledger entries is Otto's, the AI marker must render
     if (ottoCommits.some((h) => ledgerText.includes(h))) {
@@ -173,7 +174,7 @@ describe('the operating record is real and crawlable', () => {
   });
 
   it('ledger is server-rendered text, present without JavaScript', () => {
-    const { document } = page(PAGES.home);
+    const { document } = page(PAGES.about);
     const entries = document.querySelectorAll('.ledger .entry');
     for (const e of entries) {
       expect(e.textContent.trim().length).toBeGreaterThan(10);
@@ -434,10 +435,12 @@ describe('S2 — AnnaScrub component (fallbacks + CLS reservation)', () => {
 });
 
 describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
-  it('scenes are numbered 001–004 in order in the marginalia', () => {
+  it('scenes are numbered H001–H002 in order in the marginalia (S8: home is the "what")', () => {
+    // S8 (#368): HOW (autonomy) and PROOF (ledger) moved to /about; home is
+    // hero → what (H001) → exit (H002). Per-page prefixed numbering (Ezra 2026-07-21).
     const { document } = page(PAGES.home);
     const nums = [...document.querySelectorAll('.marginalia .no')].map((n) => n.textContent.trim());
-    expect(nums, 'scene marginalia numbering/order').toEqual(['001', '002', '003', '004']);
+    expect(nums, 'scene marginalia numbering/order').toEqual(['H001', 'H002']);
   });
 
   it('scene 0 hero: mono kicker + a text H1 (LCP-eligible), no CTA buttons in the scrub stage', () => {
@@ -474,17 +477,18 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
     ).toBe(0);
   });
 
-  it('scene 002: HOW IT WORKS carries the HUMAN APPROVED stamp motif', () => {
-    const { html } = page(PAGES.home);
-    expect(html, 'HUMAN APPROVED stamp missing').toMatch(/HUMAN APPROVED/i);
+  it('S8: the HOW/autonomy section and the live ledger are gone from home', () => {
+    const { document } = page(PAGES.home);
+    expect(document.querySelector('.how-rows'), 'HOW section must move off home').toBeFalsy();
+    expect(document.querySelector('.ledger .entry'), 'live ledger must move off home').toBeFalsy();
   });
 
-  it('scene 003: proof is the REAL ledger and links /about', () => {
+  it('S8: home still routes to the record on /about (the what points at the proof)', () => {
     const { document } = page(PAGES.home);
-    expect(document.querySelector('.ledger .entry'), 'real ledger missing from proof').toBeTruthy();
+    const main = document.querySelector('main');
     expect(
-      document.querySelectorAll('a[href^="/about"]').length,
-      'scene 003 must link /about'
+      main.querySelectorAll('a[href^="/about"]').length,
+      'home must link to /about where the record now lives'
     ).toBeGreaterThan(0);
   });
 
@@ -493,7 +497,7 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
     const hot = document.querySelector('a.btn.hot');
     expect(hot, 'button-hot offerte CTA missing').toBeTruthy();
     expect(hot.getAttribute('href'), 'hot CTA must link the configurator').toBe('/configurator');
-    expect(hot.textContent, 'hot CTA label').toMatch(/vraag offerte aan/i);
+    expect(hot.textContent, 'hot CTA label').toMatch(/request a quote/i);
     const ghost = document.querySelector('a.btn.ghost[href="/contact"]');
     expect(ghost, 'ghost contact CTA missing').toBeTruthy();
     expect(html, 'tech@ lead line missing').toContain('tech@anamata.ai');
@@ -508,12 +512,12 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
     expect(document.querySelectorAll('a.btn.hot, button.hot').length).toBe(1);
   });
 
-  it('nav CTA is the offerte ask (VRAAG OFFERTE AAN → /configurator)', () => {
+  it('nav CTA is the quote ask (REQUEST A QUOTE → /configurator)', () => {
     const { document } = page(PAGES.home);
     const cta = document.querySelector('header nav a.btn');
     expect(cta, 'nav CTA missing').toBeTruthy();
     expect(cta.getAttribute('href'), 'nav CTA must link the configurator').toBe('/configurator');
-    expect(cta.textContent, 'nav CTA label').toMatch(/vraag offerte aan/i);
+    expect(cta.textContent, 'nav CTA label').toMatch(/request a quote/i);
   });
 
   it('the persistent record strip is present on the home film', () => {
@@ -573,7 +577,7 @@ describe('configurator (/configurator) — order form in ledger grammar (S4)', (
     }
     const submit = form.querySelector('button[type="submit"]');
     expect(submit, 'submit button missing').toBeTruthy();
-    expect(submit.textContent).toMatch(/vraag offerte aan/i);
+    expect(submit.textContent).toMatch(/request a quote/i);
     expect(submit.className, 'submit must use the button-hot style').toMatch(/\bhot\b/);
   });
 
@@ -646,7 +650,7 @@ describe('deploy approval gate (reused later by AI employee #1)', () => {
 describe('S5 — /about consolidation', () => {
   it('about states anamata.ai is part of Anamata', () => {
     const { html } = page(PAGES.about);
-    expect(html).toContain('onderdeel van Anamata');
+    expect(html).toContain('part of Anamata');
   });
 
   it('about explains the site is AI-run — the CIO/CTO second-look page', () => {
@@ -698,7 +702,7 @@ describe('S5 — nav and footer shape', () => {
     expect(hrefs, 'Approach link not removed from header').not.toContain('/approach');
     const cta = nav.querySelector('a.btn');
     // S3: the nav CTA is now the offerte ask, not REQUEST A DEMO.
-    expect(cta?.textContent, 'nav CTA should be the offerte ask').toMatch(/vraag offerte aan/i);
+    expect(cta?.textContent, 'nav CTA should be the quote ask').toMatch(/request a quote/i);
     expect(cta?.getAttribute('href'), 'nav CTA must link the configurator').toBe('/configurator');
   });
 
@@ -892,15 +896,17 @@ describe('S7 — delta fixes (persona/channel scrub, coral softening)', () => {
     }
   });
 
-  it('the channels line keeps Teams (live) and Telegram, drops WhatsApp and adds no Slack', () => {
-    const { document } = page(PAGES.home);
-    const channelsRow = [...document.querySelectorAll('.how-rows .drow')].find((r) =>
+  it('the channels line (now on /about) keeps Teams (live) and Telegram, drops WhatsApp and adds no Slack', () => {
+    // S8 (#368): channels/couplings moved off home into the Anna dossier on
+    // /about; Telegram is softened (Peter 2026-07-21: Teams first, no Slack).
+    const { document } = page(PAGES.about);
+    const channelsRow = [...document.querySelectorAll('.dossier-rows .drow')].find((r) =>
       /channels/i.test(r.querySelector('.dk')?.textContent ?? '')
     );
     expect(channelsRow, 'channels row missing').toBeTruthy();
     const text = channelsRow.textContent;
     expect(text, 'Microsoft Teams should stay').toMatch(/Microsoft Teams/);
-    expect(text, 'Telegram may stay').toMatch(/Telegram/);
+    expect(text, 'Telegram may stay (softened)').toMatch(/Telegram/);
     expect(text, 'WhatsApp must be gone').not.toMatch(/whatsapp/i);
     expect(text, 'Slack must not be added as a replacement').not.toMatch(/slack/i);
   });
@@ -929,5 +935,88 @@ describe('S7 — delta fixes (persona/channel scrub, coral softening)', () => {
       .join('')
       .toUpperCase();
     expect(css, 'loud original coral #E15857 still in shipped CSS').not.toContain('#E15857');
+  });
+});
+
+describe('S8 — register ("AI colleague") + structure (home is the "what")', () => {
+  // #367 (Peter 2026-07-21): the register is "AI colleague" — NOT "AI employee",
+  // NOT "AI PA". The ledger conceit ("EMPLOYEE #001", personnel-file stamps) is a
+  // deliberate design element and is intentionally NOT covered by the prose guard
+  // below (it matches "EMPLOYEE"/"AI-EMPLOYEE", never the prose "AI employee").
+  const prose = () => fg.sync('**/*.{html,js,mjs,xml,txt}', { cwd: DIST });
+
+  it('the register "AI colleague" is present in the shipped prose', () => {
+    const files = prose();
+    const all = files.map((f) => readFileSync(path.join(DIST, f), 'utf8')).join('');
+    expect(all, 'register "AI colleague" not found in built site').toMatch(/AI colleague/i);
+  });
+
+  it('the old "AI employee" prose register is gone everywhere (conceit stamps excepted)', () => {
+    for (const rel of prose()) {
+      const content = readFileSync(path.join(DIST, rel), 'utf8');
+      // matches the prose register only ("AI employee"); the ledger conceit uses
+      // "EMPLOYEE #001" / "AI-EMPLOYEE" (no bare "AI employee") and is untouched.
+      expect(content, `${rel}: stale "AI employee" prose register`).not.toMatch(/\bAI employee/i);
+    }
+  });
+
+  it('the section-001 heading lands Peter\'s point — work nobody should spend time on', () => {
+    const { document } = page(PAGES.home);
+    const heading = document.querySelector('.first-scene .sec-title')?.textContent ?? '';
+    // accepts the live candidate family (V1/V2/V3) while Peter/Ezra finalize wording
+    expect(heading, 'section-001 heading missing the "work nobody should ... time on" family').toMatch(
+      /should (spend|waste) time on|manual work/i
+    );
+  });
+
+  it('the HUMAN APPROVED stamp motif now lives on /about (moved from home)', () => {
+    const { html } = page(PAGES.about);
+    expect(html, 'HUMAN APPROVED stamp missing from /about').toMatch(/HUMAN APPROVED/i);
+  });
+
+  it('the live "commit widget" ledger now renders on /about', () => {
+    const { document } = page(PAGES.about);
+    expect(
+      document.querySelector('.ledger .entry'),
+      'the operating-record ledger must render on /about'
+    ).toBeTruthy();
+  });
+
+  it('About uses per-page prefixed numbering A001–A004 in order', () => {
+    // Numbering model (Ezra 2026-07-21): per-page, page-letter prefix, 3-digit.
+    const { document } = page(PAGES.about);
+    const nums = [...document.querySelectorAll('.marginalia .no')].map((n) => n.textContent.trim());
+    expect(nums, 'About marginalia numbering/order').toEqual(['A001', 'A002', 'A003', 'A004']);
+  });
+
+  it('About retains Anna\'s end-user disclosure claim through the dossier collapse', () => {
+    // F2: collapsing Permission/Oversight/Disclosure must NOT lose the product-
+    // level Art-50 claim that Anna identifies herself to end users.
+    // whole-page text (the dossier is a <section>, not <main>); normalize the
+    // source line-wrap between "first" and "interaction"
+    const text = page(PAGES.about).document.body.textContent.replace(/\s+/g, ' ');
+    expect(text, 'end-user disclosure ("first interaction") missing').toMatch(/first interaction/i);
+    expect(text, 'end-user disclosure must cite Art. 50').toMatch(/art\.?\s*50/i);
+  });
+
+  it('the primary CTA is English site-wide — no "VRAAG OFFERTE AAN" anywhere', () => {
+    const files = fg.sync('**/*.{html,js,mjs}', { cwd: DIST });
+    for (const rel of files) {
+      const content = readFileSync(path.join(DIST, rel), 'utf8');
+      expect(content, `${rel}: Dutch CTA "VRAAG OFFERTE AAN" still shipped`).not.toMatch(
+        /vraag offerte aan/i
+      );
+    }
+  });
+
+  it('the shared CtaBlock exit renders the dual-path ask on the content pages', () => {
+    for (const rel of [PAGES.home, PAGES.about, PAGES.insights]) {
+      const { document } = page(rel);
+      const hot = document.querySelector('a.btn.hot[href="/configurator"]');
+      expect(hot, `${rel}: coral quote CTA missing`).toBeTruthy();
+      expect(hot.textContent, `${rel}: quote CTA label`).toMatch(/request a quote/i);
+      const demo = document.querySelector('a.btn.ghost[href="/contact"]');
+      expect(demo, `${rel}: ghost demo CTA missing`).toBeTruthy();
+    }
   });
 });
