@@ -72,7 +72,7 @@
       "error": "#E15857",
       "info": "#40A2F6"
     },
-    "_comment": "Brand mapping (design/bas-design-system): text=navy-900, primary=navy-700 (the logo's Ai blue), secondary=coral (CTA only), accent=sky-200 (non-text highlight only — fails contrast as text on white), semantic.success=darkened brand teal for stamp/small text (true teal #00B3A6 allowed as fill/dot), semantic.info=sky-400. Provisional pending QUESTIONS-design-system-2026-07-16.md (internal repo)."
+    "_comment": "Brand mapping (design/bas-design-system): text=navy-900, primary=navy-700 (the logo's Ai blue), secondary=coral (CTA only), accent=sky-200 (non-text highlight only — fails contrast as text on white), semantic.success=darkened brand teal for stamp/small text (true teal #00B3A6 allowed as fill/dot), semantic.info=sky-400. Confirmed by Bas 2026-07-21 (QUESTIONS-design-system-2026-07-16.md, internal repo) — incl. Q4 guardrail: sky is never a flat accent on white (on white it appears only inside the wireframe artwork; flat sky lives on navy surfaces, e.g. the record strip). Only Q10 (DS-export licensing) remains open."
   },
   "typography": {
     "fontFamily": {
@@ -98,7 +98,7 @@
       "display-xl": "12rem"
     },
     "weightPairing": {
-      "display": "As shipped (S1, Ezra-approved visually): the hero H1 is Poppins 200 (ExtraLight) UPPERCASE tracked 0.04em (clamp(3.2rem, 7.2vw, 6.4rem), line-height 1.05); section and subpage headings are Poppins 300 (Light) SENTENCE-CASE (clamp up to 4.5rem). The DS voice prescribes uppercase display throughout — sentence-case section headings are the provisional shipped choice (one-line-reversible: drop text-transform / raise weight), pending Bas Q2 (vs .eu's bold-700). One accent word may carry primary color.",
+      "display": "As shipped (S1, Ezra-approved visually): the hero H1 is Poppins 200 (ExtraLight) UPPERCASE tracked 0.04em (clamp(3.2rem, 7.2vw, 6.4rem), line-height 1.05); section and subpage headings are Poppins 300 (Light) SENTENCE-CASE (clamp up to 4.5rem). Bas delegated the web heading voice 2026-07-21 ('you choose', Q2) — this shipped split is now canonical, no longer provisional. One accent word may carry primary color.",
       "emphasis": "Poppins 600 (card names, kickers); mono 600 for stamps, buttons and mono labels"
     },
     "lineHeight": {
