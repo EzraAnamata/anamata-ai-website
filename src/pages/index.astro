@@ -15,6 +15,11 @@
  *                   connections, technical depth on /about (S9, spec §1.4)
  *   H003 EXIT     — configurator teaser → quote (shared CtaBlock: coral primary,
  *                   demo ghost, "want to know more?" → About)
+ *   H004 MEET     — Meet-Anna form (S10a §1.5): the early-phase funnel path, a
+ *                   short-intro ask via the SHARED RequestForm. Its submit is
+ *                   secondary (ghost) so home keeps exactly one coral (§1.6).
+ *                   Numbering is gapless as-built; rebased on S9's FITS strip,
+ *                   the order is WHAT/FITS/EXIT/MEET → H001/H002/H003/H004.
  *
  * Non-negotiables: tokens are law; the ledger is never fabricated (scene 001's
  * entries are visibly labeled examples); no prices; §50 transparency present.
@@ -23,7 +28,11 @@ import Base from '../layouts/Base.astro';
 import AnnaScrub from '../components/AnnaScrub.astro';
 import TransparencyNotice from '../components/TransparencyNotice.astro';
 import CtaBlock from '../components/CtaBlock.astro';
+import RequestForm from '../components/RequestForm.astro';
 import { MODULES } from '../lib/offerte.mjs';
+
+// The Meet-Anna form files to the same channel as /contact (§1.5): info@ only.
+const CONTACT_EMAIL = 'info@anamata.ai';
 ---
 
 <Base
@@ -90,6 +99,12 @@ import { MODULES } from '../lib/offerte.mjs';
         Illustrative examples, not the operating record. The live, unedited record — how this site
         itself is built and run — is <a href="/about#ledger">on the record, over on About</a>.
       </p>
+
+      <!-- Early-phase funnel entry (§1.6): ghost, never coral — home's one coral
+           is the CtaBlock quote until S10b. Jumps to the Meet-Anna form (H004). -->
+      <div class="cta-row">
+        <a class="btn ghost" href="#meet-anna">Explore Anna for your team →</a>
+      </div>
     </main>
   </div>
 
@@ -174,9 +189,34 @@ import { MODULES } from '../lib/offerte.mjs';
       <!-- The techie "tech@anamata.ai" hook lives once, in the footer's Row A on
            every page (Base.astro) — not repeated here, where it sat directly
            above its footer twin at the page bottom (S6 dedupe). -->
+    </section>
+  </div>
 
-      <!-- §50 notice: home carries the full transparency notice (the ledger it
-           used to sit beside now lives on /about, so the notice links there). -->
+  <!-- ============ 004 · MEET ANNA (§1.5 — Meet-Anna form) ============ -->
+  <!-- The early-phase funnel path (§1.6): most visitors aren't ready to buy, so
+       the cheap ask is a short intro call. Uses the SHARED RequestForm (one
+       implementation with /contact, extracted in S10a step 0) with a secondary
+       (ghost) submit — a visitor already in the form needs no coral pull, and
+       home's one coral is the CtaBlock quote (§1.6). Files to info@ via the
+       existing mailto handler; no confirmation ledger here (the live-record
+       grammar stays on /about). -->
+  <div class="sheet" id="meet-anna">
+    <aside class="marginalia">
+      <span class="no">H004</span>
+      <span class="lbl">MEET<br />ANNA</span>
+      <span class="lbl push">RECORD<br />H004</span>
+    </aside>
+    <section class="content" aria-label="Meet Anna">
+      <span class="kicker">Record H004 · Meet Anna</span>
+      <h2 class="sec-title">Meet Anna</h2>
+      <p class="sec-intro">
+        Book a short introduction and explore what Anna could take off your team's hands.
+      </p>
+
+      <RequestForm CONTACT_EMAIL={CONTACT_EMAIL} submit="secondary" showConfirmation={false} />
+
+      <!-- §50 notice: home carries the full transparency notice at the page end
+           (the ledger it used to sit beside now lives on /about). -->
       <TransparencyNotice />
     </section>
   </div>
