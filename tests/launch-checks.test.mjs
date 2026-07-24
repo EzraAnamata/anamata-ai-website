@@ -435,12 +435,14 @@ describe('S2 — AnnaScrub component (fallbacks + CLS reservation)', () => {
 });
 
 describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
-  it('scenes are numbered H001–H002 in order in the marginalia (S8: home is the "what")', () => {
-    // S8 (#368): HOW (autonomy) and PROOF (ledger) moved to /about; home is
-    // hero → what (H001) → exit (H002). Per-page prefixed numbering (Ezra 2026-07-21).
+  it('scenes are numbered H001–H003 in order in the marginalia (S9: WHAT → FITS → EXIT)', () => {
+    // S8 (#368): HOW (autonomy) and PROOF (ledger) moved to /about. S9 (spec
+    // §1.4/§4.1): a FITS strip lands between WHAT and EXIT, so the gapless
+    // as-built sequence is hero → what (H001) → fits (H002) → exit (H003).
+    // Per-page prefixed numbering (Ezra 2026-07-21).
     const { document } = page(PAGES.home);
     const nums = [...document.querySelectorAll('.marginalia .no')].map((n) => n.textContent.trim());
-    expect(nums, 'scene marginalia numbering/order').toEqual(['H001', 'H002']);
+    expect(nums, 'scene marginalia numbering/order').toEqual(['H001', 'H002', 'H003']);
   });
 
   it('scene 0 hero: mono kicker + a text H1 (LCP-eligible), no CTA buttons in the scrub stage', () => {
@@ -1018,5 +1020,67 @@ describe('S8 — register ("AI colleague") + structure (home is the "what")', ()
       const demo = document.querySelector('a.btn.ghost[href="/contact"]');
       expect(demo, `${rel}: ghost demo CTA missing`).toBeTruthy();
     }
+  });
+});
+
+describe('S9 — WHAT pass (question→action pairs + FITS strip)', () => {
+  // Spec §1.2: each demo-entry gains the triggering employee question (mono,
+  // quoted) AHEAD of the logged action — merge, never replace, the ledger conceit.
+  it('every example pairs a quoted employee question ahead of the logged action', () => {
+    const { document } = page(PAGES.home);
+    const entries = [...document.querySelectorAll('.demo-ledger .demo-entry')];
+    expect(entries.length, 'need ≥3 example pairs (spec §1.2 AC)').toBeGreaterThanOrEqual(3);
+    for (const e of entries) {
+      const kids = [...e.children];
+      const ask = e.querySelector('.ask');
+      const act = e.querySelector('.act');
+      expect(ask, 'each entry needs the triggering employee question').toBeTruthy();
+      expect(act, 'each entry keeps the logged action').toBeTruthy();
+      // quoted (straight or curly) and rendered mono
+      expect(ask.textContent.trim(), 'question must be quoted').toMatch(/^["“].+["”]$/);
+      expect(ask.className, 'question must be mono').toMatch(/\bmono\b/);
+      // the question must come AHEAD of the action
+      expect(kids.indexOf(ask) < kids.indexOf(act), 'question must precede the action').toBe(true);
+    }
+  });
+
+  // Spec §1.2: DEMO labeling stays exactly as shipped (record-is-never-fabricated).
+  it('DEMO labeling survives the pairs — banner + per-entry EXAMPLE stamps intact', () => {
+    const { document } = page(PAGES.home);
+    const demo = document.querySelector('.demo-ledger');
+    expect(demo.getAttribute('aria-label'), 'ledger still framed as illustrative').toMatch(
+      /not the live/i
+    );
+    expect(demo.querySelector('.demo-head .warn')?.textContent, 'DEMO warning banner').toMatch(
+      /DEMO/
+    );
+    const entries = [...demo.querySelectorAll('.demo-entry')];
+    const tags = [...demo.querySelectorAll('.demo-entry .tag')];
+    expect(tags.length, 'every entry keeps its EXAMPLE stamp').toBe(entries.length);
+    for (const t of tags) expect(t.textContent, 'stamp reads EXAMPLE').toMatch(/example/i);
+  });
+
+  // Spec §1.4: the words "MCP" and "Slack" must NOT appear anywhere on home.
+  it('home names no channel/connector jargon — no "MCP", no "Slack"', () => {
+    const { html } = page(PAGES.home);
+    expect(html, 'home must not name MCP (koppelbaar in plain English only)').not.toMatch(/\bMCP\b/);
+    expect(html, 'home must not name Slack (Teams-only, overruled — Peter §2)').not.toMatch(
+      /slack/i
+    );
+  });
+
+  // Spec §1.4: one compact FITS strip — Teams today, connectors as koppelbaar,
+  // technical depth one click away on /about.
+  it('the FITS strip states Teams-today + the connectors and links to /about for depth', () => {
+    const { document } = page(PAGES.home);
+    const strip = document.querySelector('.fits-strip');
+    expect(strip, 'FITS strip missing (spec §1.4)').toBeTruthy();
+    const text = strip.textContent;
+    expect(text, "Teams named as today's channel").toMatch(/Microsoft Teams/);
+    for (const conn of ['ClockWise', 'Loket', 'Remote']) {
+      expect(text, `connector ${conn} missing`).toContain(conn);
+    }
+    const more = strip.querySelector('a[href="/about"], a[href^="/about#"]');
+    expect(more, 'FITS must route the technical deep-dive to /about').toBeTruthy();
   });
 });
