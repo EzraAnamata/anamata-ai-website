@@ -268,6 +268,45 @@ const latest = getCommitEntries(1)[0];
         </div>
       </div>
 
+      <!-- S11 (#380.5-7): the data boundary — companion to the permission
+           boundary above. Claim discipline (spec §2): every line below states
+           only behaviour the anna-assistant repo documents as enforced; the
+           claim → source-doc:line map ships in the PR body. No product
+           screenshot this wave (parked ⚑ Bas 9 Aug). -->
+      <div class="prose">
+        <h2>The same boundary applies to data.</h2>
+        <p>
+          The rings govern what an AI colleague can do. A matching boundary governs its data:
+          what reaches the model, whose context stays whose, and who can read what.
+        </p>
+      </div>
+
+      <div class="ring-legend data-boundary" aria-label="Data boundary">
+        <div class="item">
+          <h3>PRIVATE CONTEXT STAYS OUT OF SHARED SESSIONS</h3>
+          <p>
+            In a shared conversation, one person's private memories and one-to-one history are
+            never placed in the AI model's context — only the group's own thread is. Personal
+            knowledge can't reach the model through a channel other people share.
+          </p>
+        </div>
+        <div class="item">
+          <h3>EACH PERSON'S CONTEXT IS ISOLATED</h3>
+          <p>
+            Memories, history and preferences are stored under each person's own identity. One
+            colleague's personal context is not reachable from another colleague's session.
+          </p>
+        </div>
+        <div class="item">
+          <h3>ACCESS IS SET PER PERSON</h3>
+          <p>
+            Which company knowledge a person can reach is assigned per person. Anna's document
+            tools only ever return content from the categories that person has been given, and
+            deny any category they haven't.
+          </p>
+        </div>
+      </div>
+
       <div class="prose">
         <h2>The approval gate is infrastructure, not policy.</h2>
         <p>
