@@ -1,0 +1,99 @@
+---
+/**
+ * RequestForm — the site's single "file a request" form (S10a §1.5).
+ *
+ * Extracted verbatim from contact.astro so /contact and home's Meet-Anna
+ * section share ONE implementation and can never drift. The mailto handler is
+ * unchanged (no backend mid-wave — the S4 rule holds); when the same-origin
+ * POST handler on vps-RGF lands (DIRECTION v1.1 item 3), both consumers switch
+ * inside this one component.
+ *
+ * Props:
+ *  - CONTACT_EMAIL: filing destination, threaded through so consumers own it
+ *    (contact's handler = info@anamata.ai; offerte@ is the configurator path).
+ *  - submit: 'primary' (coral, /contact default — Bas reviews it 9 Aug) |
+ *    'secondary' (ghost). Home passes 'secondary': a visitor already inside the
+ *    form needs no coral pull, and home's one coral is spoken for (CtaBlock).
+ *  - showConfirmation: render the ledger-styled FILED confirmation. Default
+ *    true (/contact, behavior-preserving). Home passes false — the live-record
+ *    `.ledger .entry` grammar stays off home (it lives on /about); the mail
+ *    client opening is feedback enough. The script is null-safe either way.
+ */
+interface Props {
+  CONTACT_EMAIL?: string;
+  submit?: 'primary' | 'secondary';
+  showConfirmation?: boolean;
+}
+const {
+  CONTACT_EMAIL = 'info@anamata.ai',
+  submit = 'primary',
+  showConfirmation = true,
+} = Astro.props;
+const submitClass = submit === 'secondary' ? 'btn' : 'btn hot';
+---
+
+<form class="request-form" id="request-form" aria-label="File a request">
+  <div class="frow">
+    <label for="f-name">Name</label>
+    <input id="f-name" name="name" type="text" required autocomplete="name" />
+  </div>
+  <div class="frow">
+    <label for="f-org">Organisation</label>
+    <input id="f-org" name="org" type="text" autocomplete="organization" />
+  </div>
+  <div class="frow">
+    <label for="f-email">Reply-to email</label>
+    <input id="f-email" name="email" type="email" required autocomplete="email" />
+  </div>
+  <div class="frow">
+    <label for="f-request">Request</label>
+    <textarea id="f-request" name="request" rows="5" required
+      placeholder="e.g. Show us Anna working in a Teams channel like ours."></textarea>
+  </div>
+  <div class="form-actions">
+    <button class={submitClass} type="submit">FILE REQUEST →</button>
+  </div>
+</form>
+
+{showConfirmation && (
+  <div class="ledger filed-confirmation" id="filed" aria-live="polite">
+    <div class="ledger-head"><span class="t">REQUEST — FILED FROM THIS PAGE</span></div>
+    <div class="entry on">
+      <span class="ts" id="filed-ts"></span>
+      <span class="act">request drafted — your email client opens with the filing; send it and
+        it is in our record</span>
+      <span class="stamp-cell"><span class="stamp">FILED</span></span>
+    </div>
+  </div>
+)}
+
+<p class="prose">
+  Prefer plain email? Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+</p>
+
+<script define:vars={{ CONTACT_EMAIL }}>
+  const form = document.getElementById('request-form');
+  form.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const data = new FormData(form);
+    const subject = `Demo request — ${data.get('name')}${data.get('org') ? ` (${data.get('org')})` : ''}`;
+    const body = [
+      `Name: ${data.get('name')}`,
+      `Organisation: ${data.get('org') || '—'}`,
+      `Reply-to: ${data.get('email')}`,
+      '',
+      `${data.get('request')}`,
+    ].join('\n');
+    const filed = document.getElementById('filed');
+    if (filed) {
+      const now = new Date();
+      const p = (n) => String(n).padStart(2, '0');
+      const ts = document.getElementById('filed-ts');
+      if (ts)
+        ts.textContent =
+          `${p(now.getMonth() + 1)}-${p(now.getDate())} ${p(now.getHours())}:${p(now.getMinutes())}`;
+      filed.classList.add('on');
+    }
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+</script>
