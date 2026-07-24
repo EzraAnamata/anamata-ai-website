@@ -496,12 +496,21 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('scene 004: exit — button-hot to /configurator, ghost to /contact, tech@ mono line, module cards', () => {
+  it('hero band + exit: coral primary is SEE ANNA IN ACTION → #meet-anna; the exit quote demotes to ghost', () => {
+    // S10b (§1.1/§1.5/§4.1): home's ONE coral primary is the hero exit band
+    // (below the scrub stage) — so the FIRST a.btn.hot on the page is now
+    // "SEE ANNA IN ACTION" → the Meet-Anna form, not the configurator quote.
     const { document, html } = page(PAGES.home);
     const hot = document.querySelector('a.btn.hot');
-    expect(hot, 'button-hot offerte CTA missing').toBeTruthy();
-    expect(hot.getAttribute('href'), 'hot CTA must link the configurator').toBe('/configurator');
-    expect(hot.textContent, 'hot CTA label').toMatch(/request a quote/i);
+    expect(hot, 'hero coral primary missing').toBeTruthy();
+    expect(hot.getAttribute('href'), 'hero coral must jump to the Meet-Anna form').toBe(
+      '#meet-anna'
+    );
+    expect(hot.textContent, 'hero coral label').toMatch(/see anna in action/i);
+    // the exit quote is now the ghost variant (§1.5): btn, never btn hot.
+    const ghostQuote = document.querySelector('a.btn.ghost[href="/configurator"]');
+    expect(ghostQuote, 'exit quote must demote to ghost on home').toBeTruthy();
+    expect(ghostQuote.textContent, 'demoted quote keeps its label').toMatch(/request a quote/i);
     const ghost = document.querySelector('a.btn.ghost[href="/contact"]');
     expect(ghost, 'ghost contact CTA missing').toBeTruthy();
     expect(html, 'tech@ lead line missing').toContain('tech@anamata.ai');
@@ -512,6 +521,7 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
   });
 
   it('exactly one button-hot on the home film (max one coral ask per viewport)', () => {
+    // Rule unchanged (§4.1); post-S10b the single referent is the hero primary.
     const { document } = page(PAGES.home);
     expect(document.querySelectorAll('a.btn.hot, button.hot').length).toBe(1);
   });
@@ -1014,7 +1024,10 @@ describe('S8 — register ("AI colleague") + structure (home is the "what")', ()
   });
 
   it('the shared CtaBlock exit renders the dual-path ask on the content pages', () => {
-    for (const rel of [PAGES.home, PAGES.about, PAGES.insights]) {
+    // S10b (§1.5/§4.1): the coral quote stays primary on /about + insights (the
+    // ready-to-buy pages, untouched by omission). Home passes quote="secondary",
+    // so its quote link is the ghost variant — the coral there is the hero band.
+    for (const rel of [PAGES.about, PAGES.insights]) {
       const { document } = page(rel);
       const hot = document.querySelector('a.btn.hot[href="/configurator"]');
       expect(hot, `${rel}: coral quote CTA missing`).toBeTruthy();
@@ -1022,6 +1035,20 @@ describe('S8 — register ("AI colleague") + structure (home is the "what")', ()
       const demo = document.querySelector('a.btn.ghost[href="/contact"]');
       expect(demo, `${rel}: ghost demo CTA missing`).toBeTruthy();
     }
+    // Home: the same CtaBlock, quote demoted to ghost (btn, never btn hot).
+    // Scope to the .cta-row exit block so the nav's own /configurator link (also
+    // a plain btn) can't satisfy this by accident.
+    const { document } = page(PAGES.home);
+    const homeQuote = document.querySelector('.cta-row a.btn[href="/configurator"]');
+    expect(homeQuote, 'home: exit quote link missing').toBeTruthy();
+    expect(homeQuote.className, 'home: exit quote must NOT be coral (btn hot)').not.toMatch(
+      /\bhot\b/
+    );
+    expect(homeQuote.textContent, 'home: quote keeps its label').toMatch(/request a quote/i);
+    expect(
+      document.querySelector('.cta-row a.btn.ghost[href="/contact"]'),
+      'home: ghost demo CTA missing'
+    ).toBeTruthy();
   });
 });
 
@@ -1169,12 +1196,15 @@ describe('S10a — Meet-Anna form via the shared RequestForm (§1.5)', () => {
     expect(submit.className, 'home form submit must carry the btn style').toMatch(/\bbtn\b/);
   });
 
-  it('home still has exactly one coral primary (the CtaBlock quote, unchanged)', () => {
+  it('home still has exactly one coral primary (post-S10b: the hero band)', () => {
+    // §4.1 one-hot rule unchanged; the referent moves per slice. Post-S10b the
+    // single coral is the hero exit band (SEE ANNA IN ACTION → #meet-anna); the
+    // CtaBlock quote is now the ghost variant (§1.5).
     const { document } = page(PAGES.home);
     const hot = [...document.querySelectorAll('a.btn.hot, button.hot')];
     expect(hot.length, 'home must keep exactly one .btn.hot').toBe(1);
-    expect(hot[0].getAttribute('href'), 'the one coral must stay the configurator quote').toBe(
-      '/configurator'
+    expect(hot[0].getAttribute('href'), 'the one coral is now the hero Meet-Anna primary').toBe(
+      '#meet-anna'
     );
   });
 

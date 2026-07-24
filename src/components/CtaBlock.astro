@@ -9,15 +9,23 @@
  * page it sits on — 'about' routes to the deep page, 'record' to the live
  * operating record, 'none' drops the line (used where the page IS the depth).
  *
+ * `quote` varies the coral WITHOUT forking the component (S10b, §1.5): 'primary'
+ * (default → /about + insights, the ready-to-buy pages, untouched by omission)
+ * keeps the coral quote; 'secondary' renders it ghost (btn, not btn hot) — home
+ * passes this because home's one coral is spoken for by the hero exit band
+ * (§1.1/§1.6). Same label, same href either way.
+ *
  * English only — the site is an English page (no "VRAAG OFFERTE AAN").
  */
 interface Props {
   more?: 'about' | 'record' | 'none';
+  quote?: 'primary' | 'secondary';
 }
-const { more = 'about' } = Astro.props;
+const { more = 'about', quote = 'primary' } = Astro.props;
+const quoteClass = quote === 'secondary' ? 'btn ghost' : 'btn hot';
 ---
 <div class="cta-row">
-  <a class="btn hot" href="/configurator">REQUEST A QUOTE →</a>
+  <a class={quoteClass} href="/configurator">REQUEST A QUOTE →</a>
   <a class="btn ghost" href="/contact">REQUEST A DEMO</a>
 </div>
 {more !== 'none' && (
