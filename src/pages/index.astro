@@ -13,8 +13,9 @@
  *                   Anna's logged action (S9, spec §1.2), labeled as examples
  *   H002 FITS     — works-in-your-landscape strip: Teams today + koppelbaar
  *                   connections, technical depth on /about (S9, spec §1.4)
- *   H003 EXIT     — configurator teaser → quote (shared CtaBlock: coral primary,
- *                   demo ghost, "want to know more?" → About)
+ *   H003 EXIT     — configurator teaser → quote (shared CtaBlock; on home the
+ *                   quote is ghost via quote="secondary", demo ghost, "want to
+ *                   know more?" → About — home's coral is the hero band)
  *   H004 MEET     — Meet-Anna form (S10a §1.5): the early-phase funnel path, a
  *                   short-intro ask via the SHARED RequestForm. Its submit is
  *                   secondary (ghost) so home keeps exactly one coral (§1.6).
@@ -48,6 +49,14 @@ const CONTACT_EMAIL = 'info@anamata.ai';
     heading="Anna, your digital AI assistant"
     subline="Answers, requests and admin — the work around the work — handled inside your company systems, in Teams, today."
   />
+
+  <!-- Hero exit band — section 0 (unnumbered), directly BELOW the scrub stage
+       and NEVER inside .anna-scrub (buttons fight the scrub; the scrub-stage
+       button-free test stays green by design). This is home's ONE coral primary
+       (§1.1/§1.6/§4.1): "SEE ANNA IN ACTION" → the Meet-Anna form (H004). -->
+  <div class="hero-exit">
+    <a class="btn hot" href="#meet-anna">SEE ANNA IN ACTION →</a>
+  </div>
 
   <!-- ============ 001 · WHAT ANNA DOES ============ -->
   <div class="sheet first-scene">
@@ -101,7 +110,7 @@ const CONTACT_EMAIL = 'info@anamata.ai';
       </p>
 
       <!-- Early-phase funnel entry (§1.6): ghost, never coral — home's one coral
-           is the CtaBlock quote until S10b. Jumps to the Meet-Anna form (H004). -->
+           is the hero exit band (SEE ANNA IN ACTION). Jumps to the form (H004). -->
       <div class="cta-row">
         <a class="btn ghost" href="#meet-anna">Explore Anna for your team →</a>
       </div>
@@ -182,10 +191,12 @@ const CONTACT_EMAIL = 'info@anamata.ai';
         ))}
       </div>
 
-      <!-- Standard funnel exit — shared CtaBlock (S8 CTA consistency). The
-           "want to know more?" referral routes the not-yet-ready to /about,
-           where the HOW/proof now live (Peter, funnel-tied referral). -->
-      <CtaBlock more="about" />
+      <!-- Standard funnel exit — shared CtaBlock (S8 CTA consistency). S10b
+           (§1.5/§1.6): home passes quote="secondary" so the quote renders ghost
+           — home's one coral is the hero band; the coral quote stays primary on
+           /configurator + /contact. The "want to know more?" referral routes the
+           not-yet-ready to /about, where the HOW/proof now live. -->
+      <CtaBlock more="about" quote="secondary" />
       <!-- The techie "tech@anamata.ai" hook lives once, in the footer's Row A on
            every page (Base.astro) — not repeated here, where it sat directly
            above its footer twin at the page bottom (S6 dedupe). -->

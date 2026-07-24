@@ -98,6 +98,16 @@ a { color: var(--primary); }
 .hero .sub strong { font-weight: 600; }
 .cta-row { margin-top: 36px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 
+/* Hero exit band (S10b, §1.1) — slim strip directly below the scrub stage,
+   carrying home's one coral primary. Centred on the 1440px measure like the
+   sheets; a top hairline separates it from the scrub without adding weight. */
+.hero-exit {
+  display: flex; justify-content: center;
+  padding: 20px max(1.5rem, calc((100% - 1440px) / 2 + 1.5rem));
+  border-top: 1px solid var(--hairline);
+  background: var(--paper);
+}
+
 .sec-title {
   font-family: var(--font-display); font-weight: 300;
   font-size: clamp(2rem, 3.6vw, 3.1rem); line-height: 1.1; letter-spacing: -0.01em;
