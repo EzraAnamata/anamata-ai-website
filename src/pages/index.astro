@@ -9,8 +9,11 @@
  * what → exit.
  *
  *   0    HERO     — Anna resolving wireframe→human on scroll (AnnaScrub)
- *   H001 WHAT     — concrete jobs as DEMO ledger entries, labeled as examples
- *   H002 EXIT     — configurator teaser → quote (shared CtaBlock: coral primary,
+ *   H001 WHAT     — concrete jobs as DEMO ledger entries: employee question →
+ *                   Anna's logged action (S9, spec §1.2), labeled as examples
+ *   H002 FITS     — works-in-your-landscape strip: Teams today + koppelbaar
+ *                   connections, technical depth on /about (S9, spec §1.4)
+ *   H003 EXIT     — configurator teaser → quote (shared CtaBlock: coral primary,
  *                   demo ghost, "want to know more?" → About)
  *
  * Non-negotiables: tokens are law; the ledger is never fabricated (scene 001's
@@ -34,7 +37,7 @@ import { MODULES } from '../lib/offerte.mjs';
   <AnnaScrub
     kicker="ANAMATA.AI — EMPLOYEE #001"
     heading="Anna, your digital AI assistant"
-    subline="Answers, requests and admin — handled inside your company systems, in Teams, today."
+    subline="Answers, requests and admin — the work around the work — handled inside your company systems, in Teams, today."
   />
 
   <!-- ============ 001 · WHAT ANNA DOES ============ -->
@@ -48,10 +51,9 @@ import { MODULES } from '../lib/offerte.mjs';
       <span class="kicker">Record H001 · What she does</span>
       <h2 class="sec-title">The work no human should waste time on.</h2>
       <p class="sec-intro">
-        Picture the office manager at any mid-sized company — drowning in systems: hours to log,
-        requests to file, a desk to book, an answer buried in some portal. This is the work around
-        the work, and no one should be spending a day on it. Anna does it where the team already
-        works, and writes down what she did. A day in Teams looks like this.
+        Picture the office manager at any mid-sized company — drowning in systems. This is the work
+        around the work, and no one should spend a day on it. Someone asks; Anna does it where the
+        team already works, and writes down what she did. A day in Teams looks like this.
       </p>
 
       <div class="demo-ledger" aria-label="Illustrative examples — not the live operating record">
@@ -61,22 +63,26 @@ import { MODULES } from '../lib/offerte.mjs';
         </div>
         <div class="demo-entry">
           <span class="ts">09:12</span>
+          <span class="ask mono">“Can you sort my hours?”</span>
           <span class="act">logged 3.5h to ClockWise — “sprint review” <span class="agent">· anna</span></span>
           <span class="tag">EXAMPLE</span>
         </div>
         <div class="demo-entry">
           <span class="ts">09:41</span>
+          <span class="ask mono">“Can you file my leave?”</span>
           <span class="act">filed a vacation request for approval — 12–16 Aug <span class="agent">· anna</span></span>
           <span class="tag">EXAMPLE</span>
         </div>
         <div class="demo-entry">
           <span class="ts">10:03</span>
+          <span class="ask mono">“Can you book me a desk?”</span>
           <span class="act">booked a desk — Utrecht, Thu, near the QA pod <span class="agent">· anna</span></span>
           <span class="tag">EXAMPLE</span>
         </div>
         <div class="demo-entry">
           <span class="ts">10:20</span>
-          <span class="act">answered “which VM hosts the pilot?” from company systems <span class="agent">· anna</span></span>
+          <span class="ask mono">“Where's the onboarding procedure?”</span>
+          <span class="act">answered from company systems <span class="agent">· anna</span></span>
           <span class="tag">EXAMPLE</span>
         </div>
       </div>
@@ -87,18 +93,63 @@ import { MODULES } from '../lib/offerte.mjs';
     </main>
   </div>
 
-  <!-- ============ 002 · EXIT: BUILD YOUR ANNA ============ -->
+  <!-- ============ 002 · FITS YOUR LANDSCAPE ============ -->
+  <!-- S9 (spec §1.4, #377 reduced): home is the "what", and "she works in what
+       you already run" IS the what. One compact strip, not a section of cards —
+       Teams today (no Slack, overruled — Peter §2), koppelbaar connections in
+       plain English (never the word "MCP"), technical depth one click away on
+       /about (the HOW lives there). A slot for the E2E storyboard (#376) will
+       later insert here as H002 and renumber the sheets below in one PR. -->
+  <div class="sheet">
+    <aside class="marginalia">
+      <span class="no">H002</span>
+      <span class="lbl">FITS YOUR<br />LANDSCAPE</span>
+      <span class="lbl push">RECORD<br />H002</span>
+    </aside>
+    <section class="content" aria-label="Fits your landscape">
+      <span class="kicker">Record H002 · Fits your landscape</span>
+      <h2 class="sec-title">She works in what you already run.</h2>
+      <p class="sec-intro">
+        No migration, no new app to adopt. Anna joins the team in the channel it already uses and
+        connects to the systems you already run — so the work lands back where people expect it.
+      </p>
+
+      <dl class="fits-strip">
+        <div class="fits-row">
+          <dt class="fits-k">Channel</dt>
+          <dd class="fits-v">
+            <strong>Microsoft Teams</strong> — today. She works where the conversation already
+            happens.
+            <span class="fits-note">A mobile app is an intention on the roadmap, not a promise yet.</span>
+          </dd>
+        </div>
+        <div class="fits-row">
+          <dt class="fits-k">Connections</dt>
+          <dd class="fits-v">
+            Connectable to the tools you already run — <strong>ClockWise</strong>,
+            <strong>Loket</strong>, <strong>Remote</strong>, and more added as you need them.
+            <span class="fits-note">
+              How the connections work — and how they stay bounded — is
+              <a href="/about">on the record, over on About</a>.
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+
+  <!-- ============ 003 · EXIT: BUILD YOUR ANNA ============ -->
   <!-- Home is the "what" (Peter, 2026-07-21): the HOW/autonomy section and the
        live operating record moved to /about. The exit (configure → quote)
        stays as the funnel's close. -->
   <div class="sheet">
     <aside class="marginalia">
-      <span class="no">H002</span>
+      <span class="no">H003</span>
       <span class="lbl">BUILD<br />YOUR ANNA</span>
-      <span class="lbl push">RECORD<br />H002</span>
+      <span class="lbl push">RECORD<br />H003</span>
     </aside>
     <section class="content" aria-label="Build your Anna">
-      <span class="kicker">Record H002 · Build your Anna</span>
+      <span class="kicker">Record H003 · Build your Anna</span>
       <h2 class="sec-title">Configure the team you want.</h2>
       <p class="sec-intro">
         Pick the modules that fit, and file a quote request — a person reads it and comes back
