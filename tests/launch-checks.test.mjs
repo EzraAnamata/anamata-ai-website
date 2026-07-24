@@ -435,14 +435,16 @@ describe('S2 — AnnaScrub component (fallbacks + CLS reservation)', () => {
 });
 
 describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
-  it('scenes are numbered H001–H003 in order in the marginalia (S9: WHAT → FITS → EXIT)', () => {
+  it('scenes are numbered H001–H004 in order in the marginalia (S9 FITS + S10a MEET)', () => {
     // S8 (#368): HOW (autonomy) and PROOF (ledger) moved to /about. S9 (spec
-    // §1.4/§4.1): a FITS strip lands between WHAT and EXIT, so the gapless
-    // as-built sequence is hero → what (H001) → fits (H002) → exit (H003).
+    // §1.4/§4.1) lands a FITS strip between WHAT and EXIT; S10a (spec §1.5/§4.1)
+    // appends the Meet-Anna form at the page end. Numbering follows on-page order
+    // AS BUILT and is gapless at every deploy (§1): rebased, the sequence is
+    // hero → what (H001) → fits (H002) → exit (H003) → meet (H004).
     // Per-page prefixed numbering (Ezra 2026-07-21).
     const { document } = page(PAGES.home);
     const nums = [...document.querySelectorAll('.marginalia .no')].map((n) => n.textContent.trim());
-    expect(nums, 'scene marginalia numbering/order').toEqual(['H001', 'H002', 'H003']);
+    expect(nums, 'scene marginalia numbering/order').toEqual(['H001', 'H002', 'H003', 'H004']);
   });
 
   it('scene 0 hero: mono kicker + a text H1 (LCP-eligible), no CTA buttons in the scrub stage', () => {
@@ -1082,5 +1084,125 @@ describe('S9 — WHAT pass (question→action pairs + FITS strip)', () => {
     }
     const more = strip.querySelector('a[href="/about"], a[href^="/about#"]');
     expect(more, 'FITS must route the technical deep-dive to /about').toBeTruthy();
+  });
+});
+
+describe('S10a — Meet-Anna form via the shared RequestForm (§1.5)', () => {
+  const SRC = path.join(ROOT, 'src');
+  const REQUEST_FORM = path.join(SRC, 'components', 'RequestForm.astro');
+  const CONTACT_SRC = path.join(SRC, 'pages', 'contact.astro');
+  const HOME_SRC = path.join(SRC, 'pages', 'index.astro');
+  const CONTACT_FIELDS = ['name', 'org', 'email', 'request'];
+
+  // ---- Step 0: one form, extracted — single source, not copied markup ----
+  it('the shared RequestForm component exists', () => {
+    expect(existsSync(REQUEST_FORM), 'src/components/RequestForm.astro missing').toBe(true);
+  });
+
+  it('the form field markup lives ONLY in the component (no copied markup on the pages)', () => {
+    const component = readFileSync(REQUEST_FORM, 'utf8');
+    // the discriminating field (the request textarea) must live in the component
+    expect(component, 'component missing the request field').toContain('name="request"');
+    expect(component, 'component missing the form element').toContain('class="request-form"');
+    // and NOT be duplicated inline on either consuming page — they import it
+    for (const [label, file] of [['contact', CONTACT_SRC], ['home', HOME_SRC]]) {
+      const src = readFileSync(file, 'utf8');
+      expect(src, `${label} must import the shared RequestForm`).toMatch(
+        /import\s+RequestForm\s+from\s+['"][^'"]*RequestForm\.astro['"]/
+      );
+      expect(src, `${label} still inlines the form textarea (copied markup)`).not.toContain(
+        'name="request"'
+      );
+      expect(src, `${label} still inlines the form element (copied markup)`).not.toContain(
+        'class="request-form"'
+      );
+    }
+  });
+
+  it('CONTACT_EMAIL is threaded to the component as a prop by both consumers', () => {
+    for (const [label, file] of [['contact', CONTACT_SRC], ['home', HOME_SRC]]) {
+      const src = readFileSync(file, 'utf8');
+      expect(src, `${label} must pass CONTACT_EMAIL to RequestForm`).toMatch(/CONTACT_EMAIL=/);
+    }
+  });
+
+  // ---- Home consumes the same component with contact's field set ----
+  it('home renders the shared form with contact\'s minimal field set', () => {
+    const { document } = page(PAGES.home);
+    const form = document.querySelector('form.request-form');
+    expect(form, 'home is not rendering the shared request form').toBeTruthy();
+    for (const name of CONTACT_FIELDS) {
+      expect(form.querySelector(`[name="${name}"]`), `home form field "${name}" missing`).toBeTruthy();
+    }
+  });
+
+  // ---- The MEET section ----
+  it('the MEET sheet resolves at #meet-anna with header + verbatim subheader', () => {
+    const { document } = page(PAGES.home);
+    const meet = document.getElementById('meet-anna');
+    expect(meet, 'anchor #meet-anna does not resolve on home').toBeTruthy();
+    const heading = meet.querySelector('.sec-title')?.textContent?.trim();
+    expect(heading, 'MEET heading must be "Meet Anna"').toBe('Meet Anna');
+    expect(
+      meet.textContent.replace(/\s+/g, ' '),
+      'MEET subheader (Bas verbatim) missing'
+    ).toContain(
+      "Book a short introduction and explore what Anna could take off your team's hands."
+    );
+    // the shared form lives inside the MEET section
+    expect(meet.querySelector('form.request-form'), 'MEET section missing the form').toBeTruthy();
+  });
+
+  it('the MEET marginalia label is MEET', () => {
+    const { document } = page(PAGES.home);
+    const meet = document.getElementById('meet-anna');
+    const lbl = meet.querySelector('.marginalia .lbl')?.textContent ?? '';
+    expect(lbl, 'MEET marginalia label missing').toMatch(/MEET/i);
+  });
+
+  // ---- One-coral law: home's form submit is secondary (ghost), never hot ----
+  it('home\'s form submit renders secondary (btn, not btn hot)', () => {
+    const { document } = page(PAGES.home);
+    const submit = document.querySelector('form.request-form button[type="submit"]');
+    expect(submit, 'home form submit missing').toBeTruthy();
+    expect(submit.className, 'home form submit must not be coral (btn hot)').not.toMatch(/\bhot\b/);
+    expect(submit.className, 'home form submit must carry the btn style').toMatch(/\bbtn\b/);
+  });
+
+  it('home still has exactly one coral primary (the CtaBlock quote, unchanged)', () => {
+    const { document } = page(PAGES.home);
+    const hot = [...document.querySelectorAll('a.btn.hot, button.hot')];
+    expect(hot.length, 'home must keep exactly one .btn.hot').toBe(1);
+    expect(hot[0].getAttribute('href'), 'the one coral must stay the configurator quote').toBe(
+      '/configurator'
+    );
+  });
+
+  it('home does not reintroduce a live-ledger .entry via the form (record lives on /about)', () => {
+    const { document } = page(PAGES.home);
+    expect(
+      document.querySelector('.ledger .entry'),
+      'the form confirmation must not ship as a .ledger .entry on home'
+    ).toBeFalsy();
+  });
+
+  // ---- The "Explore Anna for your team" ghost link after H001 → #meet-anna ----
+  it('an "Explore Anna for your team" ghost link points at #meet-anna', () => {
+    const { document } = page(PAGES.home);
+    const link = [...document.querySelectorAll('a[href="#meet-anna"]')].find((a) =>
+      /explore anna for your team/i.test(a.textContent)
+    );
+    expect(link, '"Explore Anna for your team" link to #meet-anna missing').toBeTruthy();
+    expect(link.className, 'the explore link must be ghost, never coral (btn hot)').not.toMatch(
+      /\bhot\b/
+    );
+  });
+
+  // ---- /contact stays behavior-preserving: its coral submit is untouched ----
+  it('/contact keeps its coral (btn hot) submit — untouched by the extraction', () => {
+    const { document } = page(PAGES.contact);
+    const submit = document.querySelector('form.request-form button[type="submit"]');
+    expect(submit, 'contact form submit missing after extraction').toBeTruthy();
+    expect(submit.className, 'contact submit must stay coral (btn hot)').toMatch(/\bhot\b/);
   });
 });

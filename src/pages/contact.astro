@@ -5,6 +5,7 @@
  * nothing leaves the origin) and renders a confirmation as a ledger entry.
  */
 import Base from '../layouts/Base.astro';
+import RequestForm from '../components/RequestForm.astro';
 
 const CONTACT_EMAIL = 'info@anamata.ai';
 ---
@@ -26,64 +27,7 @@ const CONTACT_EMAIL = 'info@anamata.ai';
         a person — Anamata's AI colleagues don't do outbound, that's outside their ring.
       </p>
 
-      <form class="request-form" id="request-form" aria-label="File a request">
-        <div class="frow">
-          <label for="f-name">Name</label>
-          <input id="f-name" name="name" type="text" required autocomplete="name" />
-        </div>
-        <div class="frow">
-          <label for="f-org">Organisation</label>
-          <input id="f-org" name="org" type="text" autocomplete="organization" />
-        </div>
-        <div class="frow">
-          <label for="f-email">Reply-to email</label>
-          <input id="f-email" name="email" type="email" required autocomplete="email" />
-        </div>
-        <div class="frow">
-          <label for="f-request">Request</label>
-          <textarea id="f-request" name="request" rows="5" required
-            placeholder="e.g. Show us Anna working in a Teams channel like ours."></textarea>
-        </div>
-        <div class="form-actions">
-          <button class="btn hot" type="submit">FILE REQUEST →</button>
-        </div>
-      </form>
-
-      <div class="ledger filed-confirmation" id="filed" aria-live="polite">
-        <div class="ledger-head"><span class="t">REQUEST — FILED FROM THIS PAGE</span></div>
-        <div class="entry on">
-          <span class="ts" id="filed-ts"></span>
-          <span class="act">request drafted — your email client opens with the filing; send it and
-            it is in our record</span>
-          <span class="stamp-cell"><span class="stamp">FILED</span></span>
-        </div>
-      </div>
-
-      <p class="prose">
-        Prefer plain email? Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-      </p>
+      <RequestForm CONTACT_EMAIL={CONTACT_EMAIL} />
     </main>
   </div>
-
-  <script define:vars={{ CONTACT_EMAIL }}>
-    const form = document.getElementById('request-form');
-    form.addEventListener('submit', (ev) => {
-      ev.preventDefault();
-      const data = new FormData(form);
-      const subject = `Demo request — ${data.get('name')}${data.get('org') ? ` (${data.get('org')})` : ''}`;
-      const body = [
-        `Name: ${data.get('name')}`,
-        `Organisation: ${data.get('org') || '—'}`,
-        `Reply-to: ${data.get('email')}`,
-        '',
-        `${data.get('request')}`,
-      ].join('\n');
-      const now = new Date();
-      const p = (n) => String(n).padStart(2, '0');
-      document.getElementById('filed-ts').textContent =
-        `${p(now.getMonth() + 1)}-${p(now.getDate())} ${p(now.getHours())}:${p(now.getMinutes())}`;
-      document.getElementById('filed').classList.add('on');
-      window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    });
-  </script>
 </Base>
