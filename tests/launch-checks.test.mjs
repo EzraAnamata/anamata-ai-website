@@ -182,6 +182,50 @@ describe('the operating record is real and crawlable', () => {
   });
 });
 
+describe('S11 — data-boundary block in the governance file (#380.5-7)', () => {
+  // Claims are sourced to anna-assistant repo docs (claim discipline, spec §2);
+  // each maps to a documented, enforced behaviour — see the PR body.
+  it('the data-boundary block sits inside A004 (the governance file)', () => {
+    const { document } = page(PAGES.about);
+    const gov = document.querySelector('#governance');
+    expect(gov, 'governance section A004 must exist').toBeTruthy();
+    const block = gov.querySelector('.data-boundary');
+    expect(block, 'data-boundary block must live inside A004').toBeTruthy();
+  });
+
+  it('states what is NOT shared with the model in a shared session (#380.5)', () => {
+    const { document } = page(PAGES.about);
+    const text = document.querySelector('#governance .data-boundary').textContent;
+    expect(text).toContain('PRIVATE CONTEXT STAYS OUT OF SHARED SESSIONS');
+    expect(text).toMatch(/never (placed|put) in the AI model/i);
+  });
+
+  it('states per-person context isolation (#380.6)', () => {
+    const { document } = page(PAGES.about);
+    const text = document.querySelector('#governance .data-boundary').textContent;
+    expect(text).toContain("EACH PERSON'S CONTEXT IS ISOLATED");
+    expect(text).toMatch(/not reachable from another/i);
+  });
+
+  it('states per-person context access control (#380.7)', () => {
+    const { document } = page(PAGES.about);
+    const text = document.querySelector('#governance .data-boundary').textContent;
+    expect(text).toContain('ACCESS IS SET PER PERSON');
+    expect(text).toMatch(/assigned per person/i);
+  });
+
+  it('A004 is otherwise intact (rings + gate + §50 unaffected)', () => {
+    const { document, html } = page(PAGES.about);
+    const gov = document.querySelector('#governance');
+    // the permission ring model and the approval-gate stamp still render
+    expect(gov.textContent).toContain('permission ring');
+    expect(gov.querySelector('.stamp')?.textContent).toContain('HUMAN APPROVED');
+    // the sitewide Art. 50 (§50) notice is untouched on /about
+    expect(html).toContain('§50');
+    expect(html).toMatch(/EU AI ACT/i);
+  });
+});
+
 describe('privacy — nothing leaves the origin (GDPR)', () => {
   it('no page references external origins (fonts self-hosted, no CDNs, no trackers)', () => {
     const files = fg.sync('**/*.{html,css}', { cwd: DIST });
