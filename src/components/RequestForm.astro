@@ -12,7 +12,7 @@
  *  - CONTACT_EMAIL: filing destination, threaded through so consumers own it
  *    (contact's handler = info@anamata.ai; offerte@ is the configurator path).
  *  - submit: 'primary' (coral, /contact default — Bas reviews it 9 Aug) |
- *    'secondary' (ghost). Home passes 'secondary': a visitor already inside the
+ *    'secondary' (secondary). Home passes 'secondary': a visitor already inside the
  *    form needs no coral pull, and home's one coral is spoken for (CtaBlock).
  *  - showConfirmation: render the ledger-styled FILED confirmation. Default
  *    true (/contact, behavior-preserving). Home passes false — the live-record
@@ -60,7 +60,7 @@ const submitClass = submit === 'secondary' ? 'btn' : 'btn hot';
     <div class="ledger-head"><span class="t">REQUEST — FILED FROM THIS PAGE</span></div>
     <div class="entry on">
       <span class="ts" id="filed-ts"></span>
-      <span class="act">request drafted — your email client opens with the filing; send it and
+      <span class="act">request drafted, your email client opens with the filing; send it and
         it is in our record</span>
       <span class="stamp-cell"><span class="stamp">FILED</span></span>
     </div>

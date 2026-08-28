@@ -26,7 +26,7 @@ export const MODULES = [
     id: 'anna',
     name: 'Anna',
     kicker: 'AI-EMPLOYEE',
-    spec: 'The AI colleague working inside Microsoft Teams — a permission ring around what she may touch and a human approval gate on anything that leaves it.',
+    spec: 'The AI colleague working inside Microsoft Teams, with a permission ring around what she may touch and a human approval gate on anything that leaves it.',
     fields: [
       ['runs in', 'Microsoft Teams'],
       ['boundary', 'permission ring'],
@@ -37,7 +37,7 @@ export const MODULES = [
     id: 'cv-tool',
     name: 'CV-tool',
     kicker: 'MODULE',
-    spec: 'Structured CV intake and candidate dossiers — the same record grammar, applied to recruitment.',
+    spec: 'Structured CV intake and candidate dossiers, the same record grammar applied to recruitment.',
     fields: [
       ['intake', 'CV documents'],
       ['output', 'structured dossier'],
