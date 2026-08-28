@@ -331,27 +331,67 @@ describe('tokens are law', () => {
 });
 
 describe('v2 brand logo (creator metadata scrubbed)', () => {
-  const logoRel = 'anamata-ai-logo.svg';
+  // #415: the wordmark refresh Bas sent via Teams ships as a PNG (1798x388).
+  // The privacy scrub is a rule about the ASSET, not about SVG — editors stamp
+  // themselves into PNG text chunks exactly as they do into SVG metadata, so the
+  // assertion below follows whichever format the header actually references.
+  const LOGO_CANDIDATES = ['anamata-ai-logo.png', 'anamata-ai-logo.svg'];
+
+  const shippedLogo = () => {
+    const { html } = page(PAGES.home);
+    return LOGO_CANDIDATES.find((rel) => html.includes(rel));
+  };
 
   it('the brand logo ships and is referenced by the header', () => {
-    expect(existsSync(path.join(ROOT, 'public', logoRel)), 'public logo missing').toBe(true);
-    expect(existsSync(path.join(DIST, logoRel)), 'built logo missing').toBe(true);
-    const { html } = page(PAGES.home);
-    expect(html, 'header does not reference the logo').toContain(logoRel);
+    const rel = shippedLogo();
+    expect(rel, `header references none of: ${LOGO_CANDIDATES.join(', ')}`).toBeTruthy();
+    expect(existsSync(path.join(ROOT, 'public', rel)), 'public logo missing').toBe(true);
+    expect(existsSync(path.join(DIST, rel)), 'built logo missing').toBe(true);
   });
 
   it('the logo carries no creator metadata or editor cruft (privacy scrub)', () => {
-    const svg = readFileSync(path.join(ROOT, 'public', logoRel), 'utf8');
-    for (const forbidden of [
-      'Michel',
-      'Created by',
-      'sodipodi',
-      'inkscape',
-      '<metadata',
-      'docname',
-    ]) {
-      expect(svg, `logo still contains "${forbidden}"`).not.toContain(forbidden);
+    const rel = shippedLogo();
+    const file = path.join(ROOT, 'public', rel);
+
+    if (rel.endsWith('.svg')) {
+      const svg = readFileSync(file, 'utf8');
+      for (const forbidden of [
+        'Michel',
+        'Created by',
+        'sodipodi',
+        'inkscape',
+        '<metadata',
+        'docname',
+      ]) {
+        expect(svg, `logo still contains "${forbidden}"`).not.toContain(forbidden);
+      }
+      return;
     }
+
+    // PNG: parse the chunk list rather than substring-scanning the file — the
+    // compressed pixel data would false-positive on short words at random.
+    const buf = readFileSync(file);
+    const chunks = [];
+    let i = 8;
+    while (i < buf.length) {
+      const len = buf.readUInt32BE(i);
+      const type = buf.toString('latin1', i + 4, i + 8);
+      chunks.push(type);
+      i += 12 + len;
+      if (type === 'IEND') break;
+    }
+    for (const t of ['tEXt', 'iTXt', 'zTXt', 'eXIf', 'tIME']) {
+      expect(chunks, `logo PNG still carries a ${t} metadata chunk`).not.toContain(t);
+    }
+  });
+
+  it('the header reserves the wordmark box so the logo cannot shift layout (CLS)', () => {
+    const { document } = page(PAGES.home);
+    const img = document.querySelector('header .wordmark img');
+    expect(img, 'header wordmark img missing').toBeTruthy();
+    const w = Number(img.getAttribute('width'));
+    const h = Number(img.getAttribute('height'));
+    expect(w > 0 && h > 0, 'wordmark must carry intrinsic width/height').toBe(true);
   });
 });
 
@@ -540,7 +580,7 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
     ).toBeGreaterThan(0);
   });
 
-  it('hero band + exit: coral primary is SEE ANNA IN ACTION → #meet-anna; the exit quote demotes to ghost', () => {
+  it('hero band + exit: coral primary is SEE ANNA IN ACTION → #meet-anna; the exit quote demotes to secondary', () => {
     // S10b (§1.1/§1.5/§4.1): home's ONE coral primary is the hero exit band
     // (below the scrub stage) — so the FIRST a.btn.hot on the page is now
     // "SEE ANNA IN ACTION" → the Meet-Anna form, not the configurator quote.
@@ -551,12 +591,12 @@ describe('S3 — home rebuilt as the film (scenes 0–004)', () => {
       '#meet-anna'
     );
     expect(hot.textContent, 'hero coral label').toMatch(/see anna in action/i);
-    // the exit quote is now the ghost variant (§1.5): btn, never btn hot.
-    const ghostQuote = document.querySelector('a.btn.ghost[href="/configurator"]');
-    expect(ghostQuote, 'exit quote must demote to ghost on home').toBeTruthy();
+    // the exit quote is now the secondary variant (§1.5): btn, never btn hot.
+    const ghostQuote = document.querySelector('a.btn.secondary[href="/configurator"]');
+    expect(ghostQuote, 'exit quote must demote to secondary on home').toBeTruthy();
     expect(ghostQuote.textContent, 'demoted quote keeps its label').toMatch(/request a quote/i);
-    const ghost = document.querySelector('a.btn.ghost[href="/contact"]');
-    expect(ghost, 'ghost contact CTA missing').toBeTruthy();
+    const secondary = document.querySelector('a.btn.secondary[href="/contact"]');
+    expect(secondary, 'secondary contact CTA missing').toBeTruthy();
     expect(html, 'tech@ lead line missing').toContain('tech@anamata.ai');
     expect(
       document.querySelectorAll('.teaser-card').length,
@@ -982,17 +1022,27 @@ describe('S7 — delta fixes (persona/channel scrub, coral softening)', () => {
       const l2 = luminance(b);
       return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
     };
-    // the loud launch coral is retired as the CTA fill
-    expect(TOKENS.colors.secondary.toUpperCase()).not.toBe('#E15857');
-    // white-on-coral still clears AA for the ≥18px bold button label (large text/UI, 3:1)
+    // #415 (Bas 28-08): #E15857 is REINSTATED as the CTA fill. S7 had retired it in
+    // favour of #C85F52; Bas asked for it back and that is an authorised design
+    // change of record, so this asserts the new intent instead of the old one.
+    expect(TOKENS.colors.secondary.toUpperCase()).toBe('#E15857');
+    // white-on-coral must still clear AA for the ≥18px bold button label (3:1).
+    // #E15857 on white measures 3.66:1, so the guardrail still holds.
     expect(ratio(TOKENS.colors.secondary, '#FFFFFF')).toBeGreaterThanOrEqual(3.0);
-    // and the loud original is gone from the shipped CSS
+    // The CTA fill must actually reach the shipped stylesheet.
+    //
+    // NOTE: this previously globbed '**/*.css' inside dist/ and had been passing
+    // vacuously for its whole life — Astro inlines global.css into <style> blocks,
+    // so dist ships ZERO .css files and the expectation ran against an empty
+    // string. Reading html too is what makes this assertion mean anything.
     const css = fg
-      .sync('**/*.css', { cwd: DIST })
+      .sync('**/*.{css,html}', { cwd: DIST })
       .map((f) => readFileSync(path.join(DIST, f), 'utf8'))
       .join('')
       .toUpperCase();
-    expect(css, 'loud original coral #E15857 still in shipped CSS').not.toContain('#E15857');
+    expect(css, 'the CTA coral never reaches the shipped stylesheet').toContain(
+      TOKENS.colors.secondary.toUpperCase()
+    );
   });
 });
 
@@ -1070,16 +1120,16 @@ describe('S8 — register ("AI colleague") + structure (home is the "what")', ()
   it('the shared CtaBlock exit renders the dual-path ask on the content pages', () => {
     // S10b (§1.5/§4.1): the coral quote stays primary on /about + insights (the
     // ready-to-buy pages, untouched by omission). Home passes quote="secondary",
-    // so its quote link is the ghost variant — the coral there is the hero band.
+    // so its quote link is the secondary variant — the coral there is the hero band.
     for (const rel of [PAGES.about, PAGES.insights]) {
       const { document } = page(rel);
       const hot = document.querySelector('a.btn.hot[href="/configurator"]');
       expect(hot, `${rel}: coral quote CTA missing`).toBeTruthy();
       expect(hot.textContent, `${rel}: quote CTA label`).toMatch(/request a quote/i);
-      const demo = document.querySelector('a.btn.ghost[href="/contact"]');
-      expect(demo, `${rel}: ghost demo CTA missing`).toBeTruthy();
+      const demo = document.querySelector('a.btn.secondary[href="/contact"]');
+      expect(demo, `${rel}: secondary demo CTA missing`).toBeTruthy();
     }
-    // Home: the same CtaBlock, quote demoted to ghost (btn, never btn hot).
+    // Home: the same CtaBlock, quote demoted to secondary (btn, never btn hot).
     // Scope to the .cta-row exit block so the nav's own /configurator link (also
     // a plain btn) can't satisfy this by accident.
     const { document } = page(PAGES.home);
@@ -1090,8 +1140,8 @@ describe('S8 — register ("AI colleague") + structure (home is the "what")', ()
     );
     expect(homeQuote.textContent, 'home: quote keeps its label').toMatch(/request a quote/i);
     expect(
-      document.querySelector('.cta-row a.btn.ghost[href="/contact"]'),
-      'home: ghost demo CTA missing'
+      document.querySelector('.cta-row a.btn.secondary[href="/contact"]'),
+      'home: secondary demo CTA missing'
     ).toBeTruthy();
   });
 });
@@ -1133,11 +1183,16 @@ describe('S9 — WHAT pass (question→action pairs + FITS strip)', () => {
     for (const t of tags) expect(t.textContent, 'stamp reads EXAMPLE').toMatch(/example/i);
   });
 
-  // Spec §1.4: the words "MCP" and "Slack" must NOT appear anywhere on home.
+  // Spec §1.4: neither "MCP" nor "Slack" appears anywhere on home.
+  //
+  // History, so this does not get re-litigated a third time: the Slack ban was
+  // briefly relaxed on 28-08 to allow a hedged "coming soon", then reinstated the
+  // same day when Bas settled on Teams-only until the #417 POC actually exists.
+  // Marketing mentions follow the feature, not the roadmap.
   it('home names no channel/connector jargon — no "MCP", no "Slack"', () => {
     const { html } = page(PAGES.home);
     expect(html, 'home must not name MCP (koppelbaar in plain English only)').not.toMatch(/\bMCP\b/);
-    expect(html, 'home must not name Slack (Teams-only, overruled — Peter §2)').not.toMatch(
+    expect(html, 'home must not name Slack (Teams-only until the #417 POC ships)').not.toMatch(
       /slack/i
     );
   });
@@ -1231,7 +1286,7 @@ describe('S10a — Meet-Anna form via the shared RequestForm (§1.5)', () => {
     expect(lbl, 'MEET marginalia label missing').toMatch(/MEET/i);
   });
 
-  // ---- One-coral law: home's form submit is secondary (ghost), never hot ----
+  // ---- One-coral law: home's form submit is secondary (secondary), never hot ----
   it('home\'s form submit renders secondary (btn, not btn hot)', () => {
     const { document } = page(PAGES.home);
     const submit = document.querySelector('form.request-form button[type="submit"]');
@@ -1243,7 +1298,7 @@ describe('S10a — Meet-Anna form via the shared RequestForm (§1.5)', () => {
   it('home still has exactly one coral primary (post-S10b: the hero band)', () => {
     // §4.1 one-hot rule unchanged; the referent moves per slice. Post-S10b the
     // single coral is the hero exit band (SEE ANNA IN ACTION → #meet-anna); the
-    // CtaBlock quote is now the ghost variant (§1.5).
+    // CtaBlock quote is now the secondary variant (§1.5).
     const { document } = page(PAGES.home);
     const hot = [...document.querySelectorAll('a.btn.hot, button.hot')];
     expect(hot.length, 'home must keep exactly one .btn.hot').toBe(1);
@@ -1260,14 +1315,14 @@ describe('S10a — Meet-Anna form via the shared RequestForm (§1.5)', () => {
     ).toBeFalsy();
   });
 
-  // ---- The "Explore Anna for your team" ghost link after H001 → #meet-anna ----
-  it('an "Explore Anna for your team" ghost link points at #meet-anna', () => {
+  // ---- The "Explore Anna for your team" secondary link after H001 → #meet-anna ----
+  it('an "Explore Anna for your team" secondary link points at #meet-anna', () => {
     const { document } = page(PAGES.home);
     const link = [...document.querySelectorAll('a[href="#meet-anna"]')].find((a) =>
       /explore anna for your team/i.test(a.textContent)
     );
     expect(link, '"Explore Anna for your team" link to #meet-anna missing').toBeTruthy();
-    expect(link.className, 'the explore link must be ghost, never coral (btn hot)').not.toMatch(
+    expect(link.className, 'the explore link must be secondary, never coral (btn hot)').not.toMatch(
       /\bhot\b/
     );
   });
@@ -1278,5 +1333,241 @@ describe('S10a — Meet-Anna form via the shared RequestForm (§1.5)', () => {
     const submit = document.querySelector('form.request-form button[type="submit"]');
     expect(submit, 'contact form submit missing after extraction').toBeTruthy();
     expect(submit.className, 'contact submit must stay coral (btn hot)').toMatch(/\bhot\b/);
+  });
+});
+
+describe('copy rule: no em-dash in prose (design-tokens.json -> copy.emDash)', () => {
+  // Bas, 28-08: the em-dash is the most recognisable AI-writing tell, and this
+  // site's whole argument is that it does not read as generated. The rule lives in
+  // design-tokens.json under "copy" and is enforced here.
+  //
+  // This walks TEXT NODES rather than elements, which is what lets the three
+  // documented exceptions survive precisely instead of by a blanket class skip:
+  //   1. uppercase mono LABEL separators (ledger grammar) — a label sits in its
+  //      own text node, so "TRANSPARENCY NOTICE — EU AI ACT, ART. 50" passes while
+  //      the sentence beside it in the same <p> is still checked
+  //   2. page <title> tags (Name — Descriptor | Brand, for SEO/OG cards)
+  //   3. real git commit subjects and approver stamps in the operating record,
+  //      generated from history and never edited: the ledger is never fabricated
+  const LEDGER_ROW = new Set(['act', 'stamp', 'ts', 'tag', 'agent', 'v', 'role']);
+  const SKIP_TAGS = new Set(['TITLE', 'SCRIPT', 'STYLE']);
+
+  const textNodesWithEmDash = (document) => {
+    const found = [];
+    const walk = (node, ancestry) => {
+      for (const child of node.childNodes || []) {
+        if (child.nodeType === 3) {
+          const text = (child.textContent || '').replace(/\s+/g, ' ');
+          if (text.includes('\u2014')) found.push({ text, ancestry });
+          continue;
+        }
+        if (child.nodeType !== 1) continue;
+        if (SKIP_TAGS.has(child.tagName)) continue;
+        const cls = (child.getAttribute('class') || '').split(/\s+/).filter(Boolean);
+        walk(child, [...ancestry, { tag: child.tagName.toLowerCase(), cls }]);
+      }
+    };
+    walk(document.body || document, []);
+    return found;
+  };
+
+  // a label is text with no lowercase letters at all: that IS the exception
+  const isLabel = (text) => !/[a-z]/.test(text);
+  const inLedgerRow = (ancestry) =>
+    ancestry.some((a) => a.cls.some((c) => LEDGER_ROW.has(c)));
+
+  it('no shipped prose contains an em-dash', () => {
+    const offenders = [];
+    for (const rel of allPages) {
+      const { document } = page(rel);
+      for (const { text, ancestry } of textNodesWithEmDash(document)) {
+        if (isLabel(text)) continue;
+        if (inLedgerRow(ancestry)) continue;
+        const i = text.indexOf('\u2014');
+        const path = ancestry
+          .slice(-2)
+          .map((a) => a.tag + (a.cls[0] ? '.' + a.cls[0] : ''))
+          .join(' > ');
+        offenders.push(`${rel} [${path}]: ...${text.slice(Math.max(0, i - 55), i + 55).trim()}...`);
+      }
+    }
+    expect(offenders, `em-dash found in prose:\n  ${offenders.join('\n  ')}`).toEqual([]);
+  });
+
+  it('the documented exceptions really are still present, so the rule is not vacuous', () => {
+    // if a future refactor stops rendering labels or the field log, this test
+    // would start passing for the wrong reason. Prove the exercised paths exist.
+    const { document } = page(PAGES.about);
+    const all = textNodesWithEmDash(document);
+    expect(all.length, 'no em-dash text nodes at all: the guard has nothing to exempt').toBeGreaterThan(0);
+    expect(all.some(({ text }) => isLabel(text)), 'no uppercase label with an em-dash found').toBe(true);
+  });
+
+  it('the rule lives in the design system, not only in this test', () => {
+    expect(TOKENS.copy, 'design-tokens.json is missing the "copy" section').toBeTruthy();
+    expect(TOKENS.copy.emDash, 'copy.emDash rule missing').toMatch(/never use an em-dash/i);
+    expect(
+      TOKENS.copy.emDashExceptions,
+      'the documented exceptions must travel with the rule'
+    ).toBeTruthy();
+  });
+});
+
+describe('S12 — design pass: white ground + centered measure (#415)', () => {
+  // Astro inlines global.css into <style> blocks — dist ships no .css files,
+  // so the built stylesheet must be read out of the HTML.
+  const builtCss = () =>
+    fg
+      .sync('**/*.{css,html}', { cwd: DIST })
+      .map((f) => readFileSync(path.join(DIST, f), 'utf8'))
+      .join('\n');
+
+  // Minification can merge selector lists and strip whitespace, so match rules
+  // by exact selector membership rather than assuming `.sel {` survives intact.
+  const rulesFor = (css, selector) =>
+    [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+      .filter(([, sel]) => sel.split(',').some((s) => s.trim() === selector))
+      .map(([, , body]) => body)
+      .join('\n');
+
+  it('the page ground ships as the --paper token value from the spec', () => {
+    const css = builtCss();
+    expect(
+      css,
+      `--paper must carry design-tokens.json colors.background (${TOKENS.colors.background})`
+    ).toMatch(new RegExp(`--paper:\\s*${TOKENS.colors.background}`, 'i'));
+  });
+
+  it('ground and card stock are the same value — the white-ground change of record (Bas 18-08)', () => {
+    // #415: the paper ground becomes white, so page and card surface match.
+    // Consequence to watch visually: with background == surface, the 1px ink
+    // borders, hard offset shadow and punch-holes carry the card boundary alone.
+    // The value itself lives in design-tokens.json — tokens are law, not this test.
+    expect(TOKENS.colors.background.toUpperCase()).toBe(TOKENS.colors.surface.toUpperCase());
+  });
+
+  it('the layout tokens reach the CSS as custom properties', () => {
+    const css = builtCss();
+    expect(css, '--max-w missing (layout.maxWidth must reach the CSS)').toMatch(
+      new RegExp(`--max-w:\\s*${TOKENS.layout.maxWidth}`)
+    );
+    expect(css, '--content-w missing (layout.contentWidth must reach the CSS)').toMatch(
+      new RegExp(`--content-w:\\s*${TOKENS.layout.contentWidth}`)
+    );
+    // a token nobody consumes is dead weight: --max-w bounds the full-width bands
+    expect(css, '--max-w is emitted but never consumed').toMatch(/var\(\s*--max-w\s*\)/);
+  });
+
+  it('the ledger sheet stays left-aligned, with the marginalia rule near the edge', () => {
+    // Ezra 28-08, superseding the centring introduced earlier the same day.
+    // Centring the sheet answered Bas' right-hand whitespace note, but it dragged
+    // the marginalia rule inward with it (486px in at 1920px) and the page read as
+    // centred rather than left-aligned, which is wrong for a ledger. The rule
+    // belongs near the viewport edge; the right-hand gulf is answered by a wider
+    // content measure instead, which is affordable because prose caps itself in ch
+    // regardless of how wide the column gets (asserted below).
+    const sheet = rulesFor(builtCss(), '.sheet');
+    expect(sheet, '.sheet rule not found in built CSS').not.toBe('');
+    expect(sheet, '.sheet must stay a marginalia + content grid').toMatch(
+      /var\(\s*--margin-w\s*\)/
+    );
+    expect(
+      sheet,
+      '.sheet must NOT centre itself: that pushes the marginalia rule off the left edge'
+    ).not.toMatch(/padding-inline/);
+  });
+
+  it('prose keeps its own reading measure independent of the column width', () => {
+    // this is what makes a wide content column safe: widening --content-w must
+    // never widen running text, or the fix trades one problem for a worse one
+    const intro = rulesFor(builtCss(), '.sec-intro');
+    expect(intro, '.sec-intro rule not found').not.toBe('');
+    expect(intro, '.sec-intro must cap its measure in ch, not inherit the column').toMatch(
+      /max-width:\s*\d+(\.\d+)?ch/
+    );
+  });
+
+  it('the content measure comes from the token, not a hardcoded pixel value', () => {
+    const content = rulesFor(builtCss(), '.content');
+    expect(content, '.content rule not found in built CSS').not.toBe('');
+    expect(content, '.content must take its measure from var(--content-w)').toMatch(
+      /max-width:\s*var\(\s*--content-w\s*\)/
+    );
+  });
+
+  it('the ground is plain everywhere, with no graph-paper texture (Ezra 28-08)', () => {
+    // The 32px graph-paper gradients are gone site-wide. Note this was painted in
+    // TWO places: the body rule and the hero stage in AnnaScrub.astro, which had
+    // its own copy. A body-only assertion passed while the hero still tiled the
+    // grid, which is exactly the gap that shipped a "fixed" background still
+    // showing grid lines on mobile, where the hero IS the first screen.
+    // So this asserts across the whole built stylesheet, not one rule.
+    const body = rulesFor(builtCss(), 'body');
+    expect(body, 'body rule not found in built CSS').not.toBe('');
+    expect(body, 'body must take the plain paper ground').toMatch(
+      /background:\s*var\(\s*--paper\s*\)/
+    );
+
+    const css = builtCss();
+    expect(css, 'the graph-paper gradient is back somewhere in the shipped CSS').not.toMatch(
+      /repeating-linear-gradient/
+    );
+    expect(css, 'a 32px tile is back: that is the graph-paper underlay').not.toMatch(
+      /background-size:\s*32px\s+32px/
+    );
+    expect(css, '--grid is back: nothing should consume a grid colour now').not.toMatch(
+      /var\(\s*--grid\s*\)/
+    );
+  });
+
+  it('the secondary buttons are filled, not transparent (Bas 28-08)', () => {
+    // They read as weak on the white ground, so .btn.secondary is now filled with what
+    // used to be its border colour. Coral stays exclusive to .btn.hot.
+    const secondary = rulesFor(builtCss(), '.btn.secondary');
+    expect(secondary, '.btn.secondary rule not found in built CSS').not.toBe('');
+    expect(secondary, '.btn.secondary must be filled with --primary').toMatch(
+      /background:\s*var\(\s*--primary\s*\)/
+    );
+    expect(secondary, '.btn.secondary must carry light text').toMatch(/color:\s*var\(\s*--paper\s*\)/);
+    expect(secondary, '.btn.secondary must never take the coral fill').not.toMatch(
+      /var\(\s*--coral\s*\)/
+    );
+  });
+
+  it('the teaser cards separate from the white ground, and stay AA for muted text', () => {
+    const srgb = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+    const lum = (hex) => {
+      const h = hex.replace('#', '');
+      const [r, g, b] = [0, 2, 4].map((i) => srgb(parseInt(h.slice(i, i + 2), 16) / 255));
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const ratio = (a, b) => {
+      const l1 = lum(a);
+      const l2 = lum(b);
+      return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    };
+    const tint = TOKENS.colors.surfaceSunken;
+    expect(tint, 'surfaceSunken token missing').toBeTruthy();
+    // it must actually differ from the page ground, or the card has no edge at all
+    expect(tint.toUpperCase()).not.toBe(TOKENS.colors.background.toUpperCase());
+    // and muted text on the tint must still clear AA — this is the ceiling that
+    // rules out the 20-25% ink fill originally suggested (that lands at 3.20:1)
+    expect(
+      ratio(TOKENS.colors.textMuted, tint),
+      `muted text on the card tint is ${ratio(TOKENS.colors.textMuted, tint).toFixed(2)}:1`
+    ).toBeGreaterThanOrEqual(4.5);
+
+    const card = rulesFor(builtCss(), '.teaser-card');
+    expect(card, '.teaser-card must take the sunken tint, not plain --surface').toMatch(
+      /background:\s*var\(\s*--surface-sunken\s*\)/
+    );
+  });
+
+  it('the hero subline carries no em-dash (Rider A, #374)', () => {
+    // Bas 18-08: "maybe remove the — too obvious — em-dash?"
+    const { document } = page(PAGES.home);
+    const subline = document.querySelector('.anna-scrub .anna-sub')?.textContent ?? '';
+    expect(subline, 'hero subline not found — selector drifted, fix the test not the copy').not.toBe('');
+    expect(subline, 'hero subline still contains an em-dash').not.toMatch(/\u2014/);
   });
 });

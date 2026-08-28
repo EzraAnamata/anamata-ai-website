@@ -74,16 +74,12 @@ const {
     grid-template-columns: 1fr minmax(0, 600px);
     align-items: center;
     gap: 3rem;
-    /* Full-bleed stage: the graph-paper underlay reaches the viewport edges like
-       the scenes below, while the content columns stay centred on the 1440px
-       measure via the centring inline padding (PR #8 review fix 1). */
+    /* Full-bleed stage: the stage spans the viewport like the scenes below, while
+       the content columns stay centred on the 1440px measure via the centring
+       inline padding (PR #8 review fix 1). The graph-paper underlay that used to
+       fill this stage was removed on 2026-08-28 with the site-wide one (#415). */
     padding-block: 0;
     padding-inline: max(1.5rem, calc((100% - 1440px) / 2 + 1.5rem));
-    /* graph-paper underlay (tokens.layout.rhythm) */
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 32px 32px;
   }
   .anna-kicker {
     font-family: var(--font-mono);

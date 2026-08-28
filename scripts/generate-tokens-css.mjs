@@ -21,6 +21,7 @@ const css = `/* GENERATED from design-tokens.json — do not edit by hand. */
 :root {
   --paper: ${t.colors.background};
   --surface: ${t.colors.surface};
+  --surface-sunken: ${t.colors.surfaceSunken};
   --ink: ${t.colors.text};
   --ink-rgb: ${hexToRgb(t.colors.text)};
   --text-muted: ${t.colors.textMuted};
@@ -33,9 +34,10 @@ const css = `/* GENERATED from design-tokens.json — do not edit by hand. */
   --sky-rgb: ${hexToRgb(t.colors.accent)};
   --teal-dark: ${t.colors.semantic.success};
   --border: ${t.colors.border};
-  --grid: rgba(${hexToRgb(t.colors.text)}, 0.06);
   --hairline: rgba(${hexToRgb(t.colors.text)}, 0.22);
   --margin-w: ${marginW}px;
+  --max-w: ${t.layout.maxWidth};
+  --content-w: ${t.layout.contentWidth};
 
   --font-display: ${t.typography.fontFamily.display};
   --font-body: ${t.typography.fontFamily.body};

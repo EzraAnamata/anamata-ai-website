@@ -18,7 +18,7 @@
       "permission rings (bounded autonomy)",
       "configurator → offerte (webshop, gefaseerd, no prices)",
       "QA and quality-engineering heritage (Anamata — Quality from the Heart)",
-      "graph paper, hairline rules, ledger typography, stamps"
+      "hairline rules, ledger typography, stamps, punch holes"
     ],
     "audienceFeeling": "Bam, dit is Anna — this is real and it is running right now; wonder wrapped in reassurance, for skeptical Dutch/EU enterprise buyers.",
     "avoid": [
@@ -41,7 +41,7 @@
   },
   "imagery": {
     "strategy": "typographic-plus-one-portrait",
-    "direction": "The Anna wireframe→human portrait (assets from Bas via ChatGPT: 33-frame sequence + static split-face fallback, white background, sky-blue wireframe) is the single figurative image on the site. Everything else stays typeset real data with geometric artifacts only: punch holes, stamps, hairline rules, graph-paper grid underlay (navy at 6% opacity, 32px cells). No stock photography, no illustration sets.",
+    "direction": "The Anna wireframe→human portrait (assets from Bas via ChatGPT: 33-frame sequence + static split-face fallback, white background, sky-blue wireframe) is the single figurative image on the site. Everything else stays typeset real data with geometric artifacts only: punch holes, stamps, hairline rules. The page ground is a plain light colour: the 32px graph-grid underlay was removed everywhere on 2026-08-28, from the body and from the hero stage alike. No stock photography, no illustration sets.",
     "sources": [
       "anna-face frame sequence: local 33-frame source (600x900) — converted to WebP frames by scripts/build-hero-frames.mjs, source never committed",
       "anna-split-face: local static portrait (1024x1536) — metadata-stripped WebP fallback ≤200KB",
@@ -51,19 +51,20 @@
   "layout": {
     "composition": "Ruled ledger sheet: fixed marginalia column (132px) carrying mono record numbers (001, 002, ...) and micro-labels, separated by a hairline; content column to its right. Sections are numbered records divided by 2px ink rules. A persistent record strip is pinned to the bottom viewport edge. The hero is a full-viewport sticky stage for the Anna scrub before the ledger sheet begins.",
     "wireframe": "| HERO: Anna wireframe→face, sticky, scroll-scrubbed          |\n| 001 | WHAT ANNA DOES ............ |\n| 002 | HOW IT WORKS ... [stamp]    |\n| 003 | PROOF: OPERATING RECORD ... |\n| 004 | CONFIGURATOR EXIT ........  |\n[ LAST ACTION 14:08 · ... ✓ ON RECORD ]",
-    "rhythm": "32px graph-grid underlay; 1px hairlines between rows; 2px ink rules between numbered sections; generous 56-72px section padding",
+    "rhythm": "Plain light ground, no background texture; 1px hairlines between rows; 2px ink rules between numbered sections; generous 56-72px section padding",
     "maxWidth": "1440px",
-    "contentWidth": "1080px",
+    "contentWidth": "1400px",
     "gutter": "1.5rem"
   },
   "colors": {
-    "background": "#FAFAFA",
+    "background": "#FFFFFF",
     "surface": "#FFFFFF",
     "surfaceRaised": "#FFFFFF",
+    "surfaceSunken": "#F2F3F4",
     "text": "#041524",
     "textMuted": "#5A7080",
     "primary": "#2C548C",
-    "secondary": "#C85F52",
+    "secondary": "#E15857",
     "accent": "#8AD9FF",
     "border": "#C9D4DF",
     "semantic": {
@@ -126,6 +127,13 @@
       "wider": "0.08em",
       "widest": "0.14em"
     }
+  },
+  "copy": {
+    "_comment": "Binding copy rules for anything that ships as visible text. Added 2026-08-28 (Bas, design review) — tokens are law applies to words too.",
+    "emDash": "NEVER use an em-dash (—) in prose. It is the single most recognisable AI-writing tell, and the site's credibility rests on not reading as generated. Rewrite the sentence so it flows without one: use a comma, a colon, or split it in two. Applies to body copy, headings, intros, meta descriptions, alt text, aria-labels, form placeholders and article content.",
+    "emDashExceptions": "Em-dashes are RETAINED in three places, all deliberate and none of them prose: (1) uppercase mono LABEL separators that are part of the ledger grammar, e.g. 'FIELD LOG — THIS SITE, FROM THE PUBLIC REPO', 'ORDER RECORD — DRAFT', 'INNER RING — ACT, ON THE RECORD', 'TRANSPARENCY NOTICE — EU AI ACT, ART. 50', 'APPROVED — <name>'; (2) page <title> tags, which follow the 'Name — Descriptor | Brand' pattern for SEO and OG cards; (3) real git commit subjects rendered in the operating record, which are generated from history and must never be edited, because the ledger is never fabricated.",
+    "emptyFieldGlyph": "A bare '—' is the placeholder for an empty ledger field or an unfilled form value. That is a data glyph, not punctuation, and stays.",
+    "claimDiscipline": "A demo utterance must itself contain everything its shown action needs, or must explicitly invoke knowledge Anna already holds (e.g. 'as I usually have them', 'my usual Thursday'). Never show an action that could not follow from the words above it. Bas, 18-08, on the H001 pairs."
   },
   "spacing": {
     "unit": "0.25rem",
@@ -216,7 +224,7 @@
     "minContrastRatioUI": 3.0,
     "minTouchTarget": "44px",
     "respectReducedMotion": true,
-    "_notes": "Ink #041524 on paper #FAFAFA ≈ 17:1 ✓. Primary #2C548C on paper ≈ 7.6:1 ✓ text-safe. Muted #5A7080 ≈ 4.9:1 ✓. Approval #067E75 ≈ 4.8:1 ✓ (true teal #00B3A6 ≈ 2.5:1 — fills/dots only, never text). Coral #C85F52 vs white ≈ 4.0:1 — coral-filled buttons only at ≥18px bold white text; smaller buttons use ink fill. Sky #8AD9FF — never text on white."
+    "_notes": "Ink #041524 on paper #FFFFFF ≈ 18.5:1 ✓. Primary #2C548C on paper ≈ 7.6:1 ✓ text-safe. Muted #5A7080 ≈ 5.2:1 ✓. Approval #067E75 ≈ 4.9:1 ✓ (true teal #00B3A6 ≈ 2.5:1 — fills/dots only, never text). Coral #E15857 vs white ≈ 3.7:1 — coral-filled buttons only at ≥18px bold white text; smaller buttons use ink fill. Sky #8AD9FF — never text on white."
   },
   "components": {
     "header": "Paper bg, 1px hairline bottom. Wordmark: anamata_ai6.svg (navy word, Ai in #2C548C), height 32px; '.AI' suffix retired — it lives in the mark. Mono nav links 12.5px, ink at 82%, primary on hover.",

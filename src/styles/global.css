@@ -7,10 +7,11 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  background:
-    repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 32px),
-    var(--paper);
+  /* #415 (Ezra 28-08): the page ground is a PLAIN light colour. The 32px
+     graph-paper gradients are gone site-wide, from the body AND from the hero
+     stage in AnnaScrub.astro, which painted its own copy. The ledger reads from
+     its rules, hairlines and marginalia, never from a background texture. */
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 17px;
@@ -54,8 +55,13 @@ a { color: var(--primary); }
   transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease;
 }
 .btn:hover { background: var(--primary); border-color: var(--primary); }
-.btn.ghost { background: transparent; color: var(--primary); border-color: var(--primary); }
-.btn.ghost:hover { background: rgba(var(--primary-rgb), 0.07); }
+/* #415 (Bas 28-08): the secondary buttons were transparent and read as weak on
+   the white ground, so they are now FILLED with what used to be their border
+   colour, with light text on top. Renamed from .btn.ghost, which stopped being
+   accurate once it was filled. Coral stays exclusive to .btn.hot, so the
+   one-coral-primary-per-page law is untouched. White on --primary is 7.63:1. */
+.btn.secondary { background: var(--primary); color: var(--paper); border-color: var(--primary); }
+.btn.secondary:hover { background: #22406C; border-color: #22406C; }
 /* the "want to know more?" referral under a CTA row — subordinate to the ask */
 .cta-more { margin-top: 14px; font-size: 12.5px; color: var(--text-muted); letter-spacing: 0.02em; }
 .cta-more a { color: var(--primary); }
@@ -66,10 +72,21 @@ a { color: var(--primary); }
   background: var(--coral); border-color: var(--coral); color: #FFFFFF;
   font-weight: 700; font-size: 18px; padding: 14px 28px; letter-spacing: 0.04em;
 }
-.btn.hot:hover { background: #B14C41; border-color: #B14C41; }
+.btn.hot:hover { background: #BF4B4A; border-color: #BF4B4A; }
 
 /* ---------- ledger page structure ---------- */
-.sheet { display: grid; grid-template-columns: var(--margin-w) 1fr; }
+/* #415: the ledger sheet is LEFT-ALIGNED and full-bleed, so the marginalia rule
+   sits near the viewport edge where a ledger's rule belongs.
+   Ezra 28-08: centring the sheet (the first attempt at Bas' right-hand whitespace
+   note) pushed the marginalia rule inward with it, 486px in at 1920px, and the
+   content read as centred instead of left-aligned. Bas' actual complaint is
+   answered by letting the CONTENT grow instead, see --content-w below: prose is
+   already capped independently at 56ch/20ch, so a wider column costs no
+   readability and only gives the wide blocks room. */
+.sheet {
+  display: grid;
+  grid-template-columns: var(--margin-w) 1fr;
+}
 .sheet + .sheet { border-top: 2px solid var(--ink); }
 .marginalia {
   border-right: 1px solid var(--hairline);
@@ -81,7 +98,7 @@ a { color: var(--primary); }
 .marginalia .no { font-size: 13px; font-weight: 600; }
 .marginalia .lbl { color: var(--ink); opacity: 0.72; letter-spacing: 0.08em; font-size: 10.5px; }
 .marginalia .lbl.push { margin-top: auto; }
-.content { padding: 56px 64px 72px 56px; max-width: 1080px; }
+.content { padding: 56px 64px 72px 56px; max-width: var(--content-w); }
 
 /* ---------- display type ---------- */
 .hero h1 {
@@ -103,7 +120,7 @@ a { color: var(--primary); }
    sheets; a top hairline separates it from the scrub without adding weight. */
 .hero-exit {
   display: flex; justify-content: center;
-  padding: 20px max(1.5rem, calc((100% - 1440px) / 2 + 1.5rem));
+  padding: 20px max(1.5rem, calc((100% - var(--max-w)) / 2 + 1.5rem));
   border-top: 1px solid var(--hairline);
   background: var(--paper);
 }
@@ -400,8 +417,11 @@ h1.sec-title { font-size: clamp(2.6rem, 5vw, 4.5rem); line-height: 1.06; max-wid
 .teaser-cards {
   margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 22px;
 }
+/* #415 (Bas 28-08): with the ground now white, var(--surface) made these cards
+   indistinguishable from the page. They take the sunken tint instead: ink at 5%
+   (#F2F3F4). 5% is deliberate, above ~6% muted text on the tint fails AA. */
 .teaser-card {
-  position: relative; background: var(--surface); border: 1px solid var(--ink);
+  position: relative; background: var(--surface-sunken); border: 1px solid var(--ink);
   border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 24px 22px 20px;
 }
 /* square "already-picked" stamp, echoing the configurator's checkbox stamps */
