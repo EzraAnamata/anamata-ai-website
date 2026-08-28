@@ -34,7 +34,6 @@ const css = `/* GENERATED from design-tokens.json — do not edit by hand. */
   --sky-rgb: ${hexToRgb(t.colors.accent)};
   --teal-dark: ${t.colors.semantic.success};
   --border: ${t.colors.border};
-  --grid: rgba(${hexToRgb(t.colors.text)}, 0.06);
   --hairline: rgba(${hexToRgb(t.colors.text)}, 0.22);
   --margin-w: ${marginW}px;
   --max-w: ${t.layout.maxWidth};

@@ -18,7 +18,7 @@
       "permission rings (bounded autonomy)",
       "configurator → offerte (webshop, gefaseerd, no prices)",
       "QA and quality-engineering heritage (Anamata — Quality from the Heart)",
-      "graph paper, hairline rules, ledger typography, stamps"
+      "hairline rules, ledger typography, stamps, punch holes"
     ],
     "audienceFeeling": "Bam, dit is Anna — this is real and it is running right now; wonder wrapped in reassurance, for skeptical Dutch/EU enterprise buyers.",
     "avoid": [
@@ -41,7 +41,7 @@
   },
   "imagery": {
     "strategy": "typographic-plus-one-portrait",
-    "direction": "The Anna wireframe→human portrait (assets from Bas via ChatGPT: 33-frame sequence + static split-face fallback, white background, sky-blue wireframe) is the single figurative image on the site. Everything else stays typeset real data with geometric artifacts only: punch holes, stamps, hairline rules, graph-paper grid underlay (navy at 6% opacity, 32px cells). No stock photography, no illustration sets.",
+    "direction": "The Anna wireframe→human portrait (assets from Bas via ChatGPT: 33-frame sequence + static split-face fallback, white background, sky-blue wireframe) is the single figurative image on the site. Everything else stays typeset real data with geometric artifacts only: punch holes, stamps, hairline rules. The page ground is a plain light colour: the 32px graph-grid underlay was removed everywhere on 2026-08-28, from the body and from the hero stage alike. No stock photography, no illustration sets.",
     "sources": [
       "anna-face frame sequence: local 33-frame source (600x900) — converted to WebP frames by scripts/build-hero-frames.mjs, source never committed",
       "anna-split-face: local static portrait (1024x1536) — metadata-stripped WebP fallback ≤200KB",
@@ -51,7 +51,7 @@
   "layout": {
     "composition": "Ruled ledger sheet: fixed marginalia column (132px) carrying mono record numbers (001, 002, ...) and micro-labels, separated by a hairline; content column to its right. Sections are numbered records divided by 2px ink rules. A persistent record strip is pinned to the bottom viewport edge. The hero is a full-viewport sticky stage for the Anna scrub before the ledger sheet begins.",
     "wireframe": "| HERO: Anna wireframe→face, sticky, scroll-scrubbed          |\n| 001 | WHAT ANNA DOES ............ |\n| 002 | HOW IT WORKS ... [stamp]    |\n| 003 | PROOF: OPERATING RECORD ... |\n| 004 | CONFIGURATOR EXIT ........  |\n[ LAST ACTION 14:08 · ... ✓ ON RECORD ]",
-    "rhythm": "32px graph-grid underlay; 1px hairlines between rows; 2px ink rules between numbered sections; generous 56-72px section padding",
+    "rhythm": "Plain light ground, no background texture; 1px hairlines between rows; 2px ink rules between numbered sections; generous 56-72px section padding",
     "maxWidth": "1440px",
     "contentWidth": "1080px",
     "gutter": "1.5rem"

@@ -1487,6 +1487,31 @@ describe('S12 — design pass: white ground + centered measure (#415)', () => {
     );
   });
 
+  it('the ground is plain everywhere, with no graph-paper texture (Ezra 28-08)', () => {
+    // The 32px graph-paper gradients are gone site-wide. Note this was painted in
+    // TWO places: the body rule and the hero stage in AnnaScrub.astro, which had
+    // its own copy. A body-only assertion passed while the hero still tiled the
+    // grid, which is exactly the gap that shipped a "fixed" background still
+    // showing grid lines on mobile, where the hero IS the first screen.
+    // So this asserts across the whole built stylesheet, not one rule.
+    const body = rulesFor(builtCss(), 'body');
+    expect(body, 'body rule not found in built CSS').not.toBe('');
+    expect(body, 'body must take the plain paper ground').toMatch(
+      /background:\s*var\(\s*--paper\s*\)/
+    );
+
+    const css = builtCss();
+    expect(css, 'the graph-paper gradient is back somewhere in the shipped CSS').not.toMatch(
+      /repeating-linear-gradient/
+    );
+    expect(css, 'a 32px tile is back: that is the graph-paper underlay').not.toMatch(
+      /background-size:\s*32px\s+32px/
+    );
+    expect(css, '--grid is back: nothing should consume a grid colour now').not.toMatch(
+      /var\(\s*--grid\s*\)/
+    );
+  });
+
   it('the secondary buttons are filled, not transparent (Bas 28-08)', () => {
     // They read as weak on the white ground, so .btn.secondary is now filled with what
     // used to be its border colour. Coral stays exclusive to .btn.hot.

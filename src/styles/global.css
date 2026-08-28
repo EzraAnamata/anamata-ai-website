@@ -7,10 +7,11 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  background:
-    repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 32px),
-    repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 32px),
-    var(--paper);
+  /* #415 (Ezra 28-08): the page ground is a PLAIN light colour. The 32px
+     graph-paper gradients are gone site-wide, from the body AND from the hero
+     stage in AnnaScrub.astro, which painted its own copy. The ledger reads from
+     its rules, hairlines and marginalia, never from a background texture. */
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: 17px;
