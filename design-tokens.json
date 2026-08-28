@@ -53,7 +53,7 @@
     "wireframe": "| HERO: Anna wireframe→face, sticky, scroll-scrubbed          |\n| 001 | WHAT ANNA DOES ............ |\n| 002 | HOW IT WORKS ... [stamp]    |\n| 003 | PROOF: OPERATING RECORD ... |\n| 004 | CONFIGURATOR EXIT ........  |\n[ LAST ACTION 14:08 · ... ✓ ON RECORD ]",
     "rhythm": "Plain light ground, no background texture; 1px hairlines between rows; 2px ink rules between numbered sections; generous 56-72px section padding",
     "maxWidth": "1440px",
-    "contentWidth": "1080px",
+    "contentWidth": "1400px",
     "gutter": "1.5rem"
   },
   "colors": {

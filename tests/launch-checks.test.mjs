@@ -1458,24 +1458,32 @@ describe('S12 — design pass: white ground + centered measure (#415)', () => {
     expect(css, '--max-w is emitted but never consumed').toMatch(/var\(\s*--max-w\s*\)/);
   });
 
-  it('the ledger sheet centers on the token max-width instead of running full-bleed', () => {
-    // Bas 18-08: on wide screens the measure sat left with a whitespace gulf on
-    // the right. The sheet now pads symmetrically to the token max-width, so the
-    // 2px inter-sheet rules and hairlines still run full-bleed behind it — the
-    // ledger grammar is a scope-guarded signature element and must not change.
+  it('the ledger sheet stays left-aligned, with the marginalia rule near the edge', () => {
+    // Ezra 28-08, superseding the centring introduced earlier the same day.
+    // Centring the sheet answered Bas' right-hand whitespace note, but it dragged
+    // the marginalia rule inward with it (486px in at 1920px) and the page read as
+    // centred rather than left-aligned, which is wrong for a ledger. The rule
+    // belongs near the viewport edge; the right-hand gulf is answered by a wider
+    // content measure instead, which is affordable because prose caps itself in ch
+    // regardless of how wide the column gets (asserted below).
     const sheet = rulesFor(builtCss(), '.sheet');
     expect(sheet, '.sheet rule not found in built CSS').not.toBe('');
-    // Centre the real measure: marginalia + content. Capping on --max-w alone
-    // left 1440 - 132 - 1080 = 228px dead at the right of the content column, so
-    // the block still read off-centre at 1920px, which is the complaint itself.
-    expect(sheet, '.sheet must centre on the content measure').toMatch(
-      /var\(\s*--content-w\s*\)/
-    );
     expect(sheet, '.sheet must stay a marginalia + content grid').toMatch(
       /var\(\s*--margin-w\s*\)/
     );
-    expect(sheet, '.sheet must centre via symmetric inline padding').toMatch(
-      /padding-inline:\s*max\(/
+    expect(
+      sheet,
+      '.sheet must NOT centre itself: that pushes the marginalia rule off the left edge'
+    ).not.toMatch(/padding-inline/);
+  });
+
+  it('prose keeps its own reading measure independent of the column width', () => {
+    // this is what makes a wide content column safe: widening --content-w must
+    // never widen running text, or the fix trades one problem for a worse one
+    const intro = rulesFor(builtCss(), '.sec-intro');
+    expect(intro, '.sec-intro rule not found').not.toBe('');
+    expect(intro, '.sec-intro must cap its measure in ch, not inherit the column').toMatch(
+      /max-width:\s*\d+(\.\d+)?ch/
     );
   });
 

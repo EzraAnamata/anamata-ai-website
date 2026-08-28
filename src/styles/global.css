@@ -75,14 +75,17 @@ a { color: var(--primary); }
 .btn.hot:hover { background: #BF4B4A; border-color: #BF4B4A; }
 
 /* ---------- ledger page structure ---------- */
-/* #415 (Bas 18-08): cap and centre the measure on the layout token, so wide
-   screens stop leaving a whitespace gulf on the right. The element itself stays
-   full-width, so the 2px inter-sheet rules and hairlines still run full-bleed
-   behind the centred content -- the ledger grammar is unchanged. */
+/* #415: the ledger sheet is LEFT-ALIGNED and full-bleed, so the marginalia rule
+   sits near the viewport edge where a ledger's rule belongs.
+   Ezra 28-08: centring the sheet (the first attempt at Bas' right-hand whitespace
+   note) pushed the marginalia rule inward with it, 486px in at 1920px, and the
+   content read as centred instead of left-aligned. Bas' actual complaint is
+   answered by letting the CONTENT grow instead, see --content-w below: prose is
+   already capped independently at 56ch/20ch, so a wider column costs no
+   readability and only gives the wide blocks room. */
 .sheet {
   display: grid;
   grid-template-columns: var(--margin-w) 1fr;
-  padding-inline: max(0px, calc((100% - var(--margin-w) - var(--content-w)) / 2));
 }
 .sheet + .sheet { border-top: 2px solid var(--ink); }
 .marginalia {
